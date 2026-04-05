@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Terrio Sales Agent",
+    "slug": "ble-sales-agent-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "ble-sales-agent",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#1a3f6f"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ble.salesagent"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1a3f6f"
+      },
+      "package": "com.ble.salesagent"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#1a3f6f"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
