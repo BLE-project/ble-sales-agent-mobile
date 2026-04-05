@@ -1,21 +1,12 @@
 import React from 'react'
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../src/api/client'
-
-interface MerchantSummary {
-  id: string
-  businessName: string
-  tenantId: string
-  status: string
-  totalTransactions: number
-  totalVolumeCents: number
-}
+import { merchantsApi, MerchantSummary } from '../../src/api/salesAgentApi'
 
 export default function MerchantsScreen() {
   const { data, isLoading } = useQuery({
     queryKey: ['agent-merchants'],
-    queryFn: () => api.get<MerchantSummary[]>('/api/v1/merchants?managedByAgent=true'),
+    queryFn: () => merchantsApi.listByAgent(),
   })
 
   return (

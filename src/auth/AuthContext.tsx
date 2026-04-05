@@ -22,9 +22,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const KC_URL    = process.env.EXPO_PUBLIC_KC_URL    ?? 'http://localhost:8180'
-const KC_REALM  = process.env.EXPO_PUBLIC_KC_REALM  ?? 'ble'
-const GATEWAY   = process.env.EXPO_PUBLIC_GATEWAY   ?? 'http://localhost:8090'
+const KC_URL    = process.env.EXPO_PUBLIC_KC_URL         ?? 'http://localhost:8180'
+const KC_REALM  = process.env.EXPO_PUBLIC_KC_REALM       ?? 'ble'
+// FIX-SA-AUTH-001: align with client.ts — use EXPO_PUBLIC_GATEWAY_URL (not EXPO_PUBLIC_GATEWAY)
+// and correct default port 8080 (BFF) not 8090 (gamification service).
+const GATEWAY   = process.env.EXPO_PUBLIC_GATEWAY_URL    ?? 'http://localhost:8080'
 const CLIENT_ID = 'ble-sales-agent-mobile'
 
 function parseJwt(token: string): Record<string, unknown> {

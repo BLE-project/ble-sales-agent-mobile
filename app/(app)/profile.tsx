@@ -1,8 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { useAuth } from '../../src/auth/AuthContext'
-import { useQuery } from '@tanstack/react-query'
-import { salesAgentProfileApi } from '../../src/api/salesAgentApi'
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth()

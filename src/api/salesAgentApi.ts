@@ -88,3 +88,18 @@ export const royaltiesApi = {
     return api.get<AgentRoyalty[]>(`/api/v1/agent-royalties${qs}`)
   },
 }
+
+// GAP-MER-001 fix: centralise merchant API calls in this module (consistent with other apis)
+export interface MerchantSummary {
+  id: string
+  businessName: string
+  tenantId: string
+  status: string
+  totalTransactions: number
+  totalVolumeCents: number
+}
+
+export const merchantsApi = {
+  /** List merchants managed by the currently authenticated sales agent. */
+  listByAgent: () => api.get<MerchantSummary[]>('/api/v1/merchants?managedByAgent=true'),
+}
