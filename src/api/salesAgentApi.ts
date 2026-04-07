@@ -89,6 +89,70 @@ export const royaltiesApi = {
   },
 }
 
+// ── FEAT-S45-001: Beacon Management ──────────────────────────────────────────
+
+export interface BeaconEnrollRequest {
+  territoryId: string
+  type: 'TRACKING' | 'MERCHANT' | 'INFO' | 'ENTRANCE'
+  ibeaconUuid: string
+  major: number
+  minor: number
+  name?: string
+  password?: string
+  txPower?: number
+  assignedToStoreId?: string
+  assignedToZoneId?: string
+}
+
+export interface BeaconSummary {
+  id: string
+  tenantId: string
+  name: string | null
+  ibeaconUuid: string
+  major: number
+  minor: number
+  type: string
+  status: string
+  enrolledBy: string | null
+  enrolledAt: string | null
+}
+
+export const beaconApi = {
+  /** Enroll (create) a new beacon. Requires SALES_AGENT or SUPER_ADMIN. */
+  enroll: (req: BeaconEnrollRequest) =>
+    api.post<BeaconSummary>('/api/v1/beacons', req),
+
+  /** List beacons for the current tenant context. */
+  list: () =>
+    api.get<BeaconSummary[]>('/api/v1/beacons'),
+
+  /** Set/change beacon password. Requires proximity (X-BLE-Proximity header). */
+  setPassword: (beaconId: string, password: string) =>
+    fetch(`${process.env.EXPO_PUBLIC_GATEWAY_URL ?? 'http://localhost:8080'}/api/v1/beacons/${beaconId}/password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-BLE-Proximity': 'true',
+      },
+      body: JSON.stringify({ password }),
+    }).then(r => { if (!r.ok) throw new Error('Set password failed'); return r.json() }),
+
+  /** Reset beacon password. Requires proximity. */
+  resetPassword: (beaconId: string, password: string) =>
+    fetch(`${process.env.EXPO_PUBLIC_GATEWAY_URL ?? 'http://localhost:8080'}/api/v1/beacons/${beaconId}/password/reset`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-BLE-Proximity': 'true',
+      },
+      body: JSON.stringify({ password }),
+    }).then(r => { if (!r.ok) throw new Error('Reset password failed'); return r.json() }),
+
+  /** Update beacon name. */
+  updateName: (beaconId: string, name: string) =>
+    api.put<BeaconSummary>(`/api/v1/beacons/${beaconId}/name`, { name }),
+}
+
 // GAP-MER-001 fix: centralise merchant API calls in this module (consistent with other apis)
 export interface MerchantSummary {
   id: string

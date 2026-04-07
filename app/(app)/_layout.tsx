@@ -20,6 +20,7 @@ export default function AppLayout() {
       <Tabs.Screen name="merchants" options={{ title: 'Merchant',    tabBarLabel: 'Merchant' }} />
       <Tabs.Screen name="royalties" options={{ title: 'Royalties',   tabBarLabel: 'Royalties' }} />
       <Tabs.Screen name="profile"   options={{ title: 'Profilo',     tabBarLabel: 'Profilo' }} />
+      <Tabs.Screen name="beacon-config" options={{ title: 'Beacon',  tabBarLabel: 'Beacon' }} />
       {/* Detail screens — hidden from tab bar */}
       <Tabs.Screen name="request/[id]" options={{ href: null }} />
     </Tabs>
