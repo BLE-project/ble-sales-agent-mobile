@@ -2,7 +2,10 @@
 /**
  * Thin API client for sales agent mobile — wraps fetch with Bearer token.
  */
+import * as SecureStore from 'expo-secure-store'
+
 const GATEWAY = process.env.EXPO_PUBLIC_GATEWAY_URL ?? 'http://localhost:8080'
+const TOKEN_KEY = 'ble_sales_agent_token'
 
 export class ApiError extends Error {
   constructor(
@@ -10,13 +13,13 @@ export class ApiError extends Error {
     message: string,
   ) {
     super(message)
+    this.name = 'ApiError'
   }
 }
 
 async function getToken(): Promise<string | null> {
   try {
-    const { default: SecureStore } = await import('expo-secure-store')
-    return await SecureStore.getItemAsync('ble_sales_agent_token')
+    return await SecureStore.getItemAsync(TOKEN_KEY)
   } catch {
     return null
   }

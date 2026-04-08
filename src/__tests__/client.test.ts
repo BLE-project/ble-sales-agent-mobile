@@ -11,20 +11,11 @@ jest.mock('expo-secure-store', () => ({
 }))
 
 import * as SecureStore from 'expo-secure-store'
+import { api, ApiError } from '../api/client'
 
 const mockGetItem = SecureStore.getItemAsync as jest.Mock
 const mockFetch   = jest.fn()
 ;(globalThis as any).fetch = mockFetch
-
-// Dynamic import so mocks are registered first
-let api: typeof import('../api/client')['api']
-let ApiError: typeof import('../api/client')['ApiError']
-
-beforeAll(async () => {
-  const mod = await import('../api/client')
-  api = mod.api
-  ApiError = mod.ApiError
-})
 
 function mockRes(status: number, body: unknown) {
   return {
