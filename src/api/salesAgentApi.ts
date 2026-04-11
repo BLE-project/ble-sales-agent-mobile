@@ -10,6 +10,7 @@ export interface RegistrationRequest {
   status: 'PENDING' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED'
   notes: string | null
   createdAt: string
+  territoryId?: string
 }
 
 export interface KitDelivery {

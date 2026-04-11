@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../../src/auth/AuthContext'
-import { registrationRequestsApi, royaltiesApi, salesAgentProfileApi } from '../../src/api/salesAgentApi'
+import { registrationRequestsApi, royaltiesApi, salesAgentProfileApi, RegistrationRequest } from '../../src/api/salesAgentApi'
 
 interface TerritoryAssignment {
   territoryId: string
@@ -42,7 +42,7 @@ export default function DashboardScreen() {
 
   // Filter pending requests by territory if selected
   const filteredPending = selectedTerritoryId
-    ? pendingRequests?.filter((r: Record<string, unknown>) => (r as { territoryId?: string }).territoryId === selectedTerritoryId)
+    ? pendingRequests?.filter((r: RegistrationRequest) => r.territoryId === selectedTerritoryId)
     : pendingRequests
 
   const tiles = [

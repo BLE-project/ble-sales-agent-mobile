@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 /**
  * Thin API client for sales agent mobile — wraps fetch with Bearer token.
  */
