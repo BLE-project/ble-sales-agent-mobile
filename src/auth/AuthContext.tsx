@@ -101,7 +101,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     const data = await res.json()
     const token = data.access_token as string
-    await SecureStore.setItemAsync('ble_sales_agent_token', token)
+    // BUG-003: persist in background to avoid iOS Keychain race condition
+    SecureStore.setItemAsync('ble_sales_agent_token', token).catch(() => {})
     const payload = parseJwt(token)
     const roles = ((payload.realm_access as Record<string, string[]>)?.roles ?? [])
 
