@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../../src/auth/AuthContext'
 import { registrationRequestsApi, royaltiesApi, salesAgentProfileApi, RegistrationRequest } from '../../src/api/salesAgentApi'
+import { moderationApi } from '../../src/api/moderationApi'
 
 interface TerritoryAssignment {
   territoryId: string
@@ -37,6 +38,13 @@ export default function DashboardScreen() {
     queryFn: () => royaltiesApi.list(),
   })
 
+  // §9bis M5 — Moderation queue count (polling 30s)
+  const { data: moderationQueue } = useQuery({
+    queryKey: ['moderation-queue-count'],
+    queryFn: () => moderationApi.list(),
+    refetchInterval: 30_000,
+  })
+
   const lastRoyalty = royalties?.[0]
   const totalPayout = lastRoyalty ? (lastRoyalty.totalPayoutCents / 100).toFixed(2) : '--'
 
@@ -51,6 +59,12 @@ export default function DashboardScreen() {
       value: filteredPending?.length ?? '--',
       color: '#f59e0b',
       route: '/requests',
+    },
+    {
+      label: 'Moderazioni',
+      value: moderationQueue?.length ?? 0,
+      color: '#6C3FCF',
+      route: '/moderation',
     },
     {
       label: 'Ultimo payout',
