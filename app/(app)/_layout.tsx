@@ -28,6 +28,9 @@ export default function AppLayout() {
       {/* §9 BLE first-config — accessed via Merchant detail */}
       <Tabs.Screen name="beacon" options={{ href: null }} />
       <Tabs.Screen name="beacon/first-config" options={{ href: null }} />
+      {/* §7.3 notification preferences — accessed via Profilo */}
+      <Tabs.Screen name="settings" options={{ href: null }} />
+      <Tabs.Screen name="settings/notifications" options={{ href: null }} />
     </Tabs>
   )
 }
