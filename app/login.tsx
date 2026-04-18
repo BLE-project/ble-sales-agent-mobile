@@ -46,6 +46,8 @@ export default function LoginScreen() {
           value={username}
           onChangeText={setUsername}
           testID="username-input"
+          autoComplete="off"
+          importantForAutofill="no"
         />
         <TextInput
           style={styles.input}
@@ -55,6 +57,8 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
           testID="password-input"
+          autoComplete="off"
+          importantForAutofill="no"
         />
         <TouchableOpacity
           style={[styles.btn, loading && styles.btnDisabled]}
