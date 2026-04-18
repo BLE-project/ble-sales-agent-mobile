@@ -27,6 +27,7 @@ export default function AppLayout() {
       <Tabs.Screen name="moderation" options={{ href: null }} />
       {/* §9 BLE first-config — accessed via Merchant detail */}
       <Tabs.Screen name="beacon" options={{ href: null }} />
+      <Tabs.Screen name="beacon/first-config" options={{ href: null }} />
     </Tabs>
   )
 }
