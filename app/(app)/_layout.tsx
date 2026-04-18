@@ -23,6 +23,10 @@ export default function AppLayout() {
       <Tabs.Screen name="beacon-config" options={{ title: 'Beacon',  tabBarLabel: 'Beacon' }} />
       {/* Detail screens — hidden from tab bar */}
       <Tabs.Screen name="request/[id]" options={{ href: null }} />
+      {/* §9bis moderation flow — accessed via Home card, not tab bar */}
+      <Tabs.Screen name="moderation" options={{ href: null }} />
+      {/* §9 BLE first-config — accessed via Merchant detail */}
+      <Tabs.Screen name="beacon" options={{ href: null }} />
     </Tabs>
   )
 }
