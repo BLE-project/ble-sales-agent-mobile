@@ -1,9 +1,11 @@
 import React from 'react'
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
+import { useRouter } from 'expo-router'
 import { merchantsApi, MerchantSummary } from '../../src/api/salesAgentApi'
 
 export default function MerchantsScreen() {
+  const router = useRouter()
   const { data, isLoading } = useQuery({
     queryKey: ['agent-merchants'],
     queryFn: () => merchantsApi.listByAgent(),
@@ -20,7 +22,11 @@ export default function MerchantsScreen() {
             contentContainerStyle={{ padding: 16 }}
             ListEmptyComponent={<Text style={styles.empty}>Nessun merchant ancora associato</Text>}
             renderItem={({ item }) => (
-              <View style={styles.card}>
+              // L4 §5-6: tap row → /merchants/:id detail (read-only landing view)
+              <TouchableOpacity
+                style={styles.card}
+                onPress={() => router.push(`/merchants/${item.id}`)}
+              >
                 <View style={styles.cardRow}>
                   <Text style={styles.bizName}>{item.businessName}</Text>
                   <Text style={[styles.status,
@@ -30,7 +36,7 @@ export default function MerchantsScreen() {
                 </View>
                 <Text style={styles.meta}>Transazioni: {item.totalTransactions}</Text>
                 <Text style={styles.meta}>Volume: €{(item.totalVolumeCents / 100).toFixed(2)}</Text>
-              </View>
+              </TouchableOpacity>
             )}
           />
       }
