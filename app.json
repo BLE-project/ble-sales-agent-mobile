@@ -20,7 +20,8 @@
       "adaptiveIcon": {
         "backgroundColor": "#1a3f6f"
       },
-      "package": "com.terrio.salesagent"
+      "package": "com.terrio.salesagent",
+      "usesCleartextTraffic": true
     },
     "plugins": [
       "expo-router",
