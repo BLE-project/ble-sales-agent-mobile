@@ -24,13 +24,18 @@ interface MerchantLanding {
   description:    string | null
   logoUrl:        string | null
   coverImageUrl:  string | null
-  landingStatus:  'DRAFT' | 'PENDING_REVIEW' | 'PUBLISHED' | 'ARCHIVED'
+  landingStatus:  string
   addressLine:    string | null
   city:           string | null
   phone:          string | null
   email:          string | null
   ratingAvg:      number | null
   ratingCount:    number
+  // v7.9.10 — social links
+  socialLinks?: {
+    instagram?: string; facebook?: string; whatsapp?: string;
+    website?: string;   tiktok?: string
+  } | null
 }
 
 const STATUS_LABEL: Record<MerchantLanding['landingStatus'], string> = {
@@ -137,6 +142,28 @@ export default function SalesAgentMerchantDetailScreen() {
             </TouchableOpacity>
           )}
         </View>
+
+        {/* v7.9.10 — social links as inline rows */}
+        {data.socialLinks && Object.values(data.socialLinks).some(Boolean) && (
+          <>
+            <Text style={s.sectionLabel}>Social</Text>
+            <View style={s.contactList}>
+              {([
+                ['instagram','📸','Instagram'], ['facebook','👥','Facebook'],
+                ['whatsapp','💬','WhatsApp'],  ['website','🌐','Sito web'],
+                ['tiktok','🎵','TikTok'],
+              ] as const).map(([k, icon, label]) => {
+                const url = data.socialLinks?.[k]
+                return url ? (
+                  <TouchableOpacity key={k} style={s.contactRow} onPress={() => Linking.openURL(url)}>
+                    <Text style={s.contactIcon}>{icon}</Text>
+                    <Text style={s.contactText} numberOfLines={1}>{label} — {url}</Text>
+                  </TouchableOpacity>
+                ) : null
+              })}
+            </View>
+          </>
+        )}
 
         <View style={s.readOnlyNote}>
           <Text style={s.readOnlyText}>
