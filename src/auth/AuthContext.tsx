@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import * as SecureStore from 'expo-secure-store'
+import { registerSalesAgentPushToken } from '../notifications/pushTokenRegistration'
 
 interface AuthUser {
   sub: string
@@ -43,14 +44,24 @@ function parseJwt(token: string): Record<string, unknown> {
  * from the backend so we have the agent's UUID (needed for downstream API calls).
  * Returns undefined if the call fails — the app still works, agentId will be absent.
  */
-async function resolveAgentProfile(token: string): Promise<{ id: string; isSuperAdminFallback: boolean } | undefined> {
+async function resolveAgentProfile(token: string): Promise<{ id: string; isSuperAdminFallback: boolean; territoryIds: string[] } | undefined> {
   try {
     const res = await fetch(`${GATEWAY}/api/v1/sales-agents/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     if (!res.ok) return undefined
     const data = await res.json()
-    return { id: data.id as string, isSuperAdminFallback: data.isSuperAdminFallback as boolean }
+    // T-162: territoryIds needed for beacon-health alert fan-out scope
+    const territoryIds: string[] = Array.isArray(data.territoryIds)
+      ? data.territoryIds
+      : Array.isArray(data.assignments)
+        ? data.assignments.map((a: { territoryId?: string }) => a.territoryId).filter(Boolean)
+        : []
+    return {
+      id: data.id as string,
+      isSuperAdminFallback: data.isSuperAdminFallback as boolean,
+      territoryIds,
+    }
   } catch {
     return undefined
   }
@@ -118,6 +129,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isSuperAdminAgent: profile?.isSuperAdminFallback,
     })
     setAccessToken(token)
+
+    // T-162: register FCM push token with territory scope (fire-and-forget)
+    const tenantId = (payload.ble_tenant_id as string) ?? (payload.tenantId as string) ?? ''
+    registerSalesAgentPushToken({
+      authToken:    token,
+      tenantId,
+      territoryIds: profile?.territoryIds ?? [],
+    }).catch(() => { /* non-fatal */ })
   }
 
   async function logout() {
