@@ -1,0 +1,49 @@
+{
+  "app.name": "TERRIO Sales",
+  "app.tagline": "Merchant support in the field",
+
+  "auth.login.title": "Sign in",
+  "auth.login.email": "Email",
+  "auth.login.password": "Password",
+  "auth.login.submit": "Sign in",
+  "auth.login.submitting": "Signing in…",
+  "auth.login.forgot_password": "Forgot password?",
+  "auth.login.error.title": "Error",
+  "auth.login.error.network": "Network error — please retry",
+  "auth.login.error.invalid": "Invalid credentials",
+  "auth.login.error.generic": "Login failed: {reason}",
+  "auth.logout": "Sign out",
+
+  "tab.overview": "Overview",
+  "tab.merchants": "Merchants",
+  "tab.moderation": "Moderation",
+  "tab.beacon_config": "Beacon Config",
+
+  "overview.territory": "Territory",
+  "overview.active_merchants": "Active merchants",
+  "overview.pending_requests": "Pending requests",
+  "overview.quick_actions": "Quick actions",
+  "overview.manage_merchant_requests": "Manage merchant requests",
+
+  "merchants.assigned": "Assigned",
+  "merchants.visit_note": "Visit note",
+  "merchants.open_ticket": "Open ticket",
+  "merchants.back": "← Back",
+
+  "moderation.queue.title": "Moderation queue",
+  "moderation.empty": "Nothing to review",
+  "moderation.approve": "Approve",
+  "moderation.reject": "Reject",
+  "moderation.reject_reason": "Reason for rejection",
+
+  "beacon_config.first_setup": "First setup",
+  "beacon_config.calibrate": "Calibrate",
+  "beacon_config.troubleshoot": "Troubleshoot",
+
+  "common.retry": "Retry",
+  "common.cancel": "Cancel",
+  "common.save": "Save",
+  "common.ok": "OK",
+  "common.loading": "Loading…",
+  "common.error.generic": "An error occurred"
+}

@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '../src/auth/AuthContext'
 import { useEffect, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
+import { I18nProvider } from '../src/i18n/I18nProvider'
 
 const qc = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30_000 } } })
 
@@ -35,11 +36,13 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={qc}>
       <AuthProvider>
-        <NotificationListener />
-        <Stack>
-          <Stack.Screen name="login"  options={{ headerShown: false }} />
-          <Stack.Screen name="(app)"  options={{ headerShown: false }} />
-        </Stack>
+        <I18nProvider tenantLocaleHint={null}>
+          <NotificationListener />
+          <Stack>
+            <Stack.Screen name="login"  options={{ headerShown: false }} />
+            <Stack.Screen name="(app)"  options={{ headerShown: false }} />
+          </Stack>
+        </I18nProvider>
       </AuthProvider>
     </QueryClientProvider>
   )

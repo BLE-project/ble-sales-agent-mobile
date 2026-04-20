@@ -1,0 +1,49 @@
+{
+  "app.name": "TERRIO Sales",
+  "app.tagline": "Assistenza merchant sul territorio",
+
+  "auth.login.title": "Accedi",
+  "auth.login.email": "Email",
+  "auth.login.password": "Password",
+  "auth.login.submit": "Accedi",
+  "auth.login.submitting": "Accesso in corso…",
+  "auth.login.forgot_password": "Password dimenticata?",
+  "auth.login.error.title": "Errore",
+  "auth.login.error.network": "Errore di rete — riprova",
+  "auth.login.error.invalid": "Credenziali non valide",
+  "auth.login.error.generic": "Accesso fallito: {reason}",
+  "auth.logout": "Esci",
+
+  "tab.overview": "Panoramica",
+  "tab.merchants": "Merchant",
+  "tab.moderation": "Moderazione",
+  "tab.beacon_config": "Config Beacon",
+
+  "overview.territory": "Territorio",
+  "overview.active_merchants": "Merchant attivi",
+  "overview.pending_requests": "Richieste pendenti",
+  "overview.quick_actions": "Azioni rapide",
+  "overview.manage_merchant_requests": "Gestisci richieste merchant",
+
+  "merchants.assigned": "Assegnati",
+  "merchants.visit_note": "Nota visita",
+  "merchants.open_ticket": "Apri ticket",
+  "merchants.back": "← Indietro",
+
+  "moderation.queue.title": "Coda moderazione",
+  "moderation.empty": "Nessun contenuto da rivedere",
+  "moderation.approve": "Approva",
+  "moderation.reject": "Rifiuta",
+  "moderation.reject_reason": "Motivo del rifiuto",
+
+  "beacon_config.first_setup": "Prima configurazione",
+  "beacon_config.calibrate": "Calibra",
+  "beacon_config.troubleshoot": "Risoluzione problemi",
+
+  "common.retry": "Riprova",
+  "common.cancel": "Annulla",
+  "common.save": "Salva",
+  "common.ok": "OK",
+  "common.loading": "Caricamento…",
+  "common.error.generic": "Si è verificato un errore"
+}
