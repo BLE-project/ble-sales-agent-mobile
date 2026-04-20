@@ -4,14 +4,18 @@
 
   "auth.login.title": "Sign in",
   "auth.login.email": "Email",
+  "auth.login.username": "Username",
   "auth.login.password": "Password",
   "auth.login.submit": "Sign in",
   "auth.login.submitting": "Signing in…",
   "auth.login.forgot_password": "Forgot password?",
+  "auth.login.missing_credentials": "Enter your username and password",
   "auth.login.error.title": "Error",
+  "auth.login.error.denied": "Access denied",
   "auth.login.error.network": "Network error — please retry",
   "auth.login.error.invalid": "Invalid credentials",
   "auth.login.error.generic": "Login failed: {reason}",
+  "auth.login.error.unknown": "Unknown error",
   "auth.logout": "Sign out",
 
   "tab.overview": "Overview",

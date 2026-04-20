@@ -1,12 +1,17 @@
+/**
+ * v8.0.0-SNAPSHOT.3 session 7-bis: migrated to react-intl FormattedMessage.
+ */
 import React, { useState } from 'react'
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   ActivityIndicator, KeyboardAvoidingView, Platform, Alert,
 } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useRouter } from 'expo-router'
 import { useAuth } from '../src/auth/AuthContext'
 
 export default function LoginScreen() {
+  const intl      = useIntl()
   const { login } = useAuth()
   const router    = useRouter()
   const [username, setUsername] = useState('')
@@ -15,7 +20,7 @@ export default function LoginScreen() {
 
   async function handleLogin() {
     if (!username.trim() || !password) {
-      Alert.alert('Inserisci username e password')
+      Alert.alert(intl.formatMessage({ id: 'auth.login.missing_credentials' }))
       return
     }
     setLoading(true)
@@ -23,11 +28,17 @@ export default function LoginScreen() {
       await login(username.trim(), password)
       router.replace('/(app)')
     } catch (e: unknown) {
-      Alert.alert('Accesso negato', e instanceof Error ? e.message : 'Errore sconosciuto')
+      Alert.alert(
+        intl.formatMessage({ id: 'auth.login.error.denied' }),
+        e instanceof Error ? e.message : intl.formatMessage({ id: 'auth.login.error.unknown' }),
+      )
     } finally {
       setLoading(false)
     }
   }
+
+  const usernamePlaceholder = intl.formatMessage({ id: 'auth.login.username' })
+  const passwordPlaceholder = intl.formatMessage({ id: 'auth.login.password' })
 
   return (
     <KeyboardAvoidingView
@@ -35,12 +46,16 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.card}>
-        <Text style={styles.brand}>Terrio</Text>
-        <Text style={styles.subtitle}>Agente Commerciale</Text>
+        <Text style={styles.brand}>
+          <FormattedMessage id="app.name" />
+        </Text>
+        <Text style={styles.subtitle}>
+          <FormattedMessage id="app.tagline" />
+        </Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Username"
+          placeholder={usernamePlaceholder}
           placeholderTextColor="#999"
           autoCapitalize="none"
           value={username}
@@ -51,7 +66,7 @@ export default function LoginScreen() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Password"
+          placeholder={passwordPlaceholder}
           placeholderTextColor="#999"
           secureTextEntry
           value={password}
@@ -68,7 +83,9 @@ export default function LoginScreen() {
         >
           {loading
             ? <ActivityIndicator color="#fff" />
-            : <Text style={styles.btnText}>Accedi</Text>
+            : <Text style={styles.btnText}>
+                <FormattedMessage id="auth.login.submit" />
+              </Text>
           }
         </TouchableOpacity>
       </View>

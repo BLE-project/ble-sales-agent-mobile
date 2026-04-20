@@ -4,14 +4,18 @@
 
   "auth.login.title": "Accedi",
   "auth.login.email": "Email",
+  "auth.login.username": "Username",
   "auth.login.password": "Password",
   "auth.login.submit": "Accedi",
   "auth.login.submitting": "Accesso in corso…",
   "auth.login.forgot_password": "Password dimenticata?",
+  "auth.login.missing_credentials": "Inserisci username e password",
   "auth.login.error.title": "Errore",
+  "auth.login.error.denied": "Accesso negato",
   "auth.login.error.network": "Errore di rete — riprova",
   "auth.login.error.invalid": "Credenziali non valide",
   "auth.login.error.generic": "Accesso fallito: {reason}",
+  "auth.login.error.unknown": "Errore sconosciuto",
   "auth.logout": "Esci",
 
   "tab.overview": "Panoramica",
