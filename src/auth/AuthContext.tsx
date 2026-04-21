@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
 import * as SecureStore from 'expo-secure-store'
-import { registerSalesAgentPushToken } from '../notifications/pushTokenRegistration'
+import { registerSalesAgentPushToken, unregisterPushToken } from '../notifications/pushTokenRegistration'
 
 interface AuthUser {
   sub: string
@@ -71,6 +71,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser]               = useState<AuthUser | null>(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [isLoading, setIsLoading]     = useState(true)
+  // T-162: cache push token for best-effort unregister on logout
+  const registeredPushToken = useRef<string | null>(null)
 
   useEffect(() => {
     SecureStore.getItemAsync('ble_sales_agent_token').then(async token => {
@@ -136,10 +138,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authToken:    token,
       tenantId,
       territoryIds: profile?.territoryIds ?? [],
+    }).then((res) => {
+      if (res.registered && res.pushToken) registeredPushToken.current = res.pushToken
     }).catch(() => { /* non-fatal */ })
   }
 
   async function logout() {
+    // T-162: best-effort unregister before clearing session
+    if (registeredPushToken.current && accessToken) {
+      const tenantId = accessToken ? (parseJwt(accessToken).ble_tenant_id as string ?? '') : ''
+      unregisterPushToken(registeredPushToken.current, {
+        authToken: accessToken,
+        tenantId,
+      }).catch(() => {})
+      registeredPushToken.current = null
+    }
     await SecureStore.deleteItemAsync('ble_sales_agent_token')
     setUser(null)
     setAccessToken(null)

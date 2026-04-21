@@ -80,3 +80,21 @@ export async function registerSalesAgentPushToken(
     return { pushToken, registered: false, reason: `network: ${(e as Error).message}` }
   }
 }
+
+/**
+ * T-162: best-effort unregister on logout — DELETE /bff/v1/sales-agent/push-token/:token
+ * Fire-and-forget; network errors are swallowed so logout is never blocked.
+ */
+export async function unregisterPushToken(
+  pushToken: string,
+  opts: { authToken: string; tenantId: string; gateway?: string },
+): Promise<void> {
+  const gateway = opts.gateway ?? GATEWAY
+  await fetch(`${gateway}/bff/v1/sales-agent/push-token/${encodeURIComponent(pushToken)}`, {
+    method: 'DELETE',
+    headers: {
+      'X-Tenant-Id':   opts.tenantId,
+      'Authorization': `Bearer ${opts.authToken}`,
+    },
+  }).catch(() => {})
+}
