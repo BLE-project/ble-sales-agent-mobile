@@ -5,3 +5,34 @@ export const shadows = {
   md: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 },
   lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.10, shadowRadius: 20, elevation: 5 },
 };
+
+// DS-003: brand color tokens — single source of truth for all brand hex values.
+// These match design-tokens.json brand section (Terrio defaults / white-label fallbacks).
+export const TOKENS = {
+  colors: {
+    brand: {
+      primary:     '#5E30C9',
+      primaryDeep: '#3A1A7E',
+      primarySoft: '#EEE6FF',
+      accent:      '#FFD83D',
+    },
+    neutral: {
+      black:     '#0B0B12',
+      ink:       '#0F172A',
+      gray900:   '#111827',
+      gray700:   '#374151',
+      gray500:   '#6B7280',
+      gray300:   '#D1D5DB',
+      gray200:   '#E5E7EB',
+      gray100:   '#F3F4F6',
+      gray50:    '#F9FAFB',
+      white:     '#FFFFFF',
+    },
+    semantic: {
+      danger:  '#EF4444',
+      success: '#10B981',
+      warning: '#F59E0B',
+      info:    '#3B82F6',
+    },
+  },
+};
