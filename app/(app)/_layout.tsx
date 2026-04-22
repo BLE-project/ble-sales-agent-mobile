@@ -31,6 +31,9 @@ export default function AppLayout() {
       {/* §7.3 notification preferences — accessed via Profilo */}
       <Tabs.Screen name="settings" options={{ href: null }} />
       <Tabs.Screen name="settings/notifications" options={{ href: null }} />
+      {/* DS-006 prospect pipeline */}
+      <Tabs.Screen name="prospects/kanban" options={{ title: 'Kanban',    tabBarLabel: 'Kanban' }} />
+      <Tabs.Screen name="prospects/map"    options={{ title: 'Mappa',     tabBarLabel: 'Mappa' }} />
     </Tabs>
   )
 }
