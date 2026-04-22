@@ -12,8 +12,12 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
+    "@expo-google-fonts/space-grotesk": "^0.2.3",
+    "@expo-google-fonts/inter": "^0.2.3",
+    "@expo-google-fonts/jetbrains-mono": "^0.2.3",
     "@react-navigation/native": "^7.0.0",
     "@tanstack/react-query": "^5.0.0",
+    "expo-font": "~13.0.2",
     "expo": "~54.0.17",
     "expo-constants": "~18.0.13",
     "expo-linking": "~8.0.11",
