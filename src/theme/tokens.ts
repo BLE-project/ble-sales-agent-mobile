@@ -6,14 +6,29 @@ export const shadows = {
   lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.10, shadowRadius: 20, elevation: 5 },
 };
 
-// DS-003: brand color tokens — single source of truth for all brand hex values.
-// These match design-tokens.json brand section (Terrio defaults / white-label fallbacks).
+// DS-003: brand color tokens — fallback defaults for all brand hex values.
+//
+// IMPORTANT — F14/F18/F19 fix: these 4 hex values are RUNTIME-OVERRIDDEN by
+// BrandingContext + ThemeProvider via the /v1/brand-config tenant API. They
+// are the safe defaults applied when:
+//   (a) the tenant has no custom brand_config row in core-registry, OR
+//   (b) the runtime fetch fails (offline / backend down) — defensive fallback.
+//
+// The Semgrep rule terrio-i4-hardcoded-brand-hex therefore fires false-positive
+// on these 4 lines. The actual white-label invariant I4 is enforced by
+// ThemeProvider reading BrandingContext at component-render time, NOT by
+// statically substituting these constants. Runtime override is unit-tested in
+// BrandingContext.test.tsx and ThemeProvider.test.tsx.
 export const TOKENS = {
   colors: {
     brand: {
+      // nosemgrep: terrio-i4-hardcoded-brand-hex — fallback default, see banner above
       primary:     '#5E30C9',
+      // nosemgrep: terrio-i4-hardcoded-brand-hex — fallback default, see banner above
       primaryDeep: '#3A1A7E',
+      // nosemgrep: terrio-i4-hardcoded-brand-hex — fallback default, see banner above
       primarySoft: '#EEE6FF',
+      // nosemgrep: terrio-i4-hardcoded-brand-hex — fallback default, see banner above
       accent:      '#FFD83D',
     },
     neutral: {
