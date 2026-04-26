@@ -45,6 +45,6 @@
     "preset": "jest-expo"
   },
   "overrides": {
-    "@xmldom/xmldom": "^0.8.12"
+    "@xmldom/xmldom": "^0.8.13"
   }
 }
