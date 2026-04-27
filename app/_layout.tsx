@@ -1,6 +1,8 @@
 import { Stack, useRouter } from 'expo-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '../src/auth/AuthContext'
+import { BiometricAuthProvider } from '../src/auth/useBiometricAuth'
+import { BiometricGate } from '../src/auth/BiometricGate'
 import { useEffect, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
 import { I18nProvider } from '../src/i18n/I18nProvider'
@@ -36,13 +38,23 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={qc}>
       <AuthProvider>
-        <I18nProvider tenantLocaleHint={null}>
-          <NotificationListener />
-          <Stack>
-            <Stack.Screen name="login"  options={{ headerShown: false }} />
-            <Stack.Screen name="(app)"  options={{ headerShown: false }} />
-          </Stack>
-        </I18nProvider>
+        {/*
+          BiometricAuthProvider (Cluster B sales-agent integration) sits inside
+          AuthProvider so the biometric hook can read auth state + call
+          loginWithToken/logout. BiometricGate below wraps the screens for
+          the status-driven overlay (PIN entry / locked / prompting).
+        */}
+        <BiometricAuthProvider>
+          <I18nProvider tenantLocaleHint={null}>
+            <BiometricGate>
+              <NotificationListener />
+              <Stack>
+                <Stack.Screen name="login"  options={{ headerShown: false }} />
+                <Stack.Screen name="(app)"  options={{ headerShown: false }} />
+              </Stack>
+            </BiometricGate>
+          </I18nProvider>
+        </BiometricAuthProvider>
       </AuthProvider>
     </QueryClientProvider>
   )
