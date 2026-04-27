@@ -18,6 +18,7 @@
 
 import { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
 // Cluster B: sales-agent uses AuthContext.tsx (vs Cluster A's useAuth.tsx).
 import { useAuth } from './AuthContext'
 import { useBiometricAuth } from './useBiometricAuth'
@@ -25,6 +26,7 @@ import { PinEntryScreen } from './PinEntryScreen'
 import { BiometricEnrollModal } from './BiometricEnrollModal'
 
 export function BiometricGate({ children }: { children: React.ReactNode }) {
+  const intl = useIntl()
   const auth = useAuth()
   const bio = useBiometricAuth()
   const [enrollModalShown, setEnrollModalShown] = useState(false)
@@ -58,10 +60,17 @@ export function BiometricGate({ children }: { children: React.ReactNode }) {
     case 'locked':
       return (
         <PinEntryScreen
-          title={bio.status === 'locked' ? 'Riprova fra poco' : 'Inserisci il PIN'}
+          title={
+            bio.status === 'locked'
+              ? intl.formatMessage({ id: 'auth.biometric.pin.title_locked' })
+              : intl.formatMessage({ id: 'auth.biometric.pin.title' })
+          }
           subtitle={
             bio.failCount > 0 && !bio.isLocked
-              ? `${10 - bio.failCount} tentativi prima del blocco`
+              ? intl.formatMessage(
+                  { id: 'auth.biometric.pin.subtitle.attempts_remaining' },
+                  { count: 10 - bio.failCount },
+                )
               : undefined
           }
           onBiometricPressed={async () => {
@@ -111,9 +120,11 @@ function BiometricPromptOverlay({ onUsePin }: { onUsePin: () => void }) {
   return (
     <View style={overlayStyles.container}>
       <ActivityIndicator size="large" color="#222222" />
-      <Text style={overlayStyles.title}>Sblocca con la biometria</Text>
+      <Text style={overlayStyles.title}>
+        <FormattedMessage id="auth.biometric.gate.title" />
+      </Text>
       <Text style={overlayStyles.subtitle}>
-        Conferma con Face ID o impronta digitale.
+        <FormattedMessage id="auth.biometric.gate.subtitle" />
       </Text>
       <TouchableOpacity
         style={overlayStyles.pinLink}
@@ -121,7 +132,9 @@ function BiometricPromptOverlay({ onUsePin }: { onUsePin: () => void }) {
         accessibilityRole="link"
         testID="biometric-use-pin"
       >
-        <Text style={overlayStyles.pinLinkText}>Usa il PIN</Text>
+        <Text style={overlayStyles.pinLinkText}>
+          <FormattedMessage id="auth.biometric.gate.use_pin" />
+        </Text>
       </TouchableOpacity>
     </View>
   )

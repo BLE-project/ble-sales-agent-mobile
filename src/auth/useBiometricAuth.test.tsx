@@ -11,6 +11,7 @@
 
 import React, { type ReactNode } from 'react'
 import { renderHook, act, waitFor } from '@testing-library/react-native'
+import { IntlProvider } from 'react-intl'
 import { BiometricAuthProvider, useBiometricAuth } from './useBiometricAuth'
 import * as SecureStore from 'expo-secure-store'
 import * as LocalAuthentication from 'expo-local-authentication'
@@ -73,8 +74,13 @@ afterAll(() => { globalThis.fetch = originalFetch })
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
+// Tests run inside an IntlProvider so the hook's `useIntl()` calls (used for
+// the LocalAuthentication prompt strings) resolve. `onError` is silenced to
+// keep MissingTranslationError noise out of the test output.
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <BiometricAuthProvider>{children}</BiometricAuthProvider>
+  <IntlProvider locale="en" onError={() => {}}>
+    <BiometricAuthProvider>{children}</BiometricAuthProvider>
+  </IntlProvider>
 )
 
 const STORAGE_KEY = 'ble_sales_agent_biometric_enrollment'

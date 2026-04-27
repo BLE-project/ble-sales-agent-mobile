@@ -45,6 +45,7 @@ import {
   type AppStateStatus,
   type NativeEventSubscription,
 } from 'react-native'
+import { useIntl } from 'react-intl'
 import * as SecureStore from 'expo-secure-store'
 import * as LocalAuthentication from 'expo-local-authentication'
 import {
@@ -122,6 +123,7 @@ const BiometricAuthContext = createContext<BiometricAuthState | null>(null)
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 export function BiometricAuthProvider({ children }: { children: ReactNode }) {
+  const intl = useIntl()
   const auth = useAuth()
   const [record, setRecord] = useState<EnrollmentRecord>(DEFAULT_ENROLLMENT)
   const [status, setStatus] = useState<BiometricStatus>('idle')
@@ -185,8 +187,8 @@ export function BiometricAuthProvider({ children }: { children: ReactNode }) {
     }
 
     const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: 'Accedi a Terrio',
-      cancelLabel: 'Usa PIN',
+      promptMessage: intl.formatMessage({ id: 'auth.biometric.prompt.message' }),
+      cancelLabel:   intl.formatMessage({ id: 'auth.biometric.prompt.cancel' }),
       disableDeviceFallback: true,
     })
 
@@ -211,7 +213,7 @@ export function BiometricAuthProvider({ children }: { children: ReactNode }) {
     await writeEnrollment(APP_SLUG, updated)
     setStatus('idle')
     return 'ok'
-  }, [auth])
+  }, [auth, intl])
 
   const submitPin = useCallback(async (pin: string): Promise<BiometricResult> => {
     const r = recordRef.current
