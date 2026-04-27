@@ -30,6 +30,7 @@ import {
   StyleSheet,
   Vibration,
 } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useBiometricAuth, type BiometricResult } from './useBiometricAuth'
 
 const KEYPAD_LAYOUT = [
@@ -49,14 +50,19 @@ export interface PinEntryScreenProps {
 }
 
 export function PinEntryScreen({
-  title = 'Inserisci il PIN',
+  title,
   subtitle,
   onBiometricPressed,
 }: PinEntryScreenProps) {
+  const intl = useIntl()
   const auth = useBiometricAuth()
   const [pin, setPin] = useState('')
   const [errorBanner, setErrorBanner] = useState<string | null>(null)
   const [tick, setTick] = useState(0)  // forces re-render for lockout countdown
+  // Default title comes from the i18n catalog; callers may override (e.g.
+  // BiometricGate passes a "Try again shortly" variant when the lockout is
+  // active so the visible title differs from the keypad hint).
+  const resolvedTitle = title ?? intl.formatMessage({ id: 'auth.biometric.pin.title' })
 
   // 1-second tick while locked, so the countdown number updates visibly.
   useEffect(() => {
@@ -80,14 +86,17 @@ export function PinEntryScreen({
       if (result === 'wrong') {
         Vibration.vibrate(80)
         setErrorBanner(
-          `PIN errato. ${10 - auth.failCount - 1} tentativi rimanenti prima del blocco.`,
+          intl.formatMessage(
+            { id: 'auth.biometric.pin.error.wrong' },
+            { remaining: 10 - auth.failCount - 1 },
+          ),
         )
       } else if (result === 'locked') {
         Vibration.vibrate(80)
-        setErrorBanner('Troppi tentativi. Riprova fra qualche minuto.')
+        setErrorBanner(intl.formatMessage({ id: 'auth.biometric.pin.error.locked' }))
       } else if (result === 'wiped') {
         Vibration.vibrate([0, 80, 80, 80])
-        setErrorBanner('Credenziali cancellate per sicurezza. Effettua di nuovo il login.')
+        setErrorBanner(intl.formatMessage({ id: 'auth.biometric.pin.error.wiped' }))
       }
       // 'ok' / 'cancelled' → gate dismisses; we just clear the field.
       setPin('')
@@ -102,7 +111,7 @@ export function PinEntryScreen({
 
   return (
     <View style={styles.container} accessibilityRole="none">
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>{resolvedTitle}</Text>
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
 
       {/* 6 dots indicator */}
@@ -111,7 +120,11 @@ export function PinEntryScreen({
           <View
             key={i}
             style={[styles.dot, i < pin.length && styles.dotFilled]}
-            accessibilityLabel={i < pin.length ? 'cifra inserita' : 'cifra vuota'}
+            accessibilityLabel={
+              i < pin.length
+                ? intl.formatMessage({ id: 'auth.biometric.pin.a11y.dot_filled' })
+                : intl.formatMessage({ id: 'auth.biometric.pin.a11y.dot_empty' })
+            }
           />
         ))}
       </View>
@@ -120,7 +133,10 @@ export function PinEntryScreen({
       {auth.isLocked ? (
         <View style={styles.lockoutBanner}>
           <Text style={styles.lockoutText}>
-            Bloccato. Riprova fra {Math.ceil(auth.remainingLockoutSeconds)}s.
+            <FormattedMessage
+              id="auth.biometric.pin.lockout.banner"
+              values={{ seconds: Math.ceil(auth.remainingLockoutSeconds) }}
+            />
           </Text>
         </View>
       ) : errorBanner ? (
@@ -146,7 +162,7 @@ export function PinEntryScreen({
                     style={[styles.key, auth.isLocked && styles.keyDisabled]}
                     onPress={handleBackspace}
                     disabled={auth.isLocked}
-                    accessibilityLabel="Cancella ultima cifra"
+                    accessibilityLabel={intl.formatMessage({ id: 'auth.biometric.pin.a11y.backspace' })}
                     accessibilityRole="button"
                     testID="pin-backspace"
                   >
@@ -160,7 +176,7 @@ export function PinEntryScreen({
                   style={[styles.key, auth.isLocked && styles.keyDisabled]}
                   onPress={() => handleDigit(cell)}
                   disabled={auth.isLocked}
-                  accessibilityLabel={`Cifra ${cell}`}
+                  accessibilityLabel={intl.formatMessage({ id: 'auth.biometric.pin.a11y.digit' }, { digit: cell })}
                   accessibilityRole="button"
                   testID={`pin-digit-${cell}`}
                 >
@@ -177,11 +193,13 @@ export function PinEntryScreen({
         <TouchableOpacity
           style={styles.biometricLink}
           onPress={onBiometricPressed}
-          accessibilityLabel="Usa autenticazione biometrica"
+          accessibilityLabel={intl.formatMessage({ id: 'auth.biometric.pin.a11y.use_biometric' })}
           accessibilityRole="link"
           testID="pin-use-biometric"
         >
-          <Text style={styles.biometricLinkText}>Usa la biometria</Text>
+          <Text style={styles.biometricLinkText}>
+            <FormattedMessage id="auth.biometric.pin.use_biometric_link" />
+          </Text>
         </TouchableOpacity>
       ) : null}
     </View>

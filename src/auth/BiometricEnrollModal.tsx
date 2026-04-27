@@ -23,6 +23,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native'
+import { FormattedMessage } from 'react-intl'
 import { useBiometricAuth } from './useBiometricAuth'
 
 export interface BiometricEnrollModalProps {
@@ -94,17 +95,16 @@ export function BiometricEnrollModal({ visible, onDone }: BiometricEnrollModalPr
       >
         {step === 'intro' || step === 'mismatch' ? (
           <View style={styles.card}>
-            <Text style={styles.title}>Accesso più rapido</Text>
+            <Text style={styles.title}>
+              <FormattedMessage id="auth.biometric.enroll.title" />
+            </Text>
             <Text style={styles.subtitle}>
-              Vuoi accedere a TERRIO con Face ID / impronta digitale?
-              {'\n\n'}
-              Sarà necessario impostare anche un PIN a 6 cifre come backup
-              (in caso il sensore non sia disponibile).
+              <FormattedMessage id="auth.biometric.enroll.subtitle" />
             </Text>
             {step === 'mismatch' ? (
               <View style={styles.errorBanner}>
                 <Text style={styles.errorText}>
-                  I PIN inseriti non coincidono. Riprova.
+                  <FormattedMessage id="auth.biometric.enroll.error.mismatch" />
                 </Text>
               </View>
             ) : null}
@@ -114,7 +114,9 @@ export function BiometricEnrollModal({ visible, onDone }: BiometricEnrollModalPr
               accessibilityRole="button"
               testID="enroll-enable"
             >
-              <Text style={styles.primaryButtonText}>Abilita</Text>
+              <Text style={styles.primaryButtonText}>
+                <FormattedMessage id="auth.biometric.enroll.cta.enable" />
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.secondaryButton}
@@ -122,7 +124,9 @@ export function BiometricEnrollModal({ visible, onDone }: BiometricEnrollModalPr
               accessibilityRole="button"
               testID="enroll-skip"
             >
-              <Text style={styles.secondaryButtonText}>Non ora</Text>
+              <Text style={styles.secondaryButtonText}>
+                <FormattedMessage id="auth.biometric.enroll.cta.skip" />
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.tertiaryButton}
@@ -130,17 +134,20 @@ export function BiometricEnrollModal({ visible, onDone }: BiometricEnrollModalPr
               accessibilityRole="button"
               testID="enroll-never"
             >
-              <Text style={styles.tertiaryButtonText}>Non chiedermelo più</Text>
+              <Text style={styles.tertiaryButtonText}>
+                <FormattedMessage id="auth.biometric.enroll.cta.never" />
+              </Text>
             </TouchableOpacity>
           </View>
         ) : null}
 
         {step === 'pin1' ? (
           <View style={styles.card}>
-            <Text style={styles.title}>Scegli un PIN</Text>
+            <Text style={styles.title}>
+              <FormattedMessage id="auth.biometric.enroll.pin1.title" />
+            </Text>
             <Text style={styles.subtitle}>
-              Imposta un PIN a 6 cifre. Verrà richiesto se la biometria non è
-              disponibile.
+              <FormattedMessage id="auth.biometric.enroll.pin1.subtitle" />
             </Text>
             <TextInput
               style={styles.input}
@@ -163,16 +170,20 @@ export function BiometricEnrollModal({ visible, onDone }: BiometricEnrollModalPr
               accessibilityRole="button"
               testID="enroll-pin1-submit"
             >
-              <Text style={styles.primaryButtonText}>Avanti</Text>
+              <Text style={styles.primaryButtonText}>
+                <FormattedMessage id="auth.biometric.enroll.cta.next" />
+              </Text>
             </TouchableOpacity>
           </View>
         ) : null}
 
         {step === 'pin2' ? (
           <View style={styles.card}>
-            <Text style={styles.title}>Conferma il PIN</Text>
+            <Text style={styles.title}>
+              <FormattedMessage id="auth.biometric.enroll.pin2.title" />
+            </Text>
             <Text style={styles.subtitle}>
-              Inserisci di nuovo il PIN per confermarlo.
+              <FormattedMessage id="auth.biometric.enroll.pin2.subtitle" />
             </Text>
             <TextInput
               style={styles.input}
@@ -195,7 +206,9 @@ export function BiometricEnrollModal({ visible, onDone }: BiometricEnrollModalPr
               accessibilityRole="button"
               testID="enroll-pin2-submit"
             >
-              <Text style={styles.primaryButtonText}>Conferma</Text>
+              <Text style={styles.primaryButtonText}>
+                <FormattedMessage id="auth.biometric.enroll.cta.confirm" />
+              </Text>
             </TouchableOpacity>
           </View>
         ) : null}
