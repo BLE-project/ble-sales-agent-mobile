@@ -16,14 +16,31 @@
  * suggestion at first credential login.
  */
 
-import { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { Animated, View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native'
 import { FormattedMessage, useIntl } from 'react-intl'
 // Cluster B: sales-agent uses AuthContext.tsx (vs Cluster A's useAuth.tsx).
 import { useAuth } from './AuthContext'
 import { useBiometricAuth } from './useBiometricAuth'
 import { PinEntryScreen } from './PinEntryScreen'
 import { BiometricEnrollModal } from './BiometricEnrollModal'
+
+/**
+ * Polish: fade the gate overlay in on each status transition. Keyed by
+ * `status` so prompting → pin-required → locked fades freshly each time.
+ * useNativeDriver:true so opacity tweens on the native UI thread.
+ */
+function FadeInView({ children }: { children: ReactNode }) {
+  const opacity = useRef(new Animated.Value(0)).current
+  useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 220,
+      useNativeDriver: true,
+    }).start()
+  }, [opacity])
+  return <Animated.View style={{ flex: 1, opacity }}>{children}</Animated.View>
+}
 
 export function BiometricGate({ children }: { children: React.ReactNode }) {
   const intl = useIntl()
@@ -53,13 +70,16 @@ export function BiometricGate({ children }: { children: React.ReactNode }) {
   switch (bio.status) {
     case 'prompting':
       return (
-        <BiometricPromptOverlay onUsePin={() => { /* hook flips status */ }} />
+        <FadeInView key={bio.status}>
+          <BiometricPromptOverlay onUsePin={() => { /* hook flips status */ }} />
+        </FadeInView>
       )
 
     case 'pin-required':
     case 'locked':
       return (
-        <PinEntryScreen
+        <FadeInView key={bio.status}>
+          <PinEntryScreen
           title={
             bio.status === 'locked'
               ? intl.formatMessage({ id: 'auth.biometric.pin.title_locked' })
@@ -81,6 +101,7 @@ export function BiometricGate({ children }: { children: React.ReactNode }) {
             void result
           }}
         />
+        </FadeInView>
       )
 
     case 'idle':
