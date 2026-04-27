@@ -1,0 +1,68 @@
+# Sprint 2 (v7.9.17) â€” reusable CodeQL workflow template.
+#
+# Drop this file at `.github/workflows/codeql.yml` in any of the 9 backend
+# Java repos (notification-service, core-registry, api-gateway-bff,
+# identity-access, event-ingestion, cashback-ledger, stream-processing,
+# reporting-pa, gamification). No per-repo customisation needed â€” the
+# `github/codeql-action` autodetects JavaScript/TypeScript and the query suites.
+#
+# Runs on:
+#   - PR to main/master (blocking)
+#   - Push to main/master
+#   - Weekly scheduled scan (catches new CVE signatures on unchanged code)
+#
+# Security alerts land in the repo's Security > Code scanning tab.
+# HIGH/CRITICAL alerts must be triaged before any v8.0 release.
+
+name: CodeQL
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+  schedule:
+    - cron: '17 3 * * 1'   # Mondays at 03:17 UTC
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [java-kotlin]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended,security-and-quality
+
+      - name: Build with Maven (CodeQL trace)
+        run: ./mvnw -q -DskipTests package
+
+      - name: CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        continue-on-error: true   # SARIF upload fails when Code Scanning is not enabled on this repo
+        with:
+          category: /language:${{ matrix.language }}
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        continue-on-error: true   # advisory upload — does not block CI
+        with:
+          sarif_file: /home/runner/work/_temp/codeql_databases/java-kotlin.sarif
