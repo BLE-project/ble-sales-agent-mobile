@@ -36,7 +36,16 @@ interface AuthContextType {
   user: AuthUser | null
   accessToken: string | null
   isLoading: boolean
+  /** True when a session is live (user is set). Derived from `user !== null`. */
+  isAuthenticated: boolean
   login: (username: string, password: string) => Promise<void>
+  /**
+   * Cluster B integration: accept pre-fetched tokens (used by the biometric
+   * auto-login hook after a successful refresh roundtrip). Parses the JWT,
+   * sets in-memory state, and persists both tokens to SecureStore. Skips
+   * the BFF call since the tokens are already valid.
+   */
+  loginWithToken: (accessToken: string, refreshToken: string) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -204,8 +213,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setOnLogout(() => { void logout() })
   }, [logout])
 
+  // Cluster B integration: accept pre-fetched tokens from the biometric
+  // auto-login hook. Mirrors `login()` but skips the BFF roundtrip.
+  // FEAT-SA-FALLBACK: re-resolve the agent profile so agentId stays fresh
+  // across biometric unlocks (the SuperAdmin sentinel can change).
+  const loginWithToken = useCallback(async (newAccess: string, newRefresh: string) => {
+    SecureStore.setItemAsync(TOKEN_KEY,   newAccess).catch(() => {})
+    SecureStore.setItemAsync(REFRESH_KEY, newRefresh).catch(() => {})
+    const payload = parseJwt(newAccess)
+    const roles = ((payload.realm_access as Record<string, string[]>)?.roles ?? [])
+    const profile = await resolveAgentProfile(newAccess)
+    setUser({
+      sub:               payload.sub as string,
+      name:              payload.name as string,
+      email:             payload.email as string,
+      roles,
+      agentId:           profile?.id,
+      isSuperAdminAgent: profile?.isSuperAdminFallback,
+    })
+    setAccessToken(newAccess)
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ user, accessToken, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        accessToken,
+        isLoading,
+        isAuthenticated: user !== null,
+        login,
+        loginWithToken,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
