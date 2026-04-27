@@ -1,19 +1,35 @@
 /**
  * Tests for API client — sales-agent-mobile.
  * Validates token handling, auth headers, error responses, and 204 support.
+ *
+ * M1.3b additions: 401 → refresh → retry path tests (REFRESH_KEY storage,
+ * BFF /api/v1/auth/refresh response handling, SEC-FIX-008 backoff,
+ * setOnLogout callback invocation on refresh failure).
  */
 jest.mock('react-native', () => ({ Platform: { OS: 'ios' } }))
 
+// M1.3b: setItemAsync now returns a resolved promise so production code
+// which does `setItemAsync(...).catch(() => {})` doesn't trip on
+// undefined.catch() at runtime.
 jest.mock('expo-secure-store', () => ({
   getItemAsync:    jest.fn(),
-  setItemAsync:    jest.fn(),
-  deleteItemAsync: jest.fn(),
+  setItemAsync:    jest.fn().mockResolvedValue(undefined),
+  deleteItemAsync: jest.fn().mockResolvedValue(undefined),
+}))
+
+// M1.3b: client.ts imports TOKEN_KEY + REFRESH_KEY from AuthContext.tsx
+// — mock the module so loading AuthContext doesn't pull React + the entire
+// notifications / expo-asset chain into the test runtime.
+jest.mock('../auth/AuthContext', () => ({
+  TOKEN_KEY:   'ble_sales_agent_token',
+  REFRESH_KEY: 'ble_sales_agent_refresh_token',
 }))
 
 import * as SecureStore from 'expo-secure-store'
-import { api, ApiError } from '../api/client'
+import { api, ApiError, setOnLogout, _resetRefreshState } from '../api/client'
 
 const mockGetItem = SecureStore.getItemAsync as jest.Mock
+const mockSetItem = SecureStore.setItemAsync as jest.Mock
 const mockFetch   = jest.fn()
 ;(globalThis as any).fetch = mockFetch
 
@@ -161,5 +177,124 @@ describe('gateway URL', () => {
 
     const [url] = mockFetch.mock.calls[0] as [string, RequestInit]
     expect(url).toMatch(/\/v1\/agents\/me$/)
+  })
+})
+
+// ── M1.3b: 401 → refresh → retry path ───────────────────────────────────────
+
+describe('api 401 → refresh → retry (M1.3b)', () => {
+  const TOKEN_KEY   = 'ble_sales_agent_token'
+  const REFRESH_KEY = 'ble_sales_agent_refresh_token'
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    // Re-arm the resolved-undefined behaviour after .clearAllMocks() — production
+    // calls .catch() on the return value, which fails on plain undefined.
+    mockSetItem.mockResolvedValue(undefined)
+    _resetRefreshState()
+  })
+
+  function mockSecureStore(items: Record<string, string | null>): void {
+    mockGetItem.mockImplementation((key: string) => Promise.resolve(items[key] ?? null))
+  }
+
+  it('refreshes the token on 401 and retries the original request', async () => {
+    mockSecureStore({ [TOKEN_KEY]: 'old-access', [REFRESH_KEY]: 'r-old' })
+    mockFetch
+      .mockResolvedValueOnce(mockRes(401, 'expired'))
+      .mockResolvedValueOnce(mockRes(200, { token: 'fresh-access', refreshToken: 'fresh-refresh' }))
+      .mockResolvedValueOnce(mockRes(200, { ok: true }))
+
+    const result = await api.get<{ ok: boolean }>('/v1/agents/me')
+
+    expect(result).toEqual({ ok: true })
+    expect(mockFetch).toHaveBeenCalledTimes(3)
+    // Call 2 was the refresh
+    expect(String(mockFetch.mock.calls[1][0])).toContain('/api/v1/auth/refresh')
+    // Call 3 was the retry, with the fresh token
+    const retryHeaders = (mockFetch.mock.calls[2][1] as RequestInit).headers as Record<string, string>
+    expect(retryHeaders['Authorization']).toBe('Bearer fresh-access')
+    // SecureStore should have been updated with the new tokens
+    expect(mockSetItem).toHaveBeenCalledWith(TOKEN_KEY,   'fresh-access')
+    expect(mockSetItem).toHaveBeenCalledWith(REFRESH_KEY, 'fresh-refresh')
+  })
+
+  it('accepts snake_case refresh response shape (proxy-translated)', async () => {
+    mockSecureStore({ [TOKEN_KEY]: 'old-access', [REFRESH_KEY]: 'r-old' })
+    mockFetch
+      .mockResolvedValueOnce(mockRes(401, ''))
+      .mockResolvedValueOnce(mockRes(200, { access_token: 'snake-access', refresh_token: 'snake-refresh' }))
+      .mockResolvedValueOnce(mockRes(200, {}))
+
+    await api.get('/x')
+    expect(mockSetItem).toHaveBeenCalledWith(TOKEN_KEY,   'snake-access')
+    expect(mockSetItem).toHaveBeenCalledWith(REFRESH_KEY, 'snake-refresh')
+  })
+
+  it('falls back to ApiError(401) and invokes onLogout when no refresh token is stored', async () => {
+    mockSecureStore({ [TOKEN_KEY]: 'old-access', [REFRESH_KEY]: null })
+    const onLogout = jest.fn()
+    setOnLogout(onLogout)
+    mockFetch.mockResolvedValueOnce(mockRes(401, ''))
+
+    await expect(api.get('/x')).rejects.toMatchObject({ name: 'ApiError', status: 401 })
+    expect(onLogout).toHaveBeenCalled()
+  })
+
+  it('falls back to ApiError(401) and invokes onLogout when the refresh endpoint returns 401', async () => {
+    mockSecureStore({ [TOKEN_KEY]: 'old-access', [REFRESH_KEY]: 'r-old' })
+    const onLogout = jest.fn()
+    setOnLogout(onLogout)
+    mockFetch
+      .mockResolvedValueOnce(mockRes(401, ''))
+      .mockResolvedValueOnce(mockRes(401, ''))
+
+    await expect(api.get('/x')).rejects.toMatchObject({ name: 'ApiError', status: 401 })
+    expect(onLogout).toHaveBeenCalled()
+  })
+
+  it('SEC-FIX-008: enforces 5s backoff after a refresh failure', async () => {
+    mockSecureStore({ [TOKEN_KEY]: 'old-access', [REFRESH_KEY]: 'r-old' })
+    setOnLogout(jest.fn())
+
+    // First 401 → refresh fails → records lastRefreshFailureMs
+    mockFetch
+      .mockResolvedValueOnce(mockRes(401, ''))
+      .mockResolvedValueOnce(mockRes(401, ''))
+    await expect(api.get('/x')).rejects.toBeInstanceOf(ApiError)
+
+    // Second request immediately after — should fast-fail without hitting refresh
+    mockFetch.mockResolvedValueOnce(mockRes(401, ''))
+    const callsBefore = mockFetch.mock.calls.length
+    await expect(api.get('/y')).rejects.toMatchObject({ name: 'ApiError', status: 401 })
+    // Only 1 additional fetch (the original /y), no refresh attempt
+    expect(mockFetch.mock.calls.length - callsBefore).toBe(1)
+  })
+
+  it('coalesces concurrent 401s into a single refresh roundtrip', async () => {
+    mockSecureStore({ [TOKEN_KEY]: 'old-access', [REFRESH_KEY]: 'r-old' })
+
+    mockFetch
+      // 3 initial requests → 401
+      .mockResolvedValueOnce(mockRes(401, ''))
+      .mockResolvedValueOnce(mockRes(401, ''))
+      .mockResolvedValueOnce(mockRes(401, ''))
+      // 1 refresh
+      .mockResolvedValueOnce(mockRes(200, { token: 'fresh', refreshToken: 'fresh-r' }))
+      // 3 retries → 200
+      .mockResolvedValueOnce(mockRes(200, { id: 'a' }))
+      .mockResolvedValueOnce(mockRes(200, { id: 'b' }))
+      .mockResolvedValueOnce(mockRes(200, { id: 'c' }))
+
+    const [a, b, c] = await Promise.all([
+      api.get<{ id: string }>('/a'),
+      api.get<{ id: string }>('/b'),
+      api.get<{ id: string }>('/c'),
+    ])
+    expect([a.id, b.id, c.id].sort()).toEqual(['a', 'b', 'c'])
+
+    // Refresh must have been called exactly once
+    const refreshCalls = mockFetch.mock.calls.filter(([url]) => String(url).includes('/api/v1/auth/refresh'))
+    expect(refreshCalls).toHaveLength(1)
   })
 })

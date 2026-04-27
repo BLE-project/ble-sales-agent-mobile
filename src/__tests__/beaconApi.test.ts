@@ -14,8 +14,15 @@ jest.mock('react-native', () => ({ Platform: { OS: 'android' } }))
 
 jest.mock('expo-secure-store', () => ({
   getItemAsync:    jest.fn().mockResolvedValue(null),
-  setItemAsync:    jest.fn(),
-  deleteItemAsync: jest.fn(),
+  setItemAsync:    jest.fn().mockResolvedValue(undefined),
+  deleteItemAsync: jest.fn().mockResolvedValue(undefined),
+}))
+
+// M1.3b: salesAgentApi → client.ts → AuthContext. Mock AuthContext so the
+// transitive notifications / expo-asset import chain doesn't crash jest-expo.
+jest.mock('../auth/AuthContext', () => ({
+  TOKEN_KEY:   'ble_sales_agent_token',
+  REFRESH_KEY: 'ble_sales_agent_refresh_token',
 }))
 
 import {

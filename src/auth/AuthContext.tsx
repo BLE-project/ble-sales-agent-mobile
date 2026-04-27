@@ -1,6 +1,25 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
 import * as SecureStore from 'expo-secure-store'
 import { registerSalesAgentPushToken, unregisterPushToken } from '../notifications/pushTokenRegistration'
+// M1.3b: client.ts drives logout when the refresh token expires / fails.
+import { setOnLogout } from '../api/client'
+
+/**
+ * SecureStore key for the OAuth access token. Exported so `src/api/client.ts`
+ * can import it instead of duplicating the string literal.
+ *
+ * Promoted from an inline literal to a module-level export as part of
+ * M1.3b (BFF migration + refresh-token consumption).
+ */
+export const TOKEN_KEY = 'ble_sales_agent_token'
+
+/**
+ * M1.3b: SecureStore key holding the OAuth refresh token. Mirrors the
+ * Cluster A naming convention (`ble_<slug>_refresh_token`). Consumed by
+ * `src/api/client.ts` for the 401 → refresh → retry interceptor and by
+ * the future biometric auto-login hook (Cluster B integration).
+ */
+export const REFRESH_KEY = 'ble_sales_agent_refresh_token'
 
 interface AuthUser {
   sub: string
@@ -75,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const registeredPushToken = useRef<string | null>(null)
 
   useEffect(() => {
-    SecureStore.getItemAsync('ble_sales_agent_token').then(async token => {
+    SecureStore.getItemAsync(TOKEN_KEY).then(async token => {
       if (token) {
         const payload = parseJwt(token)
         const roles = ((payload.realm_access as Record<string, string[]>)?.roles ?? [])
@@ -95,27 +114,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   async function login(username: string, password: string) {
+    // M1.3b: migrated from Keycloak password-grant to BFF /api/v1/auth/login
+    // (matches consumer / merchant / tenant / territory). Avoids the JWT
+    // issuer mismatch that occurs when the device hits Keycloak directly
+    // via localhost:8180 vs the BFF expecting issuer = "http://keycloak:8180/…".
     const res = await fetch(
-      `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/token`,
+      `${GATEWAY}/api/v1/auth/login`,
       {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          grant_type: 'password',
-          client_id:  CLIENT_ID,
-          username,
-          password,
-        }).toString(),
-      }
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ username, password }),
+      },
     )
     if (!res.ok) {
-      const err = await res.json()
-      throw new Error(err.error_description ?? 'Login failed')
+      const err = await res.json().catch(() => ({}))
+      throw new Error(
+        (err as { error?: string; message?: string }).message
+          ?? (err as { error_description?: string }).error_description
+          ?? 'Login failed',
+      )
     }
-    const data = await res.json()
-    const token = data.access_token as string
-    // BUG-003: persist in background to avoid iOS Keychain race condition
-    SecureStore.setItemAsync('ble_sales_agent_token', token).catch(() => {})
+    // BFF returns {token, refreshToken} (camelCase per AuthResource.java:142).
+    // Defensive on shape: also accept snake_case for proxy translation.
+    const data = await res.json() as {
+      token?: string
+      access_token?: string
+      refreshToken?: string
+      refresh_token?: string
+    }
+    const token = data.token ?? data.access_token
+    if (!token) {
+      throw new Error('Login response missing access token')
+    }
+    const refreshToken = data.refreshToken ?? data.refresh_token ?? null
+    // BUG-003: persist in background to avoid iOS Keychain race condition.
+    SecureStore.setItemAsync(TOKEN_KEY, token).catch(() => {})
+    if (refreshToken) {
+      SecureStore.setItemAsync(REFRESH_KEY, refreshToken).catch(() => {})
+    }
     const payload = parseJwt(token)
     const roles = ((payload.realm_access as Record<string, string[]>)?.roles ?? [])
 
@@ -143,7 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }).catch(() => { /* non-fatal */ })
   }
 
-  async function logout() {
+  const logout = useCallback(async () => {
     // T-162: best-effort unregister before clearing session
     if (registeredPushToken.current && accessToken) {
       const tenantId = accessToken ? (parseJwt(accessToken).ble_tenant_id as string ?? '') : ''
@@ -153,10 +189,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }).catch(() => {})
       registeredPushToken.current = null
     }
-    await SecureStore.deleteItemAsync('ble_sales_agent_token')
+    await SecureStore.deleteItemAsync(TOKEN_KEY)
+    // M1.3b: also wipe the refresh token so a fresh credential login is
+    // required on next session. Best-effort.
+    await SecureStore.deleteItemAsync(REFRESH_KEY).catch(() => {})
     setUser(null)
     setAccessToken(null)
-  }
+  }, [accessToken])
+
+  // M1.3b: register the logout callback so client.ts can drive a session
+  // wipe when the refresh token expires / fails. Re-registers whenever
+  // `logout`'s identity changes (i.e. whenever accessToken changes).
+  useEffect(() => {
+    setOnLogout(() => { void logout() })
+  }, [logout])
 
   return (
     <AuthContext.Provider value={{ user, accessToken, isLoading, login, logout }}>
