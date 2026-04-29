@@ -30,3 +30,11 @@ ios/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local dev artifacts (Metro server output, JVM crash dumps, downloaded EAS APKs,
+# beacon fixture env). Should never be committed — they are environment-specific
+# and contain device-side data.
+metro.log
+hs_err_pid*.log
+*.apk
+maestro/BEACON_FIXTURE.env
