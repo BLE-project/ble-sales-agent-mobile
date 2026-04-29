@@ -38,14 +38,17 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={qc}>
       <AuthProvider>
-        {/*
-          BiometricAuthProvider (Cluster B sales-agent integration) sits inside
-          AuthProvider so the biometric hook can read auth state + call
-          loginWithToken/logout. BiometricGate below wraps the screens for
-          the status-driven overlay (PIN entry / locked / prompting).
-        */}
-        <BiometricAuthProvider>
-          <I18nProvider tenantLocaleHint={null}>
+        <I18nProvider tenantLocaleHint={null}>
+          {/*
+            BiometricAuthProvider (Cluster B sales-agent integration) MUST sit
+            INSIDE I18nProvider: the hook calls useIntl() to localize
+            biometric-prompt strings. Sitting outside I18nProvider crashes the
+            React tree at mount with "[React Intl] Could not find required
+            `intl` object". AuthProvider stays above so the hook can still
+            read auth state + call loginWithToken/logout — the Cluster B
+            wiring contract is preserved.
+          */}
+          <BiometricAuthProvider>
             <BiometricGate>
               <NotificationListener />
               <Stack>
@@ -53,8 +56,8 @@ export default function RootLayout() {
                 <Stack.Screen name="(app)"  options={{ headerShown: false }} />
               </Stack>
             </BiometricGate>
-          </I18nProvider>
-        </BiometricAuthProvider>
+          </BiometricAuthProvider>
+        </I18nProvider>
       </AuthProvider>
     </QueryClientProvider>
   )
