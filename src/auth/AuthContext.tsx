@@ -102,6 +102,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // T-162: cache push token for best-effort unregister on logout
   const registeredPushToken = useRef<string | null>(null)
 
+  // P3 INSTRUMENTATION (Sprint14): log every user-state transition with timestamp
+  // so we can trace WHO calls setUser(null) in the navigation+logout failing path.
+  // Remove once root cause identified.
+  useEffect(() => {
+    const tag = user ? `roles=${user.roles.join(',')} agentId=${user.agentId ?? 'undef'}` : 'NULL'
+    console.log(`[P3-AUTH] user-state-change t=${Date.now()} → ${tag} isLoading=${isLoading}`)
+  }, [user, isLoading])
+
   useEffect(() => {
     SecureStore.getItemAsync(TOKEN_KEY).then(async token => {
       if (token) {
@@ -189,6 +197,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = useCallback(async () => {
+    // P3 INSTRUMENTATION (Sprint14): log entry + stack trace.
+    console.log(`[P3-AUTH] logout() ENTRY t=${Date.now()} stack=${new Error().stack?.split('\n').slice(1, 6).join(' | ')}`)
     // T-162: best-effort unregister before clearing session
     if (registeredPushToken.current && accessToken) {
       const tenantId = accessToken ? (parseJwt(accessToken).ble_tenant_id as string ?? '') : ''

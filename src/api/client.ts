@@ -48,8 +48,11 @@ export function _resetRefreshState(): void {
 }
 
 async function doRefresh(): Promise<string> {
+  // P3 INSTRUMENTATION (Sprint14): log entry + each _onLogout callsite.
+  console.log(`[P3-CLIENT] doRefresh ENTRY t=${Date.now()}`)
   const refreshToken = await SecureStore.getItemAsync(REFRESH_KEY).catch(() => null)
   if (!refreshToken) {
+    console.log(`[P3-CLIENT] doRefresh: REFRESH_KEY null → _onLogout() at t=${Date.now()}`)
     _onLogout?.()
     throw new ApiError(401, 'No refresh token — please log in again')
   }
@@ -59,6 +62,7 @@ async function doRefresh(): Promise<string> {
     body:    JSON.stringify({ refresh_token: refreshToken }),
   })
   if (!res.ok) {
+    console.log(`[P3-CLIENT] doRefresh: refresh status=${res.status} → _onLogout() at t=${Date.now()}`)
     _onLogout?.()
     throw new ApiError(401, 'Session expired — please log in again')
   }
@@ -98,6 +102,8 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${GATEWAY}${path}`, { ...options, headers })
 
   if (res.status === 401) {
+    // P3 INSTRUMENTATION (Sprint14): log every 401 path with the route that triggered it.
+    console.log(`[P3-CLIENT] 401 on path=${path} t=${Date.now()} hasToken=${token != null}`)
     // SEC-FIX-008: fast-fail if we're inside the post-failure backoff window.
     if (lastRefreshFailureMs !== null
         && Date.now() - lastRefreshFailureMs < REFRESH_BACKOFF_MS) {
