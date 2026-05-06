@@ -35,22 +35,14 @@ function makeIcon(screenName: string) {
 export default function AppLayout() {
   const { user, isLoading } = useAuth()
 
-  if (isLoading) {
-    // P3 INSTRUMENTATION (Sprint14)
-    console.log(`[P3-LAYOUT] AppLayout render: isLoading=true → render null t=${Date.now()}`)
-    return null
-  }
+  if (isLoading) return null
   // FEAT-SA-FALLBACK: SUPER_ADMIN can log in and act as the default sales agent
   const isAllowed =
     user &&
     (user.roles.includes('SALES_AGENT') || user.roles.includes('SUPER_ADMIN'))
   if (!isAllowed) {
-    // P3 INSTRUMENTATION (Sprint14): captures the moment the (app) gate kicks the user back to /login.
-    console.log(`[P3-LAYOUT] AppLayout render: !isAllowed (user=${user ? 'has-user roles=' + user.roles.join(',') : 'NULL'}) → Redirect /login t=${Date.now()}`)
     return <Redirect href="/login" />
   }
-  // P3 INSTRUMENTATION (Sprint14)
-  console.log(`[P3-LAYOUT] AppLayout render: isAllowed=true (roles=${user.roles.join(',')}) → render Tabs t=${Date.now()}`)
 
   return (
     <Tabs
