@@ -53,10 +53,18 @@ async function doRefresh(): Promise<string> {
     _onLogout?.()
     throw new ApiError(401, 'No refresh token — please log in again')
   }
+  // Sprint14 P3 fix (2026-05-06): BFF AuthResource expects camelCase
+  // `refreshToken` field. Sending snake_case `refresh_token` returns 400
+  // MISSING_REFRESH_TOKEN, which doRefresh treated as auth failure → fired
+  // _onLogout → setUser(null) → /(app)/_layout Redirect /login. Surfaced as
+  // sales-agent navigation+logout E2E fail (sales-agent uniquely triggers
+  // doRefresh because /v1/registration-requests 401s for SALES_AGENT;
+  // territory/consumer/merchant/tenant never enter the refresh path so the
+  // bug stayed latent fleet-wide). All 5 mobile apps had the same bug.
   const res = await fetch(`${GATEWAY}/api/v1/auth/refresh`, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ refresh_token: refreshToken }),
+    body:    JSON.stringify({ refreshToken }),
   })
   if (!res.ok) {
     _onLogout?.()
