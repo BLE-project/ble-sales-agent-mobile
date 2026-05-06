@@ -118,16 +118,9 @@ export function BiometricEnrollModal({ visible, onDone }: BiometricEnrollModalPr
                 <FormattedMessage id="auth.biometric.enroll.cta.enable" />
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.secondaryButton}
-              onPress={handleSkip}
-              accessibilityRole="button"
-              testID="enroll-skip"
-            >
-              <Text style={styles.secondaryButtonText}>
-                <FormattedMessage id="auth.biometric.enroll.cta.skip" />
-              </Text>
-            </TouchableOpacity>
+            {/* Anomaly H (2026-05-02): "Non ora" (skip) button removed — caused
+                perceived logout regression. See terrio-consumer-mobile for full
+                rationale. handleSkip() kept for backward compat. */}
             <TouchableOpacity
               style={styles.tertiaryButton}
               onPress={handleNeverAsk}
