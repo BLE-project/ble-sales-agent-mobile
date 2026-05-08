@@ -40,6 +40,7 @@ import {
   DEFAULT_HOLYIOT_PASSWORD,
   DEFAULT_HOLYIOT_PASSWORD_LABEL,
 } from '../../src/constants/holyIot'
+import { BleConfigDisplay } from '../../src/components/BleConfigDisplay'
 
 // Fase 3.1 fixup: aligned with backend BeaconType enum — only 3 valid
 // values. The chip picker used to show 5 chips, two of which ('INFO' and
@@ -164,6 +165,9 @@ export default function BeaconConfigScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={{ marginBottom: 12 }}>
+        <BleConfigDisplay />
+      </View>
       <Text style={styles.title}>Beacon Configuration</Text>
       <Text style={styles.subtitle}>
         BLE scan requires dev-client build. Use manual enrollment below.
