@@ -41,6 +41,7 @@ import {
   DEFAULT_HOLYIOT_PASSWORD_LABEL,
 } from '../../src/constants/holyIot'
 import { BleConfigDisplay } from '../../src/components/BleConfigDisplay'
+import { GpsCaptureButton } from '../../src/components/GpsCaptureButton'
 
 // Fase 3.1 fixup: aligned with backend BeaconType enum — only 3 valid
 // values. The chip picker used to show 5 chips, two of which ('INFO' and
@@ -241,13 +242,16 @@ export default function BeaconConfigScreen() {
             <Text style={styles.beaconDetail}>
               Territory: {territoryName(item.territoryId)}
             </Text>
-            <TouchableOpacity
-              style={styles.configBtn}
-              onPress={() => openConfig(item)}
-              testID={`beacon-config-${item.id}`}
-            >
-              <Text style={styles.configBtnText}>Reconfigure</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
+              <TouchableOpacity
+                style={styles.configBtn}
+                onPress={() => openConfig(item)}
+                testID={`beacon-config-${item.id}`}
+              >
+                <Text style={styles.configBtnText}>Reconfigure</Text>
+              </TouchableOpacity>
+              <GpsCaptureButton beaconId={item.id} testID={`gps-capture-${item.id}`} />
+            </View>
           </View>
         )}
       />
