@@ -42,6 +42,8 @@ import {
 } from '../../src/constants/holyIot'
 import { BleConfigDisplay } from '../../src/components/BleConfigDisplay'
 import { GpsCaptureButton } from '../../src/components/GpsCaptureButton'
+import { useRouter } from 'expo-router'
+import { resetWizard } from '../../src/wizard/wizardState'
 
 // Fase 3.1 fixup: aligned with backend BeaconType enum — only 3 valid
 // values. The chip picker used to show 5 chips, two of which ('INFO' and
@@ -164,6 +166,8 @@ export default function BeaconConfigScreen() {
     return territories?.find(t => t.id === id)?.name ?? id.substring(0, 8) + '…'
   }
 
+  const router = useRouter()
+
   return (
     <View style={styles.container}>
       <View style={{ marginBottom: 12 }}>
@@ -173,6 +177,17 @@ export default function BeaconConfigScreen() {
       <Text style={styles.subtitle}>
         BLE scan requires dev-client build. Use manual enrollment below.
       </Text>
+
+      <TouchableOpacity
+        style={[styles.primaryBtn, { backgroundColor: '#6C3FCF', marginTop: 8 }]}
+        onPress={() => {
+          resetWizard()
+          router.push('/(app)/wizard/step-1-merchant' as never)
+        }}
+        testID="start-first-config-wizard"
+      >
+        <Text style={styles.primaryBtnText}>🪄 Avvia first-config wizard</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.primaryBtn}
