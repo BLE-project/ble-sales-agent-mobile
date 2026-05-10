@@ -16,6 +16,7 @@ import { fetchMerchantBeacons, type BeaconSummary, type ScanResult } from '../..
 import {
   getWizardState, setBeacons, setScanResults,
 } from '../../../src/wizard/wizardState'
+import { scanBeacons, type BeaconCheckTarget } from '../../../src/ble/BeaconHealthCheck'
 
 const SCAN_WINDOW_MS = 60_000
 
@@ -57,18 +58,53 @@ export default function WizardStep2Scan() {
   async function runScan() {
     if (rows.length === 0) return
     setRows(prev => prev.map(r => ({ ...r, state: 'scanning' })))
-    // Phase-1 skeleton: simulate a scan window. The real ble-scanner integration
-    // calls bleScanner.start(cb) and aggregates the IBeaconEvent stream; the
-    // operator who reviews this PR wires that next.
-    await new Promise<void>(res => setTimeout(res, SCAN_WINDOW_MS))
+
+    // Phase-2 wiring (cross-system integration #2): delegate to the existing
+    // src/ble/BeaconHealthCheck#scanBeacons helper which handles ble-plx
+    // detection + RSSI/battery extraction natively. The helper falls back to
+    // a __DEV__ fixture (pass=true mock) when ble-plx is not loaded — same
+    // contract as the rest of the BLE call sites in this app.
+    const targets: BeaconCheckTarget[] = rows.map(r => ({
+      code:  r.beacon.id,           // map back to ScanResult.beaconId
+      label: `${r.beacon.major}-${r.beacon.minor}`,
+      uuid:  r.beacon.ibeaconUuid,
+      major: r.beacon.major,
+      minor: r.beacon.minor,
+    }))
+
+    let checkResults: Awaited<ReturnType<typeof scanBeacons>>
+    try {
+      checkResults = await scanBeacons(targets, SCAN_WINDOW_MS)
+    } catch (e) {
+      // ble-plx unavailable in production build — record all as missed.
+      checkResults = targets.map(t => ({
+        code: t.code, label: t.label, detected: false,
+        rssi: null, batteryLevel: null, pass: false,
+        reason: `Scan unavailable: ${(e as Error).message}`,
+      }))
+    }
+
     if (cancelled.current) return
-    const results: ScanResult[] = rows.map(r => ({
-      beaconId:     r.beacon.id,
-      detected:     false,
-      pass:         false,
+
+    const results: ScanResult[] = checkResults.map(r => ({
+      beaconId:     r.code,
+      detected:     r.detected,
+      rssi:         r.rssi ?? undefined,
+      batteryLevel: r.batteryLevel ?? undefined,
+      pass:         r.pass,
     }))
     setScanResults(results)
-    setRows(prev => prev.map(r => ({ ...r, state: 'missed' })))
+
+    const byId = new Map(checkResults.map(r => [r.code, r]))
+    setRows(prev => prev.map(r => {
+      const cr = byId.get(r.beacon.id)
+      return {
+        ...r,
+        state:   cr?.detected ? 'detected' : 'missed',
+        rssi:    cr?.rssi ?? undefined,
+        battery: cr?.batteryLevel ?? undefined,
+      }
+    }))
   }
 
   if (loading) {
