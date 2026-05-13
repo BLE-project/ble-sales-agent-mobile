@@ -51,29 +51,32 @@ export default function AppLayout() {
         tabBarInactiveTintColor: '#9E9E9E',
       }}
     >
+      {/* #24 — tabBarTestID convention: tab-{lowercase-italian-label}.
+          Maestro flows reference these stable ids instead of label text
+          (which drifts under i18n). */}
       <Tabs.Screen
         name="index"
-        options={{ title: 'Dashboard', tabBarLabel: 'Home', tabBarIcon: makeIcon('index') }}
+        options={{ title: 'Dashboard', tabBarLabel: 'Home', tabBarTestID: 'tab-home', tabBarIcon: makeIcon('index') }}
       />
       <Tabs.Screen
         name="requests"
-        options={{ title: 'Richieste', tabBarLabel: 'Richieste', tabBarIcon: makeIcon('requests') }}
+        options={{ title: 'Richieste', tabBarLabel: 'Richieste', tabBarTestID: 'tab-richieste', tabBarIcon: makeIcon('requests') }}
       />
       <Tabs.Screen
         name="merchants"
-        options={{ title: 'Merchant', tabBarLabel: 'Merchant', tabBarIcon: makeIcon('merchants') }}
+        options={{ title: 'Merchant', tabBarLabel: 'Merchant', tabBarTestID: 'tab-merchant', tabBarIcon: makeIcon('merchants') }}
       />
       <Tabs.Screen
         name="royalties"
-        options={{ title: 'Royalties', tabBarLabel: 'Royalties', tabBarIcon: makeIcon('royalties') }}
+        options={{ title: 'Royalties', tabBarLabel: 'Royalties', tabBarTestID: 'tab-royalties', tabBarIcon: makeIcon('royalties') }}
       />
       <Tabs.Screen
         name="profile"
-        options={{ title: 'Profilo', tabBarLabel: 'Profilo', tabBarIcon: makeIcon('profile') }}
+        options={{ title: 'Profilo', tabBarLabel: 'Profilo', tabBarTestID: 'tab-profilo', tabBarIcon: makeIcon('profile') }}
       />
       <Tabs.Screen
         name="beacon-config"
-        options={{ title: 'Beacon', tabBarLabel: 'Beacon', tabBarIcon: makeIcon('beacon-config') }}
+        options={{ title: 'Beacon', tabBarLabel: 'Beacon', tabBarTestID: 'tab-beacon', tabBarIcon: makeIcon('beacon-config') }}
       />
       {/* Detail screens — hidden from tab bar */}
       <Tabs.Screen name="request/[id]"           options={{ href: null }} />
