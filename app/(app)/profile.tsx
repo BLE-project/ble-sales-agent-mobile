@@ -32,7 +32,11 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+      <TouchableOpacity
+        style={styles.logoutBtn}
+        onPress={logout}
+        testID="btn-logout"
+      >
         <Text style={styles.logoutText}>Esci dall'account</Text>
       </TouchableOpacity>
     </ScrollView>
