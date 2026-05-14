@@ -94,7 +94,7 @@ export default function DashboardScreen() {
           <Text style={styles.greeting}>Ciao,</Text>
           <Text style={styles.name}>{user?.name ?? user?.sub}</Text>
         </View>
-        <TouchableOpacity onPress={logout}>
+        <TouchableOpacity onPress={logout} testID="btn-logout">
           <Text style={styles.signOut}>Esci</Text>
         </TouchableOpacity>
       </View>
