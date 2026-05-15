@@ -55,6 +55,7 @@
     "preset": "jest-expo"
   },
   "overrides": {
-    "@xmldom/xmldom": "^0.8.13"
+    "@xmldom/xmldom": "^0.8.13",
+    "fast-uri": "^3.1.2"
   }
 }
