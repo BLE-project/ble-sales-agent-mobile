@@ -38,3 +38,6 @@ metro.log
 hs_err_pid*.log
 *.apk
 maestro/BEACON_FIXTURE.env
+
+# Coverage
+coverage/
