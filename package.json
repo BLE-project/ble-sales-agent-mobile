@@ -57,7 +57,12 @@
       "text-summary",
       "lcov",
       "json-summary"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 81
+      }
+    }
   },
   "overrides": {
     "@xmldom/xmldom": "^0.8.13",
