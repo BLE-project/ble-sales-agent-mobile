@@ -143,9 +143,19 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json() as Promise<T>
 }
 
+/**
+ * Optional per-request headers. Used by tenant-scoped APIs (e.g. prospects)
+ * that must send `X-Tenant-Id`; the base wrapper still injects auth + refresh.
+ */
+type ExtraHeaders = Record<string, string> | undefined
+
 export const api = {
-  get:    <T>(path: string) => request<T>(path, { method: 'GET' }),
-  post:   <T>(path: string, body: unknown) => request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
-  put:    <T>(path: string, body: unknown) => request<T>(path, { method: 'PUT',  body: JSON.stringify(body) }),
-  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+  get:    <T>(path: string, headers?: ExtraHeaders) =>
+    request<T>(path, { method: 'GET', headers }),
+  post:   <T>(path: string, body: unknown, headers?: ExtraHeaders) =>
+    request<T>(path, { method: 'POST', body: JSON.stringify(body), headers }),
+  put:    <T>(path: string, body: unknown, headers?: ExtraHeaders) =>
+    request<T>(path, { method: 'PUT',  body: JSON.stringify(body), headers }),
+  delete: <T>(path: string, headers?: ExtraHeaders) =>
+    request<T>(path, { method: 'DELETE', headers }),
 }
