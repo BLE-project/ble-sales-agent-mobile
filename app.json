@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "backgroundColor": "#1a3f6f"
       },
-      "package": "com.terrio.salesagent",
+      "package": "it.terrio.salesagent",
+      "googleServicesFile": "./google-services.json",
       "usesCleartextTraffic": true,
       "permissions": [
         "USE_BIOMETRIC",
