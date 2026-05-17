@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   View,
   Text,
@@ -6,134 +6,268 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
+  TextInput,
+  Alert,
 } from 'react-native'
 import { useRouter } from 'expo-router'
+import {
+  prospectsApi,
+  Prospect,
+  ProspectStage,
+} from '../../../src/api/prospectsApi'
+import { ApiError } from '../../../src/api/client'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ── Stage config ────────────────────────────────────────────────────────────
+//
+// FU-26: stages now come from the backend domain
+// (com.ble.registry.salesagent.ProspectStage). The kanban shows the happy-path
+// columns; LOST prospects are surfaced in their own column at the end.
 
-type Stage = 'LEAD' | 'CONTACTED' | 'DEMO' | 'CONTRACT' | 'CLOSED'
+type Column = ProspectStage
 
-const STAGES: Stage[] = ['LEAD', 'CONTACTED', 'DEMO', 'CONTRACT', 'CLOSED']
+const COLUMNS: Column[] = ['LEAD', 'CONTACTED', 'DEMO', 'CONTRACT', 'CLOSED', 'LOST']
 
-const STAGE_COLORS: Record<Stage, string> = {
+/** Happy-path order — used to compute the single legal "advance" target. */
+const HAPPY_PATH: ProspectStage[] = ['LEAD', 'CONTACTED', 'DEMO', 'CONTRACT', 'CLOSED']
+
+const STAGE_COLORS: Record<Column, string> = {
   LEAD:      '#e0f2fe',
   CONTACTED: '#fef9c3',
   DEMO:      '#ede9fe',
   CONTRACT:  '#d1fae5',
-  CLOSED:    '#d1d5db',
+  CLOSED:    '#bbf7d0',
+  LOST:      '#fee2e2',
 }
 
-const STAGE_TEXT_COLORS: Record<Stage, string> = {
+const STAGE_TEXT_COLORS: Record<Column, string> = {
   LEAD:      '#0369a1',
   CONTACTED: '#92400e',
   DEMO:      '#5b21b6',
   CONTRACT:  '#065f46',
-  CLOSED:    '#374151',
+  CLOSED:    '#15803d',
+  LOST:      '#b91c1c',
 }
 
-interface Prospect {
-  id: string
-  name: string
-  address: string
-  lastContact: string
-  stage: Stage
+/** Next stage on the happy path, or null when terminal. Mirrors the backend. */
+function nextHappyStage(stage: ProspectStage): ProspectStage | null {
+  const idx = HAPPY_PATH.indexOf(stage)
+  if (idx < 0 || idx >= HAPPY_PATH.length - 1) return null
+  return HAPPY_PATH[idx + 1]
 }
 
-// ── Mock data ─────────────────────────────────────────────────────────────────
-
-const INITIAL_PROSPECTS: Prospect[] = [
-  { id: 'p1', name: 'Bar Centrale',        address: 'Via Roma 12, Milano',      lastContact: '2026-04-20', stage: 'LEAD' },
-  { id: 'p2', name: 'Ristorante da Mario', address: 'Corso Venezia 44, Milano', lastContact: '2026-04-18', stage: 'CONTACTED' },
-  { id: 'p3', name: 'Pizzeria Napoli',     address: 'Via Torino 8, Milano',     lastContact: '2026-04-15', stage: 'DEMO' },
-  { id: 'p4', name: 'Caffè Brera',         address: 'Via Solferino 3, Milano',  lastContact: '2026-04-10', stage: 'CONTRACT' },
-  { id: 'p5', name: 'Osteria del Porto',   address: 'Via Savona 23, Milano',    lastContact: '2026-04-05', stage: 'CLOSED' },
-]
+/** Render an API/network error as a short user-facing string. */
+function describeError(e: unknown): string {
+  if (e instanceof ApiError) {
+    if (e.status === 401) return 'Sessione scaduta. Effettua di nuovo il login.'
+    if (e.status === 403) return 'Non hai i permessi per questa operazione.'
+    if (e.status === 409) return 'Spostamento di fase non consentito.'
+    return e.message || `Errore ${e.status}`
+  }
+  return 'Errore di rete. Riprova.'
+}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function ProspectKanbanScreen() {
-  const [prospects, setProspects] = useState<Prospect[]>(INITIAL_PROSPECTS)
   const router = useRouter()
 
-  const moveToNextStage = (id: string) => {
-    setProspects(prev =>
-      prev.map(p => {
-        if (p.id !== id) return p
-        const currentIdx = STAGES.indexOf(p.stage)
-        const nextStage = STAGES[Math.min(currentIdx + 1, STAGES.length - 1)]
-        return { ...p, stage: nextStage }
-      })
+  const [prospects, setProspects] = useState<Prospect[]>([])
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState<string | null>(null)
+  // id of the prospect whose stage move is in-flight (disables its buttons)
+  const [movingId, setMovingId]   = useState<string | null>(null)
+
+  // New-prospect inline form
+  const [newOrg, setNewOrg]       = useState('')
+  const [creating, setCreating]   = useState(false)
+
+  const loadProspects = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const page = await prospectsApi.list()
+      setProspects(page.items)
+    } catch (e) {
+      setError(describeError(e))
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadProspects()
+  }, [loadProspects])
+
+  const createProspect = useCallback(async () => {
+    const organization = newOrg.trim()
+    if (!organization) return
+    setCreating(true)
+    try {
+      const created = await prospectsApi.create({ organization })
+      setProspects(prev => [created, ...prev])
+      setNewOrg('')
+    } catch (e) {
+      Alert.alert('Creazione non riuscita', describeError(e))
+    } finally {
+      setCreating(false)
+    }
+  }, [newOrg])
+
+  const moveStage = useCallback(async (id: string, target: ProspectStage) => {
+    setMovingId(id)
+    try {
+      const updated = await prospectsApi.moveStage(id, target)
+      setProspects(prev => prev.map(p => (p.id === id ? updated : p)))
+    } catch (e) {
+      Alert.alert('Spostamento non riuscito', describeError(e))
+    } finally {
+      setMovingId(null)
+    }
+  }, [])
+
+  const prospectsInStage = (stage: Column) =>
+    prospects.filter(p => p.stage === stage)
+
+  // ── Loading / error states ────────────────────────────────────────────────
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centered]} testID="kanban-loading">
+        <ActivityIndicator size="large" color="#1a3f6f" />
+        <Text style={styles.stateText}>Caricamento pipeline…</Text>
+      </View>
     )
   }
 
-  const prospectsInStage = (stage: Stage) =>
-    prospects.filter(p => p.stage === stage)
+  if (error) {
+    return (
+      <View style={[styles.container, styles.centered]} testID="kanban-error">
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity style={styles.retryBtn} onPress={() => void loadProspects()}>
+          <Text style={styles.retryBtnText}>Riprova</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  // ── Main board ────────────────────────────────────────────────────────────
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Pipeline prospect</Text>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator
-        contentContainerStyle={styles.board}
-        testID="kanban-board"
-      >
-        {STAGES.map(stage => {
-          const items = prospectsInStage(stage)
-          return (
-            <View key={stage} style={styles.column} testID={`kanban-col-${stage}`}>
-              {/* Column header */}
-              <View style={[styles.columnHeader, { backgroundColor: STAGE_COLORS[stage] }]}>
-                <Text style={[styles.columnTitle, { color: STAGE_TEXT_COLORS[stage] }]}>
-                  {stage}
-                </Text>
-                <View style={[styles.badge, { backgroundColor: STAGE_TEXT_COLORS[stage] }]}>
-                  <Text style={styles.badgeText}>{items.length}</Text>
-                </View>
-              </View>
+      {/* New-prospect inline form */}
+      <View style={styles.addRow} testID="kanban-add-row">
+        <TextInput
+          style={styles.addInput}
+          placeholder="Nuovo prospect (ragione sociale)"
+          placeholderTextColor="#9ca3af"
+          value={newOrg}
+          onChangeText={setNewOrg}
+          editable={!creating}
+          testID="kanban-add-input"
+        />
+        <TouchableOpacity
+          style={[styles.addBtn, (!newOrg.trim() || creating) && styles.addBtnDisabled]}
+          onPress={() => void createProspect()}
+          disabled={!newOrg.trim() || creating}
+          testID="kanban-add-button"
+        >
+          {creating
+            ? <ActivityIndicator size="small" color="#fff" />
+            : <Text style={styles.addBtnText}>Aggiungi</Text>}
+        </TouchableOpacity>
+      </View>
 
-              {/* Cards */}
-              <FlatList
-                data={items}
-                keyExtractor={i => i.id}
-                scrollEnabled={false}
-                ListEmptyComponent={
-                  <Text style={styles.emptyColumn}>Nessun prospect</Text>
-                }
-                renderItem={({ item }) => {
-                  const isLast = STAGES.indexOf(item.stage) === STAGES.length - 1
-                  return (
-                    <View style={styles.card} testID={`kanban-card-${item.id}`}>
-                      <Text style={styles.cardName}>{item.name}</Text>
-                      <Text style={styles.cardMeta}>{item.address}</Text>
-                      <Text style={styles.cardMeta}>
-                        Ultimo contatto: {item.lastContact}
-                      </Text>
-                      <View style={styles.cardActions}>
-                        <TouchableOpacity
-                          style={styles.detailBtn}
-                          onPress={() => router.push(`/(app)/merchants` as never)}
-                        >
-                          <Text style={styles.detailBtnText}>Dettaglio</Text>
-                        </TouchableOpacity>
-                        {!isLast && (
+      {prospects.length === 0 ? (
+        <View style={[styles.centered, styles.emptyBoard]} testID="kanban-empty">
+          <Text style={styles.stateText}>Nessun prospect ancora.</Text>
+          <Text style={styles.emptyHint}>
+            Aggiungi il primo prospect con il campo qui sopra.
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator
+          contentContainerStyle={styles.board}
+          testID="kanban-board"
+        >
+          {COLUMNS.map(stage => {
+            const items = prospectsInStage(stage)
+            return (
+              <View key={stage} style={styles.column} testID={`kanban-col-${stage}`}>
+                <View style={[styles.columnHeader, { backgroundColor: STAGE_COLORS[stage] }]}>
+                  <Text style={[styles.columnTitle, { color: STAGE_TEXT_COLORS[stage] }]}>
+                    {stage}
+                  </Text>
+                  <View style={[styles.badge, { backgroundColor: STAGE_TEXT_COLORS[stage] }]}>
+                    <Text style={styles.badgeText}>{items.length}</Text>
+                  </View>
+                </View>
+
+                <FlatList
+                  data={items}
+                  keyExtractor={i => i.id}
+                  scrollEnabled={false}
+                  ListEmptyComponent={
+                    <Text style={styles.emptyColumn}>Nessun prospect</Text>
+                  }
+                  renderItem={({ item }) => {
+                    const advanceTo = nextHappyStage(item.stage)
+                    const canLose   = item.stage !== 'CLOSED' && item.stage !== 'LOST'
+                    const busy      = movingId === item.id
+                    return (
+                      <View style={styles.card} testID={`kanban-card-${item.id}`}>
+                        <Text style={styles.cardName}>{item.organization}</Text>
+                        {item.address ? (
+                          <Text style={styles.cardMeta}>{item.address}</Text>
+                        ) : null}
+                        <Text style={styles.cardMeta}>
+                          Ultimo contatto: {item.lastContactAt
+                            ? item.lastContactAt.slice(0, 10)
+                            : '—'}
+                        </Text>
+                        <View style={styles.cardActions}>
                           <TouchableOpacity
-                            style={styles.moveBtn}
-                            onPress={() => moveToNextStage(item.id)}
+                            style={styles.detailBtn}
+                            onPress={() => router.push(`/(app)/merchants` as never)}
                           >
-                            <Text style={styles.moveBtnText}>Sposta a →</Text>
+                            <Text style={styles.detailBtnText}>Dettaglio</Text>
+                          </TouchableOpacity>
+                          {advanceTo && (
+                            <TouchableOpacity
+                              style={[styles.moveBtn, busy && styles.moveBtnDisabled]}
+                              disabled={busy}
+                              onPress={() => void moveStage(item.id, advanceTo)}
+                              testID={`kanban-move-${item.id}`}
+                            >
+                              {busy
+                                ? <ActivityIndicator size="small" color="#fff" />
+                                : <Text style={styles.moveBtnText}>Sposta a →</Text>}
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                        {canLose && (
+                          <TouchableOpacity
+                            style={[styles.loseBtn, busy && styles.moveBtnDisabled]}
+                            disabled={busy}
+                            onPress={() => void moveStage(item.id, 'LOST')}
+                            testID={`kanban-lose-${item.id}`}
+                          >
+                            <Text style={styles.loseBtnText}>Segna come perso</Text>
                           </TouchableOpacity>
                         )}
                       </View>
-                    </View>
-                  )
-                }}
-              />
-            </View>
-          )
-        })}
-      </ScrollView>
+                    )
+                  }}
+                />
+              </View>
+            )
+          })}
+        </ScrollView>
+      )}
     </View>
   )
 }
@@ -144,8 +278,51 @@ const COLUMN_WIDTH = 220
 
 const styles = StyleSheet.create({
   container:    { flex: 1, backgroundColor: '#f5f7fa' },
+  centered:     { alignItems: 'center', justifyContent: 'center', padding: 24 },
   header:       { fontSize: 20, fontWeight: '700', color: '#1a3f6f', padding: 20, paddingBottom: 10 },
   board:        { paddingHorizontal: 12, paddingBottom: 20, gap: 10 },
+
+  stateText:    { marginTop: 12, fontSize: 14, color: '#6b7280' },
+  emptyBoard:   { flex: 1 },
+  emptyHint:    { marginTop: 6, fontSize: 13, color: '#9ca3af', textAlign: 'center' },
+  errorText:    { fontSize: 14, color: '#b91c1c', textAlign: 'center', marginBottom: 16 },
+
+  retryBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: '#1a3f6f',
+  },
+  retryBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+
+  // New-prospect form
+  addRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    gap: 8,
+  },
+  addInput: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 14,
+    color: '#111',
+  },
+  addBtn: {
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: '#1a3f6f',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 90,
+  },
+  addBtnDisabled: { backgroundColor: '#9ca3af' },
+  addBtnText:     { color: '#fff', fontSize: 14, fontWeight: '600' },
 
   column: {
     width: COLUMN_WIDTH,
@@ -212,6 +389,18 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#1a3f6f',
     alignItems: 'center',
+    justifyContent: 'center',
   },
+  moveBtnDisabled: { opacity: 0.6 },
   moveBtnText: { fontSize: 12, color: '#fff', fontWeight: '600' },
+
+  loseBtn: {
+    marginTop: 6,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#b91c1c',
+    alignItems: 'center',
+  },
+  loseBtnText: { fontSize: 12, color: '#b91c1c', fontWeight: '600' },
 })
