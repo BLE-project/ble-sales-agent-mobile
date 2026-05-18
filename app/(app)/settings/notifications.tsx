@@ -85,7 +85,13 @@ export default function NotificationsSettingsScreen() {
         'Questa notifica critica non può essere disabilitata per motivi di workflow.')
       return
     }
-    const nextPrefs = { ...prefs, [channelId]: next }
+    // Capture the pre-update snapshot so a failed save can be rolled back to
+    // the *previous* value. Sonar S6443: never pass the matching state variable
+    // straight back to its setter — after the optimistic setPrefs(nextPrefs)
+    // below, `prefs` is still the stale render-scope binding, so reverting must
+    // use an explicitly captured copy, not the variable itself.
+    const previousPrefs = prefs
+    const nextPrefs = { ...previousPrefs, [channelId]: next }
     setPrefs(nextPrefs)
     setSaving(true)
     try {
@@ -98,7 +104,7 @@ export default function NotificationsSettingsScreen() {
       )
     } catch (err) {
       Alert.alert('Errore salvataggio', (err as Error).message)
-      setPrefs(prefs)
+      setPrefs(previousPrefs)
     } finally {
       setSaving(false)
     }

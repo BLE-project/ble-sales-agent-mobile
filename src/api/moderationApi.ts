@@ -5,6 +5,7 @@
  * POST /{advId}/reject, POST /{advId}/escalate (TOTP required for approve/reject).
  */
 
+import * as SecureStore from 'expo-secure-store'
 import { api } from './client'
 
 export type AdvModerationStatus =
@@ -43,8 +44,9 @@ async function withTotp<T>(
 ): Promise<T> {
   const gateway = process.env.EXPO_PUBLIC_GATEWAY_URL ?? 'http://localhost:8080'
   // Token resolved via SecureStore by the base api wrapper; here we need raw fetch
-  // to insert X-TOTP-Code along with bearer. Duplicate minimally:
-  const SecureStore = await import('expo-secure-store')
+  // to insert X-TOTP-Code along with bearer. Duplicate minimally.
+  // FU-51: SecureStore is now a static import (was a per-call dynamic import) —
+  // consistent with client.ts/prospectsApi.ts and unit-testable under jest.
   const token = await SecureStore.getItemAsync('ble_sales_agent_token')
   const res = await fetch(`${gateway}${path}`, {
     method,
