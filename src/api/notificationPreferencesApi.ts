@@ -1,6 +1,7 @@
 /**
  * §7.3 — Notification preferences REST client (sales-agent-mobile).
  */
+import * as SecureStore from 'expo-secure-store'
 
 export interface NotificationPref {
   appId:     string
@@ -12,8 +13,10 @@ export interface NotificationPref {
 const GATEWAY = process.env.EXPO_PUBLIC_GATEWAY_URL ?? 'http://localhost:8080'
 const TOKEN_KEY = 'ble_sales_agent_token'
 
+// FU-51: static import of expo-secure-store (was a per-call dynamic import).
+// Aligns with src/api/client.ts + prospectsApi.ts, removes a native-bridge
+// dynamic-import round-trip, and makes the module unit-testable under jest.
 async function getToken(): Promise<string | null> {
-  const SecureStore = await import('expo-secure-store')
   try {
     return await SecureStore.getItemAsync(TOKEN_KEY)
   } catch {

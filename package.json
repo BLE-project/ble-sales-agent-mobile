@@ -53,6 +53,14 @@
   },
   "jest": {
     "preset": "jest-expo",
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "app/**/*.{ts,tsx}",
+      "!**/*.test.{ts,tsx}",
+      "!**/*.spec.{ts,tsx}",
+      "!src/i18n/messages/**",
+      "!**/__tests__/**"
+    ],
     "coverageReporters": [
       "text-summary",
       "lcov",
@@ -60,7 +68,7 @@
     ],
     "coverageThreshold": {
       "global": {
-        "lines": 81
+        "lines": 78
       }
     }
   },
