@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "767639420872",
+    "project_id": "terrionotification",
+    "storage_bucket": "terrionotification.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767639420872:android:e27d2217fbc098ef7ecafd",
+        "android_client_info": {
+          "package_name": "it.terrio.salesagent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACktowKLFEPyWmYrYHPTNxaVUcNZpkIFs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
