@@ -81,7 +81,7 @@ async function resolveTenantId(): Promise<string> {
     throw new ApiError(401, 'Not authenticated')
   }
   try {
-    const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    const base64 = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')
     const payload = JSON.parse(atob(base64)) as Record<string, unknown>
     const tenantId = (payload.ble_tenant_id as string) ?? (payload.tenantId as string)
     if (!tenantId || tenantId === 'ANY') {

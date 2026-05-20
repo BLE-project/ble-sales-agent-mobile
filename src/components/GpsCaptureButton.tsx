@@ -23,7 +23,7 @@ export interface GpsCaptureButtonProps {
   testID?: string
 }
 
-export function GpsCaptureButton(props: GpsCaptureButtonProps) {
+export function GpsCaptureButton(props: Readonly<GpsCaptureButtonProps>) {
   const [busy, setBusy] = useState(false)
 
   async function handleCapture() {
