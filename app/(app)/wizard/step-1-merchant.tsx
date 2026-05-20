@@ -51,12 +51,12 @@ export default function WizardStep1Merchant() {
       />
 
       {isLoading && <ActivityIndicator style={{ marginTop: 16 }} />}
-      {error && <Text style={styles.error}>Errore: {(error as Error).message}</Text>}
+      {error && <Text style={styles.error}>Errore: {error.message}</Text>}
 
       <FlatList
         data={filtered}
         keyExtractor={m => m.id}
-        ListEmptyComponent={!isLoading ? <Text style={styles.muted}>Nessun merchant trovato.</Text> : null}
+        ListEmptyComponent={isLoading ? null : <Text style={styles.muted}>Nessun merchant trovato.</Text>}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.row}

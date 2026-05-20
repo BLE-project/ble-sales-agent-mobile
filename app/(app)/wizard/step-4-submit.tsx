@@ -15,7 +15,7 @@ export default function WizardStep4Submit() {
   const router = useRouter()
   const [phase, setPhase] = useState<Phase>('submitting')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [snapshotId, setSnapshot] = useState<string | null>(null)
+  const [localSnapshotId, setLocalSnapshotId] = useState<string | null>(null)
 
   useEffect(() => {
     const state = getWizardState()
@@ -30,7 +30,7 @@ export default function WizardStep4Submit() {
     })
       .then(res => {
         setSnapshotId(res.healthSnapshotId)
-        setSnapshot(res.healthSnapshotId)
+        setLocalSnapshotId(res.healthSnapshotId)
         setPhase('ok')
       })
       .catch(e => {
@@ -65,7 +65,7 @@ export default function WizardStep4Submit() {
     <View style={styles.center}>
       <Text style={styles.ok} testID="wizard-submit-ok">✅ First-config registrata</Text>
       <Text style={styles.muted}>Health Snapshot ID:</Text>
-      <Text style={styles.snapshot}>{snapshotId}</Text>
+      <Text style={styles.snapshot}>{localSnapshotId}</Text>
       <TouchableOpacity
         style={[styles.btn, styles.btnPrimary, { marginTop: 24 }]}
         onPress={() => {
