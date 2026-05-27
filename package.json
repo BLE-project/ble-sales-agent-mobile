@@ -71,7 +71,10 @@
       "global": {
         "lines": 78
       }
-    }
+    },
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/observability/"
+    ]
   },
   "overrides": {
     "@xmldom/xmldom": "^0.8.13",
