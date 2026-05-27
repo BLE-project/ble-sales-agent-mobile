@@ -20,6 +20,7 @@
     "@expo-google-fonts/space-grotesk": "^0.2.3",
     "@expo/vector-icons": "^15.1.1",
     "@react-navigation/native": "^7.0.0",
+    "@sentry/react-native": "^6.22.0",
     "@tanstack/react-query": "^5.0.0",
     "expo": "~54.0.17",
     "expo-build-properties": "~1.0.10",
@@ -70,7 +71,10 @@
       "global": {
         "lines": 78
       }
-    }
+    },
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/observability/"
+    ]
   },
   "overrides": {
     "@xmldom/xmldom": "^0.8.13",

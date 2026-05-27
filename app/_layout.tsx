@@ -6,6 +6,11 @@ import { BiometricGate } from '../src/auth/BiometricGate'
 import { useEffect, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
 import { I18nProvider } from '../src/i18n/I18nProvider'
+import { initSentry, SentryErrorBoundary } from '../src/observability/sentry'
+
+// ADR-020: Sentry init — dormant until EXPO_PUBLIC_SENTRY_DSN set
+// post Privacy→Legal sign-off (legal-review-log.md entry 2026-05-27).
+initSentry()
 
 const qc = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30_000 } } })
 
@@ -36,6 +41,7 @@ function NotificationListener() {
 
 export default function RootLayout() {
   return (
+    <SentryErrorBoundary>
     <QueryClientProvider client={qc}>
       <AuthProvider>
         <I18nProvider tenantLocaleHint={null}>
@@ -60,5 +66,6 @@ export default function RootLayout() {
         </I18nProvider>
       </AuthProvider>
     </QueryClientProvider>
+    </SentryErrorBoundary>
   )
 }
