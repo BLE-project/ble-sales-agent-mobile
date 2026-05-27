@@ -46,7 +46,8 @@ const RE_PAN = /\b\d{13,19}\b/g;
 const RE_UUID = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
 const RE_LONG_NUMERIC = /\b\d{8,}\b/g;
 
-function redactValueShapes(s: string): string {
+// Exported for ADR-020 Sprint ε.3 PII scrub regression test suite.
+export function redactValueShapes(s: string): string {
   if (typeof s !== 'string') return s;
   return s
     .replace(RE_JWT, '[REDACTED:jwt]')
@@ -57,7 +58,7 @@ function redactValueShapes(s: string): string {
     .replace(RE_PAN, '[REDACTED:pan]');
 }
 
-function scrubUrl(url: string | undefined): string | undefined {
+export function scrubUrl(url: string | undefined): string | undefined {
   if (!url || typeof url !== 'string') return url;
   try {
     const u = new URL(url, 'http://placeholder.local');
@@ -86,7 +87,7 @@ function scrubUrl(url: string | undefined): string | undefined {
   }
 }
 
-function scrubHeaders(headers: unknown): unknown {
+export function scrubHeaders(headers: unknown): unknown {
   if (!headers || typeof headers !== 'object') return headers;
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(headers as Record<string, unknown>)) {
@@ -102,7 +103,7 @@ function scrubHeaders(headers: unknown): unknown {
   return out;
 }
 
-function scrubPii(value: unknown): unknown {
+export function scrubPii(value: unknown): unknown {
   if (value === null || value === undefined) return value;
   if (typeof value === 'string') return redactValueShapes(value);
   if (Array.isArray(value)) return value.map(scrubPii);
@@ -118,7 +119,7 @@ function scrubPii(value: unknown): unknown {
   return out;
 }
 
-function scrubBreadcrumb(breadcrumb: Sentry.Breadcrumb): Sentry.Breadcrumb | null {
+export function scrubBreadcrumb(breadcrumb: Sentry.Breadcrumb): Sentry.Breadcrumb | null {
   if (breadcrumb.category === 'ui.input' || breadcrumb.category === 'touch') return null;
   if (breadcrumb.category === 'ui.click') {
     const target = (breadcrumb.message ?? '').toLowerCase();
