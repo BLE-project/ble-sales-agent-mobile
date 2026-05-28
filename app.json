@@ -57,6 +57,14 @@
             "networkSecurityConfig": "./network_security_config.xml"
           }
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "terrio",
+          "project": "sales-agent-mobile",
+          "url": "https://glitchtip.terrio.local/"
+        }
       ]
     ],
     "experiments": {
