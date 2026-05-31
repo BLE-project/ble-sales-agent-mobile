@@ -8,6 +8,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -43,3 +46,12 @@ jobs:
           path: coverage/
           if-no-files-found: warn
           retention-days: 30
+
+      # T6 (2026-05-31): self-hosted SonarQube scan. Reads sonar-project.properties
+      # (projectKey + javascript.lcov.reportPaths=coverage/lcov.info). Gated on the
+      # SONAR_TOKEN secret — skips cleanly until the operator provisions SONAR_TOKEN +
+      # makes SONAR_HOST_URL reachable from GitHub runners (mirrors the GlitchTip gate
+      # pattern already in the fleet). No CI-red while unprovisioned.
+      - name: SonarQube scan
+        if: env.SONAR_TOKEN != ''
+        uses: sonarsource/sonarqube-scan-action@v3
