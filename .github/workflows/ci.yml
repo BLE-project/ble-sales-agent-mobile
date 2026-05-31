@@ -8,9 +8,12 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # Non-secret boolean only: the real token is confined to the SonarQube step
+      # below, never exposed to npm install / npm test where third-party JS runs.
+      HAS_SONAR: ${{ secrets.SONAR_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,5 +56,8 @@ jobs:
       # makes SONAR_HOST_URL reachable from GitHub runners (mirrors the GlitchTip gate
       # pattern already in the fleet). No CI-red while unprovisioned.
       - name: SonarQube scan
-        if: env.SONAR_TOKEN != ''
-        uses: sonarsource/sonarqube-scan-action@v3
+        if: env.HAS_SONAR == 'true'
+        uses: sonarsource/sonarqube-scan-action@13990a695682794b53148ff9f6a8b6e22e43955e # v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
