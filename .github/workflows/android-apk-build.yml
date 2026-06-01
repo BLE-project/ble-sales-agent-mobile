@@ -38,6 +38,10 @@ env:
   EXPO_PUBLIC_GATEWAY_URL: 'http://localhost:8080'
   EXPO_PUBLIC_KC_URL: 'http://localhost:8180'
   EXPO_PUBLIC_KC_REALM: 'ble'
+  # ADR-020: CI has no SENTRY_AUTH_TOKEN, so the @sentry/react-native gradle
+  # SentryUpload task ("Auth token is required") fails assembleRelease. Skip the
+  # source-map upload in CI; re-enable by adding a real token + dropping this.
+  SENTRY_DISABLE_AUTO_UPLOAD: 'true'
 
 jobs:
   build-apk:
