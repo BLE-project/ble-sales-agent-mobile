@@ -8,6 +8,27 @@
 import * as SecureStore from 'expo-secure-store'
 import { api } from './client'
 
+const TOKEN_KEY = 'ble_sales_agent_token'
+
+/**
+ * Decode the `ble_tenant_id` claim from the stored JWT. The moderation endpoints
+ * are tenant-scoped: the API gateway (and notification-service TenantValidator)
+ * reject any request whose `X-Tenant-Id` header is missing (400) or mismatched
+ * (403). Mirrors prospectsApi.resolveTenantId — without this header the queue
+ * silently rendered empty ("0 in attesa").
+ */
+async function resolveTenantId(): Promise<string> {
+  const token = await SecureStore.getItemAsync(TOKEN_KEY).catch(() => null)
+  if (!token) throw new Error('Not authenticated')
+  const base64 = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')
+  const payload = JSON.parse(atob(base64)) as Record<string, unknown>
+  const tenantId = (payload.ble_tenant_id as string) ?? (payload.tenant_id as string)
+  if (!tenantId || tenantId === 'ANY' || tenantId === '*') {
+    throw new Error('No tenant is associated with this account')
+  }
+  return tenantId
+}
+
 export type AdvModerationStatus =
   | 'PENDING_HUMAN'
   | 'ESCALATED_TO_ADMIN'
@@ -48,11 +69,13 @@ async function withTotp<T>(
   // FU-51: SecureStore is now a static import (was a per-call dynamic import) —
   // consistent with client.ts/prospectsApi.ts and unit-testable under jest.
   const token = await SecureStore.getItemAsync('ble_sales_agent_token')
+  const tenantId = await resolveTenantId()
   const res = await fetch(`${gateway}${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      'X-Tenant-Id': tenantId,
       'X-TOTP-Code': totpCode,
     },
     body: JSON.stringify(body),
@@ -66,11 +89,13 @@ async function withTotp<T>(
 }
 
 export const moderationApi = {
-  list: (page = 0, size = 20) =>
-    api.get<ReviewTask[]>(`/api/v1/moderation/reviews?page=${page}&size=${size}`),
+  list: async (page = 0, size = 20) =>
+    api.get<ReviewTask[]>(`/api/v1/moderation/reviews?page=${page}&size=${size}`,
+      { 'X-Tenant-Id': await resolveTenantId() }),
 
-  get: (advId: string) =>
-    api.get<ReviewTask>(`/api/v1/moderation/reviews/${advId}`),
+  get: async (advId: string) =>
+    api.get<ReviewTask>(`/api/v1/moderation/reviews/${advId}`,
+      { 'X-Tenant-Id': await resolveTenantId() }),
 
   approve: (advId: string, reason: string, totpCode: string) =>
     withTotp<{ status: string }>('POST',
@@ -80,7 +105,8 @@ export const moderationApi = {
     withTotp<{ status: string }>('POST',
       `/api/v1/moderation/reviews/${advId}/reject`, { reason }, totpCode),
 
-  escalate: (advId: string, reason: string) =>
+  escalate: async (advId: string, reason: string) =>
     api.post<{ status: string }>(
-      `/api/v1/moderation/reviews/${advId}/escalate`, { reason }),
+      `/api/v1/moderation/reviews/${advId}/escalate`, { reason },
+      { 'X-Tenant-Id': await resolveTenantId() }),
 }

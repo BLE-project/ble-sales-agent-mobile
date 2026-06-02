@@ -37,10 +37,15 @@ function res(status: number, body: unknown) {
   }
 }
 
+// Stored session token must be a real 3-part JWT so resolveTenantId can decode
+// the ble_tenant_id claim used for the X-Tenant-Id header.
+const TENANT = 'tenant-xyz'
+const JWT = `h.${Buffer.from(JSON.stringify({ ble_tenant_id: TENANT })).toString('base64url')}.s`
+
 beforeEach(() => {
   mockFetch.mockReset()
   mockGetItem.mockReset()
-  mockGetItem.mockResolvedValue('agent-token')
+  mockGetItem.mockResolvedValue(JWT)
   mockFetch.mockResolvedValue(res(200, {}))
 })
 
@@ -50,6 +55,7 @@ describe('moderationApi.list', () => {
     const [url, init] = mockFetch.mock.calls[0]
     expect(url).toContain('/api/v1/moderation/reviews?page=0&size=20')
     expect(init.method).toBe('GET')
+    expect(init.headers['X-Tenant-Id']).toBe(TENANT)
   })
 
   it('honours explicit page + size args', async () => {
@@ -77,16 +83,18 @@ describe('moderationApi.approve (TOTP)', () => {
     expect(url).toContain('/api/v1/moderation/reviews/adv-1/approve')
     expect(init.method).toBe('POST')
     expect(init.headers['X-TOTP-Code']).toBe('123456')
-    expect(init.headers['Authorization']).toBe('Bearer agent-token')
+    expect(init.headers['Authorization']).toBe(`Bearer ${JWT}`)
+    expect(init.headers['X-Tenant-Id']).toBe(TENANT)
     expect(JSON.parse(init.body)).toEqual({ reason: 'compliant' })
   })
 
-  it('omits Authorization header when no token is stored', async () => {
-    mockGetItem.mockResolvedValueOnce(null)
-    mockFetch.mockResolvedValueOnce(res(200, { status: 'APPROVED' }))
-    await moderationApi.approve('adv-1', 'r', '000000')
-    const [, init] = mockFetch.mock.calls[0]
-    expect(init.headers['Authorization']).toBeUndefined()
+  it('rejects (not authenticated) when no token is stored', async () => {
+    // Tenant-scoped endpoints need the JWT to resolve X-Tenant-Id; with no token
+    // the call fails closed before reaching the network.
+    mockGetItem.mockResolvedValue(null)
+    await expect(moderationApi.approve('adv-1', 'r', '000000'))
+      .rejects.toThrow('Not authenticated')
+    expect(mockFetch).not.toHaveBeenCalled()
   })
 
   it('throws an Error carrying the status when the backend rejects', async () => {
