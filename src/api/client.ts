@@ -90,9 +90,33 @@ async function doRefresh(): Promise<string> {
   return newAccess
 }
 
+// Tenant-scoped endpoints (/v1/*) require X-Tenant-Id — the BFF does NOT derive
+// it from the JWT, so the client must send it on EVERY request. Pull
+// ble_tenant_id from the access token and inject it centrally (mirrors
+// consumer/merchant/tenant/territory-mobile). Without this, tenant-scoped
+// sales-agent calls returned 400 MISSING_TENANT_ID and screens rendered empty
+// (moderation queue, "I tuoi merchant", merchant detail, …).
+function tenantIdFromToken(token: string | null): string | null {
+  if (!token) return null
+  try {
+    const base64 = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')
+    const payload = JSON.parse(atob(base64)) as Record<string, unknown>
+    return (payload.ble_tenant_id as string)
+        ?? (payload.tenant_id as string)
+        ?? (payload.tenantId as string)
+        ?? null
+  } catch {
+    return null
+  }
+}
+
 function buildHeaders(token: string | null, baseHeaders: Record<string, string>): Record<string, string> {
+  const tenantId = tenantIdFromToken(token)
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    // Auto-inject X-Tenant-Id; an explicit per-call header (e.g. SUPER_ADMIN
+    // cross-tenant) in baseHeaders still wins via the spread below.
+    ...(tenantId ? { 'X-Tenant-Id': tenantId } : {}),
     ...baseHeaders,
   }
   if (token) headers['Authorization'] = `Bearer ${token}`
