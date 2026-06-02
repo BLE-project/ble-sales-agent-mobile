@@ -45,6 +45,9 @@ function res(status: number, body: unknown) {
 beforeEach(() => {
   mockFetch.mockReset()
   mockFetch.mockResolvedValue(res(200, {}))
+  // Reset the stored token between tests (the merchantsApi test overrides it
+  // with a real JWT for X-Tenant-Id resolution).
+  ;(require('expo-secure-store').getItemAsync as jest.Mock).mockResolvedValue('agent-token')
 })
 
 describe('registrationRequestsApi', () => {
@@ -138,10 +141,17 @@ describe('royaltiesApi', () => {
 })
 
 describe('merchantsApi', () => {
-  it('listByAgent() GETs merchants filtered by managedByAgent', async () => {
+  it('listByAgent() GETs merchants filtered by managedByAgent + X-Tenant-Id', async () => {
+    // listByAgent resolves X-Tenant-Id from the JWT claim, so the stored token
+    // must be a real 3-part JWT here (the module default "agent-token" is not).
+    const SecureStore = require('expo-secure-store')
+    const jwt = `h.${Buffer.from(JSON.stringify({ ble_tenant_id: 'tenant-xyz' })).toString('base64url')}.s`
+    ;(SecureStore.getItemAsync as jest.Mock).mockResolvedValue(jwt)
+
     await merchantsApi.listByAgent()
-    const [url] = mockFetch.mock.calls[0]
+    const [url, init] = mockFetch.mock.calls[0]
     expect(url).toContain('/api/v1/merchants?managedByAgent=true')
+    expect(init.headers['X-Tenant-Id']).toBe('tenant-xyz')
   })
 })
 

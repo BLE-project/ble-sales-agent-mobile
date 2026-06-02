@@ -1,4 +1,24 @@
+import * as SecureStore from 'expo-secure-store'
 import { api } from './client'
+
+const TOKEN_KEY = 'ble_sales_agent_token'
+
+/**
+ * Resolve X-Tenant-Id from the stored JWT (ble_tenant_id claim). Tenant-scoped
+ * endpoints (e.g. /v1/merchants) 400 without it — mirrors prospectsApi /
+ * moderationApi. Without this the "I tuoi merchant" list silently rendered empty.
+ */
+async function resolveTenantId(): Promise<string> {
+  const token = await SecureStore.getItemAsync(TOKEN_KEY).catch(() => null)
+  if (!token) throw new Error('Not authenticated')
+  const base64 = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')
+  const payload = JSON.parse(atob(base64)) as Record<string, unknown>
+  const tenantId = (payload.ble_tenant_id as string) ?? (payload.tenant_id as string)
+  if (!tenantId || tenantId === 'ANY' || tenantId === '*') {
+    throw new Error('No tenant is associated with this account')
+  }
+  return tenantId
+}
 
 export interface RegistrationRequest {
   id: string
@@ -262,5 +282,7 @@ export interface MerchantSummary {
 
 export const merchantsApi = {
   /** List merchants managed by the currently authenticated sales agent. */
-  listByAgent: () => api.get<MerchantSummary[]>('/api/v1/merchants?managedByAgent=true'),
+  listByAgent: async () =>
+    api.get<MerchantSummary[]>('/api/v1/merchants?managedByAgent=true',
+      { 'X-Tenant-Id': await resolveTenantId() }),
 }
