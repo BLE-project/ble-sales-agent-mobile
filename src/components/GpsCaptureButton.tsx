@@ -13,7 +13,11 @@ import { TouchableOpacity, Text, ActivityIndicator, Alert, StyleSheet } from 're
 import * as Location from 'expo-location'
 import { captureBeaconGps } from '../api/beaconGpsApi'
 
-const MAX_ACCURACY_METERS = 10
+// Door-of-store granularity per #185 spec. Configurable via env so the e2e
+// build can relax it — a physical test device indoors only gets ~45 m fixes,
+// which would make the capture flow permanently un-passable (same rationale as
+// the e2e TOTP disable). Defaults to the production-safe 10 m when unset.
+const MAX_ACCURACY_METERS = Number(process.env.EXPO_PUBLIC_GPS_MAX_ACCURACY_M) || 10
 
 export interface GpsCaptureButtonProps {
   beaconId: string
