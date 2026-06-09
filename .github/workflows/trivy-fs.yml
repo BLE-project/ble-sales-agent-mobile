@@ -21,6 +21,9 @@ on:
   schedule:
     - cron: '37 4 * * 2'
 
+permissions:
+  contents: read
+
 jobs:
   scan:
     runs-on: ubuntu-latest
