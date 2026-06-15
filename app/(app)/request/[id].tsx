@@ -59,8 +59,8 @@ export default function RequestDetailScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ padding: 20 }}>
-      <Text style={styles.title}>{request.businessName}</Text>
+    <ScrollView style={styles.container} contentContainerStyle={{ padding: 20 }} testID="request-detail">
+      <Text style={styles.title} testID="request-title">{request.businessName}</Text>
       <Text style={styles.meta}>Proprietario: {request.ownerName}</Text>
       <Text style={styles.meta}>Tipo: {request.businessType}</Text>
       <Text style={styles.meta}>Email: {request.email}</Text>
@@ -78,11 +78,13 @@ export default function RequestDetailScreen() {
             value={notes}
             onChangeText={setNotes}
             multiline
+            testID="request-accept-notes"
           />
           <TouchableOpacity
             style={styles.btnPrimary}
             onPress={() => acceptMutation.mutate()}
             disabled={acceptMutation.isPending}
+            testID="request-accept-btn"
           >
             <Text style={styles.btnText}>
               {acceptMutation.isPending ? 'Aggiornamento...' : '▶ Prendi in carico'}
@@ -100,11 +102,13 @@ export default function RequestDetailScreen() {
             value={notes}
             onChangeText={setNotes}
             multiline
+            testID="request-approve-notes"
           />
           <TouchableOpacity
             style={styles.btnSuccess}
             onPress={() => approveMutation.mutate()}
             disabled={approveMutation.isPending}
+            testID="request-approve-btn"
           >
             <Text style={styles.btnText}>
               {approveMutation.isPending ? 'Approvazione...' : '✓ Approva'}
@@ -123,11 +127,13 @@ export default function RequestDetailScreen() {
             value={kitNotes}
             onChangeText={setKitNotes}
             multiline
+            testID="request-kit-notes"
           />
           <TouchableOpacity
             style={styles.btnPrimary}
             onPress={() => kitMutation.mutate()}
             disabled={kitMutation.isPending}
+            testID="request-kit-btn"
           >
             <Text style={styles.btnText}>
               {kitMutation.isPending ? 'Creazione...' : '📦 Crea consegna kit'}
