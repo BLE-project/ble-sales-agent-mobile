@@ -170,3 +170,57 @@ describe('useAuth guard', () => {
     spy.mockRestore()
   })
 })
+
+describe('agent profile resolution (FEAT-SA-FALLBACK)', () => {
+  it('populates agentId + isSuperAdminAgent from /sales-agents/me on login', async () => {
+    mockFetch
+      .mockResolvedValueOnce(jsonRes(200, { token: AGENT_JWT, refreshToken: 'r-1' })) // login
+      .mockResolvedValueOnce(jsonRes(200, {                                            // profile
+        id: 'sa-uuid-9', isSuperAdminFallback: true, territoryIds: ['ter-1', 'ter-2'],
+      }))
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    await act(async () => { await result.current.login('mario', 'pw') })
+
+    expect(result.current.user?.agentId).toBe('sa-uuid-9')
+    expect(result.current.user?.isSuperAdminAgent).toBe(true)
+  })
+
+  it('derives territoryIds from assignments[] when territoryIds is absent', async () => {
+    // Bootstrap path: token present in SecureStore, profile resolves via assignments.
+    mockGet.mockImplementation((k: string) =>
+      Promise.resolve(k === 'ble_sales_agent_token' ? AGENT_JWT : null))
+    mockFetch.mockResolvedValueOnce(jsonRes(200, {
+      id: 'sa-uuid-7', isSuperAdminFallback: false,
+      assignments: [{ territoryId: 'ter-a' }, { territoryId: 'ter-b' }, {}],
+    }))
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(true))
+    expect(result.current.user?.agentId).toBe('sa-uuid-7')
+  })
+})
+
+describe('push token lifecycle (T-162)', () => {
+  it('unregisters the cached push token on logout when one was registered', async () => {
+    const { registerSalesAgentPushToken, unregisterPushToken } =
+      jest.requireMock('../notifications/pushTokenRegistration')
+    ;(registerSalesAgentPushToken as jest.Mock).mockResolvedValue({
+      registered: true, pushToken: 'fcm-token-xyz',
+    })
+    mockFetch
+      .mockResolvedValueOnce(jsonRes(200, { token: AGENT_JWT, refreshToken: 'r-1' })) // login
+      .mockResolvedValue(jsonRes(404, {}))                                            // profile
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    await act(async () => { await result.current.login('mario', 'pw') })
+    // let the fire-and-forget registration settle
+    await waitFor(() => expect(registerSalesAgentPushToken).toHaveBeenCalled())
+
+    await act(async () => { await result.current.logout() })
+    expect(unregisterPushToken).toHaveBeenCalledWith(
+      'fcm-token-xyz', expect.objectContaining({ authToken: AGENT_JWT }),
+    )
+  })
+})
