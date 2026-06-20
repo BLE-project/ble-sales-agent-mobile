@@ -60,7 +60,7 @@ const CLIENT_ID = 'ble-sales-agent-mobile'
 
 function parseJwt(token: string): Record<string, unknown> {
   try {
-    const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    const base64 = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')
     return JSON.parse(atob(base64))
   } catch {
     return {}
@@ -95,7 +95,7 @@ async function resolveAgentProfile(token: string): Promise<{ id: string; isSuper
   }
 }
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [user, setUser]               = useState<AuthUser | null>(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [isLoading, setIsLoading]     = useState(true)

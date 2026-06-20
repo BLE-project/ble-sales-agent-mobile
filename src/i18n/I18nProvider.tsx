@@ -20,7 +20,7 @@ interface Props {
   children: ReactNode
 }
 
-export function I18nProvider({ tenantLocaleHint, children }: Props) {
+export function I18nProvider({ tenantLocaleHint, children }: Readonly<Props>) {
   const [locale, setLocale] = useState<Locale | null>(null)
 
   useEffect(() => {

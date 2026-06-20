@@ -50,12 +50,12 @@ const RE_LONG_NUMERIC = /\b\d{8,}\b/g;
 export function redactValueShapes(s: string): string {
   if (typeof s !== 'string') return s;
   return s
-    .replace(RE_JWT, '[REDACTED:jwt]')
-    .replace(RE_EMAIL, '[REDACTED:email]')
-    .replace(RE_IBAN, '[REDACTED:iban]')
-    .replace(RE_CF, '[REDACTED:cf]')
-    .replace(RE_UUID, '[REDACTED:uuid]')
-    .replace(RE_PAN, '[REDACTED:pan]');
+    .replaceAll(RE_JWT, '[REDACTED:jwt]')
+    .replaceAll(RE_EMAIL, '[REDACTED:email]')
+    .replaceAll(RE_IBAN, '[REDACTED:iban]')
+    .replaceAll(RE_CF, '[REDACTED:cf]')
+    .replaceAll(RE_UUID, '[REDACTED:uuid]')
+    .replaceAll(RE_PAN, '[REDACTED:pan]');
 }
 
 export function scrubUrl(url: string | undefined): string | undefined {
@@ -74,11 +74,11 @@ export function scrubUrl(url: string | undefined): string | undefined {
       .map((seg) => {
         if (!seg) return seg;
         return seg
-          .replace(RE_UUID, '[uuid]')
-          .replace(RE_EMAIL, '[email]')
-          .replace(RE_CF, '[cf]')
-          .replace(RE_IBAN, '[iban]')
-          .replace(RE_LONG_NUMERIC, '[id]');
+          .replaceAll(RE_UUID, '[uuid]')
+          .replaceAll(RE_EMAIL, '[email]')
+          .replaceAll(RE_CF, '[cf]')
+          .replaceAll(RE_IBAN, '[iban]')
+          .replaceAll(RE_LONG_NUMERIC, '[id]');
       })
       .join('/');
     return u.toString().replace('http://placeholder.local', '');

@@ -122,7 +122,7 @@ const BiometricAuthContext = createContext<BiometricAuthState | null>(null)
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
-export function BiometricAuthProvider({ children }: { children: ReactNode }) {
+export function BiometricAuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const intl = useIntl()
   const auth = useAuth()
   const [record, setRecord] = useState<EnrollmentRecord>(DEFAULT_ENROLLMENT)

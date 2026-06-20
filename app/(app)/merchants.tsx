@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
-import { merchantsApi, MerchantSummary } from '../../src/api/salesAgentApi'
+import { merchantsApi } from '../../src/api/salesAgentApi'
 
 export default function MerchantsScreen() {
   const router = useRouter()

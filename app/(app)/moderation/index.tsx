@@ -12,7 +12,7 @@ import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { moderationApi, ReviewTask } from '../../../src/api/moderationApi'
 
-function RiskBadge({ level }: { level: ReviewTask['claudeRiskLevel'] }) {
+function RiskBadge({ level }: Readonly<{ level: ReviewTask['claudeRiskLevel'] }>) {
   if (!level) return null
   const color = level === 'HIGH' ? '#ef4444' : level === 'MEDIUM' ? '#f59e0b' : '#10b981'
   return (

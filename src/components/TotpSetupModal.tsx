@@ -22,7 +22,7 @@ interface TotpSetupResponse {
   issuer: string
 }
 
-export function TotpSetupModal({ visible, onClose, onSetupComplete }: TotpSetupModalProps) {
+export function TotpSetupModal({ visible, onClose, onSetupComplete }: Readonly<TotpSetupModalProps>) {
   const [step, setStep] = useState<'init' | 'verify' | 'done'>('init')
   const [secret, setSecret] = useState('')
   const [otpauthUri, setOtpauthUri] = useState('')
@@ -79,7 +79,7 @@ export function TotpSetupModal({ visible, onClose, onSetupComplete }: TotpSetupM
                 <Text style={styles.hint}>Copy the secret or URI into your authenticator app.</Text>
                 <Text style={styles.label}>Enter 6-digit code:</Text>
                 <TextInput style={styles.codeInput} value={code} maxLength={6} keyboardType="numeric"
-                  onChangeText={t => setCode(t.replace(/\D/g, '').slice(0, 6))} placeholder="000000" />
+                  onChangeText={t => setCode(t.replaceAll(/\D/g, '').slice(0, 6))} placeholder="000000" />
                 {!!error && <Text style={styles.error}>{error}</Text>}
                 <TouchableOpacity style={[styles.btn, (loading || code.length !== 6) && styles.btnDisabled]}
                   onPress={handleVerify} disabled={loading || code.length !== 6}>
