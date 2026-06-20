@@ -14,7 +14,7 @@ interface TotpVerifyModalProps {
   operationLabel?: string
 }
 
-export function TotpVerifyModal({ visible, onClose, onVerified, totpSecret, operationLabel }: TotpVerifyModalProps) {
+export function TotpVerifyModal({ visible, onClose, onVerified, totpSecret, operationLabel }: Readonly<TotpVerifyModalProps>) {
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -39,7 +39,7 @@ export function TotpVerifyModal({ visible, onClose, onVerified, totpSecret, oper
             {operationLabel ? `Enter code to ${operationLabel}.` : 'Enter your authenticator code.'}
           </Text>
           <TextInput style={styles.codeInput} value={code} maxLength={6} keyboardType="numeric"
-            onChangeText={t => setCode(t.replace(/\D/g, '').slice(0, 6))} placeholder="000000" autoFocus />
+            onChangeText={t => setCode(t.replaceAll(/\D/g, '').slice(0, 6))} placeholder="000000" autoFocus />
           {!!error && <Text style={styles.error}>{error}</Text>}
           <View style={styles.row}>
             <TouchableOpacity style={styles.cancelBtn} onPress={() => { setCode(''); setError(''); onClose() }}>

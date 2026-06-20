@@ -30,7 +30,7 @@ import { BiometricEnrollModal } from './BiometricEnrollModal'
  * `status` so prompting → pin-required → locked fades freshly each time.
  * useNativeDriver:true so opacity tweens on the native UI thread.
  */
-function FadeInView({ children }: { children: ReactNode }) {
+function FadeInView({ children }: Readonly<{ children: ReactNode }>) {
   const opacity = useRef(new Animated.Value(0)).current
   useEffect(() => {
     Animated.timing(opacity, {
@@ -42,7 +42,7 @@ function FadeInView({ children }: { children: ReactNode }) {
   return <Animated.View style={{ flex: 1, opacity }}>{children}</Animated.View>
 }
 
-export function BiometricGate({ children }: { children: React.ReactNode }) {
+export function BiometricGate({ children }: Readonly<{ children: React.ReactNode }>) {
   const intl = useIntl()
   const auth = useAuth()
   const bio = useBiometricAuth()
@@ -120,7 +120,7 @@ export function BiometricGate({ children }: { children: React.ReactNode }) {
 
 // ── Internal: biometric prompt overlay ───────────────────────────────────────
 
-function BiometricPromptOverlay({ onUsePin }: { onUsePin: () => void }) {
+function BiometricPromptOverlay({ onUsePin }: Readonly<{ onUsePin: () => void }>) {
   const bio = useBiometricAuth()
 
   // Auto-trigger biometric on mount. The hook handles status transitions

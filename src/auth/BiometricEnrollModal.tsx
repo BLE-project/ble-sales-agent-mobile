@@ -34,7 +34,7 @@ export interface BiometricEnrollModalProps {
 
 type Step = 'intro' | 'pin1' | 'pin2' | 'mismatch'
 
-export function BiometricEnrollModal({ visible, onDone }: BiometricEnrollModalProps) {
+export function BiometricEnrollModal({ visible, onDone }: Readonly<BiometricEnrollModalProps>) {
   const auth = useBiometricAuth()
   const [step, setStep] = useState<Step>('intro')
   const [pin1, setPin1] = useState('')

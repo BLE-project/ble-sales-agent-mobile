@@ -24,7 +24,7 @@ interface Props {
   onClear: () => void
 }
 
-export default function SignatureCanvas({ onSave, onClear }: Props) {
+export default function SignatureCanvas({ onSave, onClear }: Readonly<Props>) {
   const [segments, setSegments] = useState<Segment[]>([])
   const lastPoint = useRef<Point | null>(null)
   const canvasOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 })

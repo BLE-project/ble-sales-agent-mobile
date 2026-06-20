@@ -53,7 +53,7 @@ export function PinEntryScreen({
   title,
   subtitle,
   onBiometricPressed,
-}: PinEntryScreenProps) {
+}: Readonly<PinEntryScreenProps>) {
   const intl = useIntl()
   const auth = useBiometricAuth()
   const [pin, setPin] = useState('')
