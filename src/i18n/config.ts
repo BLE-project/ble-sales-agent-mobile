@@ -16,8 +16,11 @@ import * as SecureStore from 'expo-secure-store'
 // Adding a locale = drop a new JSON file under ./messages/ + add import here.
 import itIT from './messages/it-IT.json'
 import enUS from './messages/en-US.json'
+import esES from './messages/es-ES.json'
+import frFR from './messages/fr-FR.json'
+import deDE from './messages/de-DE.json'
 
-export type Locale = 'it-IT' | 'en-US'
+export type Locale = 'it-IT' | 'en-US' | 'es-ES' | 'fr-FR' | 'de-DE'
 
 export const DEFAULT_LOCALE: Locale = 'it-IT'
 const SECURE_STORE_KEY = 'ble_user_locale_pref'
@@ -25,6 +28,9 @@ const SECURE_STORE_KEY = 'ble_user_locale_pref'
 export const MESSAGES: Record<Locale, Record<string, string>> = {
   'it-IT': itIT,
   'en-US': enUS,
+  'es-ES': esES,
+  'fr-FR': frFR,
+  'de-DE': deDE,
 }
 
 /**
@@ -58,6 +64,27 @@ export async function resolveLocale(tenantLocaleHint?: string | null): Promise<L
 
 export async function setUserLocale(locale: Locale): Promise<void> {
   await SecureStore.setItemAsync(SECURE_STORE_KEY, locale)
+  _activeLocale = locale
+}
+
+// Cached active locale, populated by ensureLocale() at startup so synchronous
+// callers (splash, error boundaries, the t() helper) can read it without an
+// await. Defaults to DEFAULT_LOCALE until the first resolution completes.
+let _activeLocale: Locale = DEFAULT_LOCALE
+
+/**
+ * Startup entry point — resolve the active locale once and cache it.
+ * Call from the root layout before first paint (the IntlProvider does its
+ * own async resolution, but ensureLocale() warms the cache for pre-mount
+ * lookups and lets callers know which catalogue is live).
+ */
+export async function ensureLocale(tenantLocaleHint?: string | null): Promise<Locale> {
+  _activeLocale = await resolveLocale(tenantLocaleHint)
+  return _activeLocale
+}
+
+export function getActiveLocale(): Locale {
+  return _activeLocale
 }
 
 export function isSupported(tag: string): boolean {

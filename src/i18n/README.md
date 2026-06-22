@@ -44,7 +44,24 @@ reference — the same pattern applies here, only the message IDs differ.
 3. Device locale via `expo-localization`
 4. Hardcoded `DEFAULT_LOCALE = 'it-IT'`
 
-## Adding a locale (Phase 3 — `es-ES`, `pt-PT`, `fr-FR`)
+## Shipped locales (Task #86 — i18n FULL)
+
+Five catalogues ship, all key-aligned with `it-IT` (the source of truth) and
+guarded by `parity.test.ts`:
+
+| Locale  | Status                                              |
+|---------|-----------------------------------------------------|
+| `it-IT` | source of truth (`DEFAULT_LOCALE`)                  |
+| `en-US` | reviewed                                            |
+| `es-ES` | **machine-draft** — needs native review            |
+| `fr-FR` | **machine-draft** — needs native review            |
+| `de-DE` | **machine-draft** — needs native review            |
+
+> The `es-ES` / `fr-FR` / `de-DE` values were drafted automatically from the
+> Italian source. ICU placeholders and plural arms are preserved (enforced by
+> `parity.test.ts`), but copy should be reviewed by a native speaker before GA.
+
+## Adding a locale (after the initial five)
 
 1. Add file `messages/<tag>.json` with translated values
 2. Add `import xxYY from './messages/xx-YY.json'` to `config.ts`

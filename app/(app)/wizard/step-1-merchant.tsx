@@ -7,6 +7,7 @@
  */
 import { useMemo, useState } from 'react'
 import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { merchantsApi, type MerchantSummary } from '../../../src/api/salesAgentApi'
@@ -14,6 +15,7 @@ import { setMerchant } from '../../../src/wizard/wizardState'
 
 export default function WizardStep1Merchant() {
   const router = useRouter()
+  const intl = useIntl()
   const [filter, setFilter] = useState('')
 
   const { data, isLoading, error } = useQuery({
@@ -36,14 +38,14 @@ export default function WizardStep1Merchant() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Step 1 — Seleziona merchant</Text>
+      <Text style={styles.title}><FormattedMessage id="wizard.step1.title" /></Text>
       <Text style={styles.subtitle}>
-        Scegli il merchant a cui sono assegnati i beacon da configurare.
+        <FormattedMessage id="wizard.step1.subtitle" />
       </Text>
 
       <TextInput
         style={styles.search}
-        placeholder="Filtra per nome o UUID…"
+        placeholder={intl.formatMessage({ id: 'wizard.step1.search_placeholder' })}
         value={filter}
         onChangeText={setFilter}
         autoCapitalize="none"
@@ -51,12 +53,12 @@ export default function WizardStep1Merchant() {
       />
 
       {isLoading && <ActivityIndicator style={{ marginTop: 16 }} />}
-      {error && <Text style={styles.error}>Errore: {error.message}</Text>}
+      {error && <Text style={styles.error}><FormattedMessage id="wizard.error" values={{ reason: error.message }} /></Text>}
 
       <FlatList
         data={filtered}
         keyExtractor={m => m.id}
-        ListEmptyComponent={isLoading ? null : <Text style={styles.muted}>Nessun merchant trovato.</Text>}
+        ListEmptyComponent={isLoading ? null : <Text style={styles.muted}><FormattedMessage id="wizard.step1.no_merchants" /></Text>}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.row}

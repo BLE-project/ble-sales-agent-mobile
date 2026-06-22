@@ -7,6 +7,8 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native'
 import { Alert } from 'react-native'
+import { IntlProvider } from 'react-intl'
+import itIT from '../../../../src/i18n/messages/it-IT.json'
 
 jest.mock('../../../../src/api/notificationPreferencesApi', () => ({
   notificationPreferencesApi: { list: jest.fn(), update: jest.fn() },
@@ -17,6 +19,13 @@ import NotificationsSettingsScreen from '../notifications'
 
 const mockList = notificationPreferencesApi.list as jest.Mock
 const mockUpdate = notificationPreferencesApi.update as jest.Mock
+
+const renderScreen = () =>
+  render(
+    <IntlProvider locale="it-IT" messages={itIT} defaultLocale="it-IT" onError={() => {}}>
+      <NotificationsSettingsScreen />
+    </IntlProvider>,
+  )
 
 let alertSpy: jest.SpyInstance
 beforeEach(() => {
@@ -29,7 +38,7 @@ afterEach(() => alertSpy.mockRestore())
 
 describe('NotificationsSettingsScreen', () => {
   it('renders every sales-agent channel after loading', async () => {
-    render(<NotificationsSettingsScreen />)
+    renderScreen()
     expect(await screen.findByTestId('toggle-merchant-support-request')).toBeTruthy()
     expect(screen.getByTestId('toggle-royalty-credit')).toBeTruthy()
     expect(screen.getByTestId('toggle-meeting-reminder')).toBeTruthy()
@@ -39,7 +48,7 @@ describe('NotificationsSettingsScreen', () => {
     mockList.mockResolvedValue([
       { appId: 'sales', channelId: 'royalty-credit', enabled: false, mandatory: null },
     ])
-    render(<NotificationsSettingsScreen />)
+    renderScreen()
     const toggle = await screen.findByTestId('toggle-royalty-credit')
     // default for royalty-credit is true; the server row flips it to false
     expect(toggle.props.value).toBe(false)
@@ -47,19 +56,19 @@ describe('NotificationsSettingsScreen', () => {
 
   it('falls back to defaults when the preferences fetch fails', async () => {
     mockList.mockRejectedValue(new Error('offline'))
-    render(<NotificationsSettingsScreen />)
+    renderScreen()
     const toggle = await screen.findByTestId('toggle-kit-shipment')
     expect(toggle.props.value).toBe(true) // kit-shipment default
   })
 
   it('mandatory channels are rendered disabled', async () => {
-    render(<NotificationsSettingsScreen />)
+    renderScreen()
     const mandatory = await screen.findByTestId('toggle-merchant-support-request')
     expect(mandatory.props.disabled).toBe(true)
   })
 
   it('persists an optional-channel toggle through the update API', async () => {
-    render(<NotificationsSettingsScreen />)
+    renderScreen()
     const toggle = await screen.findByTestId('toggle-royalty-credit')
     fireEvent(toggle, 'valueChange', false)
     await waitFor(() => expect(mockUpdate).toHaveBeenCalled())
@@ -78,7 +87,7 @@ describe('NotificationsSettingsScreen', () => {
    */
   it('rolls back to the previous value when the save fails (S6443 regression)', async () => {
     mockUpdate.mockRejectedValueOnce(new Error('500 server error'))
-    render(<NotificationsSettingsScreen />)
+    renderScreen()
     const toggle = await screen.findByTestId('toggle-royalty-credit')
     expect(toggle.props.value).toBe(true) // starts enabled (default)
 

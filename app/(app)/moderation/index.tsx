@@ -8,6 +8,7 @@
 
 import React from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { moderationApi, ReviewTask } from '../../../src/api/moderationApi'
@@ -22,10 +23,11 @@ function RiskBadge({ level }: Readonly<{ level: ReviewTask['claudeRiskLevel'] }>
   )
 }
 
-function countdownText(expiresAt: string | null): string {
-  if (!expiresAt) return ''
+/** Remaining time as a compact "Xh Ym" / "Ym" string, or null when expired/absent. */
+function countdownText(expiresAt: string | null): string | null {
+  if (!expiresAt) return null
   const diffMs = new Date(expiresAt).getTime() - Date.now()
-  if (diffMs <= 0) return 'Scaduta!'
+  if (diffMs <= 0) return null
   const h = Math.floor(diffMs / 3_600_000)
   const m = Math.floor((diffMs % 3_600_000) / 60_000)
   return h > 0 ? `${h}h ${m}m` : `${m}m`
@@ -33,6 +35,7 @@ function countdownText(expiresAt: string | null): string {
 
 export default function ModerationQueueScreen() {
   const router = useRouter()
+  const intl = useIntl()
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['moderation-queue'],
@@ -56,10 +59,15 @@ export default function ModerationQueueScreen() {
         <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
         <View style={styles.cardFooter}>
           <Text style={styles.expiry}>
-            Scade tra {countdownText(item.salesReviewExpiresAt)}
+            {(() => {
+              const remaining = countdownText(item.salesReviewExpiresAt)
+              return remaining === null
+                ? intl.formatMessage({ id: 'moderation.expired' })
+                : intl.formatMessage({ id: 'moderation.expires_in' }, { time: remaining })
+            })()}
           </Text>
           {item.moderationStatus === 'ESCALATED_TO_ADMIN' && (
-            <Text style={styles.escalated}>↑ Escalata ad admin</Text>
+            <Text style={styles.escalated}><FormattedMessage id="moderation.escalated" /></Text>
           )}
         </View>
       </TouchableOpacity>
@@ -69,8 +77,10 @@ export default function ModerationQueueScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Moderazioni</Text>
-        <Text style={styles.headerCount}>{data?.length ?? 0} in attesa</Text>
+        <Text style={styles.headerTitle}><FormattedMessage id="moderation.header.title" /></Text>
+        <Text style={styles.headerCount}>
+          <FormattedMessage id="moderation.header.waiting" values={{ count: data?.length ?? 0 }} />
+        </Text>
       </View>
 
       {isLoading
@@ -82,7 +92,7 @@ export default function ModerationQueueScreen() {
             contentContainerStyle={{ padding: 16 }}
             onRefresh={refetch}
             refreshing={isLoading}
-            ListEmptyComponent={<Text style={styles.empty}>Nessuna ADV da moderare 🎉</Text>}
+            ListEmptyComponent={<Text style={styles.empty}><FormattedMessage id="moderation.empty_queue" /></Text>}
           />
       }
     </View>
