@@ -8,6 +8,8 @@
 import React, { type ReactNode } from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { IntlProvider } from 'react-intl'
+import itIT from '../../src/i18n/messages/it-IT.json'
 
 // ── expo-router ──────────────────────────────────────────────────────────────
 const mockPush = jest.fn()
@@ -54,7 +56,11 @@ import ModerationQueueScreen from '../(app)/moderation/index'
 function wrapper() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={qc}>{children}</QueryClientProvider>
+    <QueryClientProvider client={qc}>
+      <IntlProvider locale="it-IT" messages={itIT} defaultLocale="it-IT" onError={() => {}}>
+        {children}
+      </IntlProvider>
+    </QueryClientProvider>
   )
 }
 

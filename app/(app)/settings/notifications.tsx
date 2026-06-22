@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 import {
   View, Text, StyleSheet, ScrollView, Switch, ActivityIndicator, Alert,
 } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { notificationPreferencesApi, NotificationPref } from '../../../src/api/notificationPreferencesApi'
 
 interface ChannelDef {
@@ -57,6 +58,7 @@ const SALES_AGENT_CHANNELS: ChannelDef[] = [
 ]
 
 export default function NotificationsSettingsScreen() {
+  const intl = useIntl()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving]   = useState(false)
   const [prefs, setPrefs]     = useState<Record<string, boolean>>({})
@@ -81,8 +83,10 @@ export default function NotificationsSettingsScreen() {
 
   async function toggle(channelId: string, next: boolean, mandatory: boolean) {
     if (mandatory && !next) {
-      Alert.alert('Sempre attivo',
-        'Questa notifica critica non può essere disabilitata per motivi di workflow.')
+      Alert.alert(
+        intl.formatMessage({ id: 'settings.notifications.mandatory.title' }),
+        intl.formatMessage({ id: 'settings.notifications.mandatory.body' }),
+      )
       return
     }
     // Capture the pre-update snapshot so a failed save can be rolled back to
@@ -103,7 +107,7 @@ export default function NotificationsSettingsScreen() {
         })),
       )
     } catch (err) {
-      Alert.alert('Errore salvataggio', (err as Error).message)
+      Alert.alert(intl.formatMessage({ id: 'settings.notifications.save_error.title' }), (err as Error).message)
       setPrefs(previousPrefs)
     } finally {
       setSaving(false)
@@ -115,9 +119,9 @@ export default function NotificationsSettingsScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Preferenze notifiche</Text>
+        <Text style={styles.title}><FormattedMessage id="settings.notifications.title" /></Text>
         <Text style={styles.subtitle}>
-          Gestisci le notifiche che ricevi come sales agent. Notifiche critiche sempre attive.
+          <FormattedMessage id="settings.notifications.subtitle" />
         </Text>
       </View>
       {SALES_AGENT_CHANNELS.map((c) => (
@@ -125,7 +129,7 @@ export default function NotificationsSettingsScreen() {
           <View style={styles.rowText}>
             <Text style={styles.label}>
               {c.label}
-              {c.mandatory && <Text style={styles.mandatoryBadge}>  • Sempre attivo</Text>}
+              {c.mandatory && <Text style={styles.mandatoryBadge}><FormattedMessage id="settings.notifications.always_on" /></Text>}
             </Text>
             <Text style={styles.description}>{c.description}</Text>
           </View>

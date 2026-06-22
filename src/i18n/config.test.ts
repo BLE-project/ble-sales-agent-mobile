@@ -32,12 +32,15 @@ beforeEach(() => {
 })
 
 describe('isSupported', () => {
-  it('accepts the two shipped locales', () => {
+  it('accepts the five shipped locales', () => {
     expect(isSupported('it-IT')).toBe(true)
     expect(isSupported('en-US')).toBe(true)
+    expect(isSupported('es-ES')).toBe(true)
+    expect(isSupported('fr-FR')).toBe(true)
+    expect(isSupported('de-DE')).toBe(true)
   })
   it('rejects an unknown locale tag', () => {
-    expect(isSupported('fr-FR')).toBe(false)
+    expect(isSupported('ja-JP')).toBe(false)
     expect(isSupported('')).toBe(false)
   })
 })
@@ -51,7 +54,7 @@ describe('resolveLocale priority', () => {
 
   it('1b. an unsupported tenant hint is ignored', async () => {
     mockGetItem.mockResolvedValue('en-US')
-    await expect(resolveLocale('de-DE')).resolves.toBe('en-US')
+    await expect(resolveLocale('ja-JP')).resolves.toBe('en-US')
   })
 
   it('2. user SecureStore preference wins when no tenant hint', async () => {

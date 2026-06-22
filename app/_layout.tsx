@@ -6,6 +6,7 @@ import { BiometricGate } from '../src/auth/BiometricGate'
 import { useEffect, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
 import { I18nProvider } from '../src/i18n/I18nProvider'
+import { ensureLocale } from '../src/i18n/config'
 import { initSentry, SentryErrorBoundary } from '../src/observability/sentry'
 
 // ADR-020: Sentry init — dormant until EXPO_PUBLIC_SENTRY_DSN set
@@ -40,6 +41,11 @@ function NotificationListener() {
 }
 
 export default function RootLayout() {
+  // Warm the cached active locale at startup so pre-mount lookups (splash,
+  // error boundaries) read the resolved locale. IntlProvider still performs
+  // its own async resolution inside I18nProvider — this only seeds the cache.
+  useEffect(() => { void ensureLocale(null) }, [])
+
   return (
     <SentryErrorBoundary>
     <QueryClientProvider client={qc}>

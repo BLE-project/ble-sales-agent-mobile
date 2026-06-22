@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../../src/auth/AuthContext'
@@ -14,6 +15,7 @@ interface TerritoryAssignment {
 
 export default function DashboardScreen() {
   const { user, logout } = useAuth()
+  const intl = useIntl()
   const router = useRouter()
   const [selectedTerritoryId, setSelectedTerritoryId] = useState<string | null>(null)
 
@@ -68,19 +70,19 @@ export default function DashboardScreen() {
 
   const tiles = [
     {
-      label: 'Richieste pending',
+      label: intl.formatMessage({ id: 'overview.tile.pending_requests' }),
       value: filteredPending?.length ?? '--',
       color: '#f59e0b',
       route: '/requests',
     },
     {
-      label: 'Moderazioni',
+      label: intl.formatMessage({ id: 'overview.tile.moderations' }),
       value: moderationQueue?.length ?? 0,
       color: '#6C3FCF',
       route: '/moderation',
     },
     {
-      label: 'Ultimo payout',
+      label: intl.formatMessage({ id: 'overview.tile.last_payout' }),
       value: totalPayout !== '--' ? `EUR ${totalPayout}` : '--',
       color: '#1a3f6f',
       route: '/royalties',
@@ -91,25 +93,25 @@ export default function DashboardScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Ciao,</Text>
+          <Text style={styles.greeting}><FormattedMessage id="overview.greeting" /></Text>
           <Text style={styles.name}>{user?.name ?? user?.sub}</Text>
         </View>
         <TouchableOpacity onPress={logout} testID="btn-logout">
-          <Text style={styles.signOut}>Esci</Text>
+          <Text style={styles.signOut}><FormattedMessage id="auth.logout" /></Text>
         </TouchableOpacity>
       </View>
 
       {/* Territory selector — shown only if agent has multiple territory assignments */}
       {hasMultipleTerritories && (
         <View style={styles.territorySelectorContainer}>
-          <Text style={styles.territorySelectorLabel}>Territory</Text>
+          <Text style={styles.territorySelectorLabel}><FormattedMessage id="overview.territory" /></Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.territoryChips}>
             <TouchableOpacity
               style={[styles.territoryChip, !selectedTerritoryId && styles.territoryChipActive]}
               onPress={() => setSelectedTerritoryId(null)}
             >
               <Text style={[styles.territoryChipText, !selectedTerritoryId && styles.territoryChipTextActive]}>
-                Tutti
+                <FormattedMessage id="overview.all" />
               </Text>
             </TouchableOpacity>
             {assignments?.map(a => (
@@ -127,7 +129,7 @@ export default function DashboardScreen() {
         </View>
       )}
 
-      <Text style={styles.sectionTitle}>Panoramica</Text>
+      <Text style={styles.sectionTitle}><FormattedMessage id="tab.overview" /></Text>
       <View style={styles.grid}>
         {tiles.map(t => (
           <TouchableOpacity
@@ -141,12 +143,12 @@ export default function DashboardScreen() {
         ))}
       </View>
 
-      <Text style={styles.sectionTitle}>Azioni rapide</Text>
+      <Text style={styles.sectionTitle}><FormattedMessage id="overview.quick_actions" /></Text>
       <TouchableOpacity style={styles.action} onPress={() => router.push('/requests')}>
-        <Text style={styles.actionText}>Gestisci richieste merchant</Text>
+        <Text style={styles.actionText}><FormattedMessage id="overview.manage_merchant_requests" /></Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.action} onPress={() => router.push('/royalties')}>
-        <Text style={styles.actionText}>Visualizza royalties</Text>
+        <Text style={styles.actionText}><FormattedMessage id="overview.view_royalties" /></Text>
       </TouchableOpacity>
     </ScrollView>
   )
