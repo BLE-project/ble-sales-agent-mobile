@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
-import { api } from '../api/client'
+import { api, ApiError } from '../api/client'
 
 interface TotpVerifyModalProps {
   visible: boolean
@@ -26,7 +26,13 @@ export function TotpVerifyModal({ visible, onClose, onVerified, totpSecret, oper
       const result = await api.post<{ valid: boolean }>('/api/v1/auth/totp/validate', { secret: totpSecret, code })
       if (result.valid) { setCode(''); onVerified() }
       else setError('Invalid code.')
-    } catch { setError('Validation failed.') }
+    } catch (e) {
+      // #101: /validate risponde 400 sul codice errato (400 e non 401 apposta,
+      // così il client.ts non lo scambia per sessione scaduta e non tenta un
+      // refresh-token spurio). Distinguere status===400 per "Invalid code".
+      if (e instanceof ApiError && e.status === 400) setError('Invalid code.')
+      else setError('Validation failed.')
+    }
     finally { setLoading(false) }
   }
 
