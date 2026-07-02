@@ -12,7 +12,20 @@ import { Alert } from 'react-native'
 // ── module mocks ─────────────────────────────────────────────────────────────
 jest.mock('../../api/tenantBleConfig', () => ({ fetchTenantBleConfig: jest.fn() }))
 jest.mock('../../api/beaconGpsApi', () => ({ captureBeaconGps: jest.fn() }))
-jest.mock('../../api/client', () => ({ api: { post: jest.fn() } }))
+// #101: il modal importa anche ApiError per distinguere il 400 (codice errato)
+// dagli errori di rete — il mock deve esportarlo o `e instanceof ApiError`
+// esplode ("Right-hand side of 'instanceof' is not an object").
+jest.mock('../../api/client', () => ({
+  api: { post: jest.fn() },
+  ApiError: class ApiError extends Error {
+    status: number
+    constructor(status: number, message: string) {
+      super(message)
+      this.status = status
+      this.name = 'ApiError'
+    }
+  },
+}))
 jest.mock('expo-location', () => ({
   requestForegroundPermissionsAsync: jest.fn(),
   getCurrentPositionAsync: jest.fn(),
@@ -21,7 +34,7 @@ jest.mock('expo-location', () => ({
 
 import { fetchTenantBleConfig } from '../../api/tenantBleConfig'
 import { captureBeaconGps } from '../../api/beaconGpsApi'
-import { api } from '../../api/client'
+import { api, ApiError } from '../../api/client'
 import * as Location from 'expo-location'
 import { BleConfigDisplay } from '../BleConfigDisplay'
 import { GpsCaptureButton } from '../GpsCaptureButton'
@@ -168,6 +181,14 @@ describe('TotpVerifyModal', () => {
     fireEvent.changeText(screen.getByPlaceholderText('000000'), '123456')
     fireEvent.press(screen.getByText('Verify'))
     expect(await screen.findByText('Validation failed.')).toBeTruthy()
+  })
+
+  it('shows "Invalid code" when /validate returns 400 (#101)', async () => {
+    mockApiPost.mockRejectedValue(new ApiError(400, 'invalid code'))
+    render(<TotpVerifyModal {...baseProps} />)
+    fireEvent.changeText(screen.getByPlaceholderText('000000'), '999999')
+    fireEvent.press(screen.getByText('Verify'))
+    expect(await screen.findByText('Invalid code.')).toBeTruthy()
   })
 
   it('clears state and closes when Cancel is pressed', () => {
