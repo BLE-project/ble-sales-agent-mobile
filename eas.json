@@ -21,8 +21,8 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_GATEWAY_URL": "https://api.ble-platform.com",
-        "EXPO_PUBLIC_KC_URL": "https://auth.ble-platform.com",
+        "EXPO_PUBLIC_GATEWAY_URL": "https://api.terrio.it",
+        "EXPO_PUBLIC_KC_URL": "https://auth.terrio.it",
         "EXPO_PUBLIC_KC_REALM": "ble"
       }
     },
@@ -31,8 +31,8 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_GATEWAY_URL": "https://api.ble-platform.com",
-        "EXPO_PUBLIC_KC_URL": "https://auth.ble-platform.com",
+        "EXPO_PUBLIC_GATEWAY_URL": "https://api.terrio.it",
+        "EXPO_PUBLIC_KC_URL": "https://auth.terrio.it",
         "EXPO_PUBLIC_KC_REALM": "ble"
       }
     },
