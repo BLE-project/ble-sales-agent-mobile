@@ -3,7 +3,7 @@
   Network Security Config for Terrio mobile apps (Android targetSdkVersion>=28).
   Allows cleartext HTTP traffic for local dev backends only.
 
-  Production builds (profile preview/production) point to https://api.ble-platform.com
+  Production builds (profile preview/production) point to https://api.terrio.it
   which uses TLS — this config does NOT weaken production security.
 -->
 <network-security-config>
