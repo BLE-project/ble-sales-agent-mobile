@@ -51,6 +51,22 @@
         "EXPO_PUBLIC_KC_REALM": "ble",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       }
+    },
+    "previewStaging": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_GATEWAY_URL": "TODO_STAGING_GATEWAY_URL_derive_after_infra-gcp_apply",
+        "EXPO_PUBLIC_KC_URL": "TODO_STAGING_KC_URL_derive_after_infra-gcp_apply",
+        "EXPO_PUBLIC_KC_REALM": "ble",
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+      }
     }
   }
 }
