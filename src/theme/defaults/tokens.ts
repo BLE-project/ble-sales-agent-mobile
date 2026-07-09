@@ -6,19 +6,16 @@ export const shadows = {
   lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.10, shadowRadius: 20, elevation: 5 },
 };
 
-// DS-003: brand color tokens — fallback defaults for all brand hex values.
+// DS-003: brand color tokens.
 //
-// IMPORTANT — F14/F18/F19 fix: these 4 hex values are RUNTIME-OVERRIDDEN by
-// BrandingContext + ThemeProvider via the /v1/brand-config tenant API. They
-// are the safe defaults applied when:
-//   (a) the tenant has no custom brand_config row in core-registry, OR
-//   (b) the runtime fetch fails (offline / backend down) — defensive fallback.
+// STATIC platform-level values — NOT runtime-overridden. sales-agent is an
+// internal ops app, not white-label per-tenant: there is no BrandingContext
+// or ThemeProvider in this repo. These 4 hex values are the permanent Terrio
+// brand colors, applied as-is at build time.
 //
-// The Semgrep rule terrio-i4-hardcoded-brand-hex therefore fires false-positive
-// on these 4 lines. The actual white-label invariant I4 is enforced by
-// ThemeProvider reading BrandingContext at component-render time, NOT by
-// statically substituting these constants. Runtime override is unit-tested in
-// BrandingContext.test.tsx and ThemeProvider.test.tsx.
+// The Semgrep rule terrio-i4-hardcoded-brand-hex fires on these 4 lines by
+// design (I4 white-label invariant applies to the tenant-facing apps —
+// consumer/merchant/tenant-mobile — not to this platform-level app).
 export const TOKENS = {
   colors: {
     brand: {
@@ -49,6 +46,14 @@ export const TOKENS = {
       warning: '#F59E0B',
       info:    '#3B82F6',
     },
+    // Semantici soft — tint di sfondo per banner/badge. v2 2026-07-09.
+    // Fonte: terrio-platform-docs/design_handoff/tokens/piazza-tokens.ts.
+    semanticSoft: {
+      dangerSoft:  '#FEE2E2',
+      successSoft: '#DCFCE7',
+      warningSoft: '#FEF3C7',
+      infoSoft:    '#DBEAFE',
+    },
     // «La Piazza» superfici / inchiostro — platform-level (sales-agent non è
     // white-label per-tenant, nessun BrandingContext runtime). Fonte:
     // terrio-platform-docs/design_handoff/tokens/piazza-tokens.ts.
@@ -60,6 +65,8 @@ export const TOKENS = {
       inkSoft:   '#5B5170',
       line:      '#E7E1F2',
       rewardInk: '#6B5200',
+      // Testo/icone su fill brand (bottoni pieni, header colorati). v2 2026-07-09.
+      onBrand:   '#FFFFFF',
     },
   },
 };

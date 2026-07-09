@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import { fetchTenantBleConfig, type TenantBleConfig } from '../api/tenantBleConfig'
+import { TOKENS } from '../theme/defaults/tokens'
 
 export function BleConfigDisplay() {
   const [data, setData] = useState<TenantBleConfig | null>(null)
@@ -56,11 +57,11 @@ export function BleConfigDisplay() {
 }
 
 const styles = StyleSheet.create({
-  card:       { backgroundColor: '#fff', borderRadius: 12, padding: 20, borderWidth: 1, borderColor: '#e5e7eb' },
+  card:       { backgroundColor: TOKENS.colors.surface.surface, borderRadius: 12, padding: 20, borderWidth: 1, borderColor: TOKENS.colors.surface.line },
   center:     { padding: 16, alignItems: 'center' },
-  label:      { fontSize: 12, textTransform: 'uppercase', color: '#6b7280' },
+  label:      { fontSize: 12, textTransform: 'uppercase', color: TOKENS.colors.surface.inkSoft },
   value:      { fontSize: 32, fontWeight: '800', marginVertical: 4 },
-  helper:     { fontSize: 12, color: '#6b7280' },
-  helperWarn: { fontSize: 14, color: '#b45309', marginTop: 4 },
-  error:      { padding: 16, color: '#b91c1c' },
+  helper:     { fontSize: 12, color: TOKENS.colors.surface.inkSoft },
+  helperWarn: { fontSize: 14, color: TOKENS.colors.semantic.warning, marginTop: 4 },
+  error:      { padding: 16, color: TOKENS.colors.semantic.danger },
 })

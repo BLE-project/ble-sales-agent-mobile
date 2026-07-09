@@ -8,6 +8,7 @@ import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } fr
 import { useRouter } from 'expo-router'
 import { submitBeaconHealth } from '../../../src/api/beaconHealthApi'
 import { getWizardState, setSnapshotId, resetWizard } from '../../../src/wizard/wizardState'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 type Phase = 'submitting' | 'ok' | 'error'
 
@@ -42,7 +43,7 @@ export default function WizardStep4Submit() {
   if (phase === 'submitting') {
     return (
       <View style={styles.center} testID="wizard-submit-loading">
-        <ActivityIndicator size="large" color="#6C3FCF" />
+        <ActivityIndicator size="large" color={TOKENS.colors.brand.primary} />
         <Text style={styles.muted}>Invio snapshot in corso…</Text>
       </View>
     )
@@ -81,12 +82,12 @@ export default function WizardStep4Submit() {
 }
 
 const styles = StyleSheet.create({
-  center:     { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: '#fff' },
+  center:     { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: TOKENS.colors.neutral.white },
   ok:         { fontSize: 22, fontWeight: '700', color: '#166534', marginBottom: 16 },
   error:      { fontSize: 14, color: '#b91c1c', textAlign: 'center' },
-  muted:      { color: '#6b7280', marginTop: 12 },
-  snapshot:   { fontFamily: 'Courier', fontSize: 12, color: '#111827', marginTop: 4, textAlign: 'center' },
+  muted:      { color: TOKENS.colors.neutral.gray500, marginTop: 12 },
+  snapshot:   { fontFamily: 'Courier', fontSize: 12, color: TOKENS.colors.neutral.gray900, marginTop: 4, textAlign: 'center' },
   btn:        { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 10, alignItems: 'center' },
   btnPrimary: { backgroundColor: '#0B6E4F' },
-  btnText:    { color: '#fff', fontWeight: '700', fontSize: 14 },
+  btnText:    { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 14 },
 })

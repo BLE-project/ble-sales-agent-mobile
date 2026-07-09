@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { merchantsApi, type MerchantSummary } from '../../../src/api/salesAgentApi'
 import { setMerchant } from '../../../src/wizard/wizardState'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 export default function WizardStep1Merchant() {
   const router = useRouter()
@@ -75,16 +76,16 @@ export default function WizardStep1Merchant() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', padding: 16 },
-  title:     { fontSize: 22, fontWeight: '700', color: '#111827' },
-  subtitle:  { fontSize: 13, color: '#6b7280', marginTop: 4, marginBottom: 12 },
+  container: { flex: 1, backgroundColor: TOKENS.colors.neutral.white, padding: 16 },
+  title:     { fontSize: 22, fontWeight: '700', color: TOKENS.colors.neutral.gray900 },
+  subtitle:  { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4, marginBottom: 12 },
   search:    {
-    borderWidth: 1, borderColor: '#d1d5db', borderRadius: 10,
+    borderWidth: 1, borderColor: TOKENS.colors.neutral.gray300, borderRadius: 10,
     paddingHorizontal: 12, paddingVertical: 10, marginBottom: 12,
   },
-  row:       { paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#e5e7eb' },
-  rowName:   { fontSize: 15, fontWeight: '600', color: '#111827' },
-  rowMeta:   { fontSize: 12, color: '#6b7280', marginTop: 2 },
+  row:       { paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: TOKENS.colors.neutral.gray200 },
+  rowName:   { fontSize: 15, fontWeight: '600', color: TOKENS.colors.neutral.gray900 },
+  rowMeta:   { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginTop: 2 },
   error:     { color: '#b91c1c', marginTop: 12 },
-  muted:     { color: '#6b7280', textAlign: 'center', marginTop: 24 },
+  muted:     { color: TOKENS.colors.neutral.gray500, textAlign: 'center', marginTop: 24 },
 })

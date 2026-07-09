@@ -17,6 +17,7 @@ import {
   getWizardState, setBeacons, setScanResults,
 } from '../../../src/wizard/wizardState'
 import { scanBeacons, type BeaconCheckTarget } from '../../../src/ble/BeaconHealthCheck'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 const SCAN_WINDOW_MS = 60_000
 
@@ -108,7 +109,7 @@ export default function WizardStep2Scan() {
   }
 
   if (loading) {
-    return <View style={styles.center}><ActivityIndicator size="large" color="#6C3FCF" /></View>
+    return <View style={styles.center}><ActivityIndicator size="large" color={TOKENS.colors.brand.primary} /></View>
   }
   if (error) {
     return <View style={styles.center}><Text style={styles.error}>{error}</Text></View>
@@ -159,20 +160,20 @@ function badgeStyle(s: RowState) {
     case 'detected': return { backgroundColor: '#dcfce7', color: '#166534' }
     case 'missed':   return { backgroundColor: '#fee2e2', color: '#991b1b' }
     case 'scanning': return { backgroundColor: '#dbeafe', color: '#1e40af' }
-    default:         return { backgroundColor: '#f3f4f6', color: '#374151' }
+    default:         return { backgroundColor: TOKENS.colors.neutral.gray100, color: TOKENS.colors.neutral.gray700 }
   }
 }
 
 const styles = StyleSheet.create({
-  container:  { flex: 1, backgroundColor: '#fff', padding: 16 },
+  container:  { flex: 1, backgroundColor: TOKENS.colors.neutral.white, padding: 16 },
   center:     { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  title:      { fontSize: 22, fontWeight: '700', color: '#111827' },
-  subtitle:   { fontSize: 13, color: '#6b7280', marginTop: 4, marginBottom: 12 },
+  title:      { fontSize: 22, fontWeight: '700', color: TOKENS.colors.neutral.gray900 },
+  subtitle:   { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4, marginBottom: 12 },
   row:        {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#e5e7eb',
+    paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: TOKENS.colors.neutral.gray200,
   },
-  rowName:    { fontSize: 15, fontWeight: '600', color: '#111827' },
+  rowName:    { fontSize: 15, fontWeight: '600', color: TOKENS.colors.neutral.gray900 },
   badge:      {
     paddingVertical: 4, paddingHorizontal: 10, borderRadius: 999,
     fontSize: 11, fontWeight: '700', overflow: 'hidden',
@@ -180,8 +181,8 @@ const styles = StyleSheet.create({
   actions:    { flexDirection: 'row', gap: 10, marginTop: 16 },
   btn:        { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
   btnPrimary: { backgroundColor: '#0B6E4F' },
-  btnSecondary: { backgroundColor: '#f3f4f6' },
-  btnText:    { color: '#fff', fontWeight: '700', fontSize: 14 },
-  btnTextSecondary: { color: '#374151', fontWeight: '700', fontSize: 14 },
+  btnSecondary: { backgroundColor: TOKENS.colors.neutral.gray100 },
+  btnText:    { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 14 },
+  btnTextSecondary: { color: TOKENS.colors.neutral.gray700, fontWeight: '700', fontSize: 14 },
   error:      { color: '#b91c1c', fontSize: 14 },
 })

@@ -30,7 +30,8 @@
     "ink": "#241645",
     "inkSoft": "#5B5170",
     "line": "#E7E1F2",
-    "rewardInk": "#6B5200"
+    "rewardInk": "#6B5200",
+    "onBrand": "#FFFFFF"
   },
   "semantic": {
     "success": { "base": "#10B981", "soft": "#D1FAE5", "dark": "#065F46" },
@@ -38,6 +39,13 @@
     "danger":  { "base": "#EF4444", "soft": "#FEE2E2", "dark": "#991B1B" },
     "info":    { "base": "#3B82F6", "soft": "#DBEAFE", "dark": "#1E40AF" },
     "ai":      { "base": "#8B5CF6", "soft": "#EDE9FE", "dark": "#5B21B6" }
+  },
+  "semanticSoft": {
+    "$note": "v2 2026-07-09 — tinte di sfondo per banner/badge, allineate a piazza-tokens.ts.",
+    "dangerSoft":  "#FEE2E2",
+    "successSoft": "#DCFCE7",
+    "warningSoft": "#FEF3C7",
+    "infoSoft":    "#DBEAFE"
   },
   "font": {
     "display": "\"Space Grotesk\", \"Inter\", -apple-system, system-ui, sans-serif",

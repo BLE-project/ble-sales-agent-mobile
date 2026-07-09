@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
 import { api, ApiError } from '../api/client'
+import { TOKENS } from '../theme/defaults/tokens'
 
 interface TotpVerifyModalProps {
   visible: boolean
@@ -64,15 +65,15 @@ export function TotpVerifyModal({ visible, onClose, onVerified, totpSecret, oper
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
-  modal: { backgroundColor: '#fff', borderRadius: 16, padding: 20, width: '85%' },
-  title: { fontSize: 18, fontWeight: '700', color: '#111827', marginBottom: 8 },
-  desc: { fontSize: 14, color: '#6b7280', marginBottom: 16 },
-  codeInput: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 12, fontSize: 24, fontFamily: 'monospace', textAlign: 'center', letterSpacing: 8, marginBottom: 12 },
-  error: { color: '#dc2626', fontSize: 13, marginBottom: 8 },
+  modal: { backgroundColor: TOKENS.colors.surface.surface, borderRadius: 16, padding: 20, width: '85%' },
+  title: { fontSize: 18, fontWeight: '700', color: TOKENS.colors.surface.ink, marginBottom: 8 },
+  desc: { fontSize: 14, color: TOKENS.colors.surface.inkSoft, marginBottom: 16 },
+  codeInput: { borderWidth: 1, borderColor: TOKENS.colors.surface.line, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 12, fontSize: 24, fontFamily: 'monospace', textAlign: 'center', letterSpacing: 8, marginBottom: 12 },
+  error: { color: TOKENS.colors.semantic.danger, fontSize: 13, marginBottom: 8 },
   row: { flexDirection: 'row', gap: 8 },
-  cancelBtn: { flex: 1, borderWidth: 1, borderColor: '#d1d5db', borderRadius: 8, paddingVertical: 10, alignItems: 'center' },
-  cancelText: { color: '#374151', fontSize: 14 },
-  btn: { flex: 1, backgroundColor: '#1a3f6f', borderRadius: 8, paddingVertical: 10, alignItems: 'center' },
+  cancelBtn: { flex: 1, borderWidth: 1, borderColor: TOKENS.colors.surface.line, borderRadius: 8, paddingVertical: 10, alignItems: 'center' },
+  cancelText: { color: TOKENS.colors.surface.inkSoft, fontSize: 14 },
+  btn: { flex: 1, backgroundColor: TOKENS.colors.brand.primary, borderRadius: 8, paddingVertical: 10, alignItems: 'center' },
   btnDisabled: { opacity: 0.5 },
-  btnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
+  btnText: { color: TOKENS.colors.surface.onBrand, fontWeight: '600', fontSize: 14 },
 })
