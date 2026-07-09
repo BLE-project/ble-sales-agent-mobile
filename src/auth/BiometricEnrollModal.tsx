@@ -25,6 +25,7 @@ import {
 } from 'react-native'
 import { FormattedMessage } from 'react-intl'
 import { useBiometricAuth } from './useBiometricAuth'
+import { TOKENS } from '../theme/defaults/tokens'
 
 export interface BiometricEnrollModalProps {
   visible: boolean
@@ -213,7 +214,7 @@ export function BiometricEnrollModal({ visible, onDone }: Readonly<BiometricEnro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TOKENS.colors.surface.base,
     justifyContent: 'center',
     paddingHorizontal: 32,
   },
@@ -223,20 +224,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#111111',
+    color: TOKENS.colors.surface.ink,
     textAlign: 'center',
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 15,
-    color: '#666666',
+    color: TOKENS.colors.surface.inkSoft,
     textAlign: 'center',
     marginBottom: 24,
     lineHeight: 22,
   },
   input: {
     height: 56,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: TOKENS.colors.surface.sunk,
     borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 24,
@@ -246,14 +247,14 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     height: 52,
-    backgroundColor: '#222222',
+    backgroundColor: TOKENS.colors.brand.primary,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
   },
   primaryButtonText: {
-    color: '#FFFFFF',
+    color: TOKENS.colors.neutral.white,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -267,10 +268,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#DDDDDD',
+    borderColor: TOKENS.colors.surface.line,
   },
   secondaryButtonText: {
-    color: '#222222',
+    color: TOKENS.colors.surface.ink,
     fontSize: 16,
     fontWeight: '500',
   },
@@ -279,18 +280,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tertiaryButtonText: {
-    color: '#888888',
+    color: TOKENS.colors.surface.inkSoft,
     fontSize: 14,
     textDecorationLine: 'underline',
   },
   errorBanner: {
+    // ponytail: no "danger-soft" background token exists yet — kept
+    // hardcoded per MAPPA rule (semantic without a token stays as-is).
     backgroundColor: '#FFE4E4',
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
   },
   errorText: {
-    color: '#A60000',
+    color: TOKENS.colors.semantic.danger,
     fontSize: 13,
     textAlign: 'center',
   },

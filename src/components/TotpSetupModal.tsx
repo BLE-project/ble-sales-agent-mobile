@@ -9,6 +9,7 @@
 import { useState } from 'react'
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
 import { api } from '../api/client'
+import { TOKENS } from '../theme/defaults/tokens'
 
 interface TotpSetupModalProps {
   visible: boolean
@@ -111,19 +112,19 @@ export function TotpSetupModal({ visible, onClose, onSetupComplete }: Readonly<T
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
-  modal: { backgroundColor: '#fff', borderRadius: 16, padding: 20, width: '90%', maxHeight: '80%' },
-  title: { fontSize: 18, fontWeight: '700', color: '#111827', marginBottom: 12 },
-  desc: { fontSize: 14, color: '#6b7280', marginBottom: 16 },
-  label: { fontSize: 12, fontWeight: '600', color: '#374151', marginTop: 8, marginBottom: 4 },
-  secretText: { fontFamily: 'monospace', fontSize: 13, color: '#111827', backgroundColor: '#f3f4f6', padding: 8, borderRadius: 6 },
-  uriText: { fontFamily: 'monospace', fontSize: 10, color: '#6b7280', backgroundColor: '#f3f4f6', padding: 8, borderRadius: 6 },
-  hint: { fontSize: 11, color: '#9ca3af', marginTop: 4, marginBottom: 8 },
-  codeInput: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 12, fontSize: 24, fontFamily: 'monospace', textAlign: 'center', letterSpacing: 8, marginBottom: 12 },
-  error: { color: '#dc2626', fontSize: 13, marginBottom: 8 },
-  btn: { backgroundColor: '#1a3f6f', paddingVertical: 12, borderRadius: 8, alignItems: 'center', marginTop: 8 },
+  modal: { backgroundColor: TOKENS.colors.surface.surface, borderRadius: 16, padding: 20, width: '90%', maxHeight: '80%' },
+  title: { fontSize: 18, fontWeight: '700', color: TOKENS.colors.surface.ink, marginBottom: 12 },
+  desc: { fontSize: 14, color: TOKENS.colors.surface.inkSoft, marginBottom: 16 },
+  label: { fontSize: 12, fontWeight: '600', color: TOKENS.colors.surface.inkSoft, marginTop: 8, marginBottom: 4 },
+  secretText: { fontFamily: 'monospace', fontSize: 13, color: TOKENS.colors.surface.ink, backgroundColor: TOKENS.colors.surface.sunk, padding: 8, borderRadius: 6 },
+  uriText: { fontFamily: 'monospace', fontSize: 10, color: TOKENS.colors.surface.inkSoft, backgroundColor: TOKENS.colors.surface.sunk, padding: 8, borderRadius: 6 },
+  hint: { fontSize: 11, color: TOKENS.colors.surface.inkSoft, marginTop: 4, marginBottom: 8 },
+  codeInput: { borderWidth: 1, borderColor: TOKENS.colors.surface.line, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 12, fontSize: 24, fontFamily: 'monospace', textAlign: 'center', letterSpacing: 8, marginBottom: 12 },
+  error: { color: TOKENS.colors.semantic.danger, fontSize: 13, marginBottom: 8 },
+  btn: { backgroundColor: TOKENS.colors.brand.primary, paddingVertical: 12, borderRadius: 8, alignItems: 'center', marginTop: 8 },
   btnDisabled: { opacity: 0.5 },
-  btnText: { color: '#fff', fontWeight: '600', fontSize: 15 },
+  btnText: { color: TOKENS.colors.neutral.white, fontWeight: '600', fontSize: 15 },
   cancelBtn: { marginTop: 12, alignItems: 'center' },
-  cancelText: { color: '#6b7280', fontSize: 14 },
-  doneText: { fontSize: 15, color: '#111827', textAlign: 'center', marginVertical: 20 },
+  cancelText: { color: TOKENS.colors.surface.inkSoft, fontSize: 14 },
+  doneText: { fontSize: 15, color: TOKENS.colors.surface.ink, textAlign: 'center', marginVertical: 20 },
 })

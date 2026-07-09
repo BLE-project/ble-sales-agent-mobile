@@ -8,6 +8,7 @@ import {
   GestureResponderEvent,
   LayoutChangeEvent,
 } from 'react-native'
+import { TOKENS } from '../theme/defaults/tokens'
 
 interface Point {
   x: number
@@ -144,27 +145,29 @@ export default function SignatureCanvas({ onSave, onClear }: Readonly<Props>) {
 const styles = StyleSheet.create({
   wrapper: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: TOKENS.colors.surface.line,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.surface.surface,
   },
   canvas: {
     height: 180,
-    backgroundColor: '#fafafa',
+    backgroundColor: TOKENS.colors.surface.sunk,
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholder: {
     fontSize: 15,
-    color: '#9ca3af',
+    color: TOKENS.colors.surface.inkSoft,
     fontStyle: 'italic',
     pointerEvents: 'none',
   },
   line: {
     position: 'absolute',
     height: 2,
+    // ponytail: '#111' near-black stroke kept hardcoded — functional ink
+    // color for the drawn signature, needs max contrast regardless of theme.
     backgroundColor: '#111',
     borderRadius: 1,
   },
@@ -174,8 +177,8 @@ const styles = StyleSheet.create({
     gap: 8,
     padding: 10,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-    backgroundColor: '#fff',
+    borderTopColor: TOKENS.colors.surface.line,
+    backgroundColor: TOKENS.colors.surface.surface,
   },
   btn: {
     paddingHorizontal: 16,
@@ -183,20 +186,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   btnPrimary: {
-    backgroundColor: '#1a3f6f',
+    backgroundColor: TOKENS.colors.brand.primary,
   },
   btnSecondary: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: TOKENS.colors.surface.sunk,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: TOKENS.colors.surface.line,
   },
   btnTextPrimary: {
-    color: '#fff',
+    color: TOKENS.colors.neutral.white,
     fontWeight: '600',
     fontSize: 13,
   },
   btnTextSecondary: {
-    color: '#374151',
+    color: TOKENS.colors.surface.inkSoft,
     fontWeight: '600',
     fontSize: 13,
   },

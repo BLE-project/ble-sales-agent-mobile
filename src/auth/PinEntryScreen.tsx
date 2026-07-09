@@ -7,9 +7,8 @@
  *
  * ## Visual contract
  *
- * - I4-compliant: only neutral grays + system colors. Brand-token
- *   integration deferred to a polish PR (kept simple here so the
- *   pilot ships fast).
+ * - I4-compliant: «La Piazza» surface tokens (theme/defaults/tokens.ts)
+ *   for backgrounds/text/borders; semantic tokens for error/lockout text.
  * - Accessibility: each digit button has a numeric `accessibilityLabel`.
  * - Auto-submit: when 6th digit is entered, `submitPin` fires
  *   automatically — no extra "OK" button.
@@ -32,6 +31,7 @@ import {
 } from 'react-native'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useBiometricAuth, type BiometricResult } from './useBiometricAuth'
+import { TOKENS } from '../theme/defaults/tokens'
 
 const KEYPAD_LAYOUT = [
   ['1', '2', '3'],
@@ -211,19 +211,19 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 60,
     paddingHorizontal: 32,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TOKENS.colors.surface.base,
     alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: '600',
     marginBottom: 8,
-    color: '#111111',
+    color: TOKENS.colors.surface.ink,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
-    color: '#666666',
+    color: TOKENS.colors.surface.inkSoft,
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -236,16 +236,18 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: TOKENS.colors.surface.line,
   },
   dotFilled: {
-    backgroundColor: '#222222',
+    backgroundColor: TOKENS.colors.surface.ink,
   },
   bannerSpacer: { height: 40 },
   errorBanner: {
     minHeight: 40,
     paddingVertical: 8,
     paddingHorizontal: 16,
+    // ponytail: no "danger-soft" background token exists yet — kept
+    // hardcoded per MAPPA rule (semantic without a token stays as-is).
     backgroundColor: '#FFE4E4',
     borderRadius: 8,
     marginVertical: 8,
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   errorText: {
-    color: '#A60000',
+    color: TOKENS.colors.semantic.danger,
     fontSize: 13,
     textAlign: 'center',
   },
@@ -261,6 +263,8 @@ const styles = StyleSheet.create({
     minHeight: 40,
     paddingVertical: 8,
     paddingHorizontal: 16,
+    // ponytail: no "warning-soft" background token exists yet — kept
+    // hardcoded per MAPPA rule (semantic without a token stays as-is).
     backgroundColor: '#FFF4D6',
     borderRadius: 8,
     marginVertical: 8,
@@ -268,7 +272,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   lockoutText: {
-    color: '#7A5A00',
+    color: TOKENS.colors.semantic.warning,
     fontSize: 13,
     textAlign: 'center',
   },
@@ -286,7 +290,7 @@ const styles = StyleSheet.create({
     width: 88,
     height: 64,
     borderRadius: 12,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: TOKENS.colors.surface.sunk,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -300,7 +304,7 @@ const styles = StyleSheet.create({
   keyText: {
     fontSize: 24,
     fontWeight: '500',
-    color: '#222222',
+    color: TOKENS.colors.surface.ink,
   },
   biometricLink: {
     marginTop: 24,
@@ -308,7 +312,7 @@ const styles = StyleSheet.create({
   },
   biometricLinkText: {
     fontSize: 15,
-    color: '#0066CC',
+    color: TOKENS.colors.semantic.info,
     textAlign: 'center',
     textDecorationLine: 'underline',
   },

@@ -24,6 +24,7 @@ import { useAuth } from './AuthContext'
 import { useBiometricAuth } from './useBiometricAuth'
 import { PinEntryScreen } from './PinEntryScreen'
 import { BiometricEnrollModal } from './BiometricEnrollModal'
+import { TOKENS } from '../theme/defaults/tokens'
 
 /**
  * Polish: fade the gate overlay in on each status transition. Keyed by
@@ -140,7 +141,7 @@ function BiometricPromptOverlay({ onUsePin }: Readonly<{ onUsePin: () => void }>
 
   return (
     <View style={overlayStyles.container}>
-      <ActivityIndicator size="large" color="#222222" />
+      <ActivityIndicator size="large" color={TOKENS.colors.surface.ink} />
       <Text style={overlayStyles.title}>
         <FormattedMessage id="auth.biometric.gate.title" />
       </Text>
@@ -164,7 +165,7 @@ function BiometricPromptOverlay({ onUsePin }: Readonly<{ onUsePin: () => void }>
 const overlayStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TOKENS.colors.surface.base,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 32,
@@ -172,13 +173,13 @@ const overlayStyles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#111111',
+    color: TOKENS.colors.surface.ink,
     marginTop: 24,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
-    color: '#666666',
+    color: TOKENS.colors.surface.inkSoft,
     marginTop: 8,
     textAlign: 'center',
   },
@@ -188,7 +189,7 @@ const overlayStyles = StyleSheet.create({
   },
   pinLinkText: {
     fontSize: 15,
-    color: '#0066CC',
+    color: TOKENS.colors.semantic.info,
     textDecorationLine: 'underline',
   },
 })
