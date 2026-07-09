@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   center:         { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header:         { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
   title:          { color: TOKENS.colors.neutral.white, fontSize: 22, fontWeight: '700' },
-  subtitle:       { color: '#93c5fd', fontSize: 13, marginTop: 6, lineHeight: 18 },
+  subtitle:       { color: TOKENS.colors.brand.primarySoft, fontSize: 13, marginTop: 6, lineHeight: 18 },
   row:            { flexDirection: 'row', backgroundColor: TOKENS.colors.neutral.white, padding: 16, borderBottomWidth: 1, borderBottomColor: TOKENS.colors.neutral.gray100 },
   rowText:        { flex: 1, marginRight: 12 },
   label:          { fontSize: 15, fontWeight: '600', color: TOKENS.colors.surface.ink },

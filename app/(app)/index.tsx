@@ -158,9 +158,9 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container:    { flex: 1, backgroundColor: TOKENS.colors.surface.base },
   header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, backgroundColor: TOKENS.colors.brand.primary },
-  greeting:     { color: '#93c5fd', fontSize: 13 },
+  greeting:     { color: TOKENS.colors.brand.primarySoft, fontSize: 13 },
   name:         { color: TOKENS.colors.neutral.white, fontSize: 18, fontWeight: '700' },
-  signOut:      { color: '#93c5fd', fontSize: 13 },
+  signOut:      { color: TOKENS.colors.brand.primarySoft, fontSize: 13 },
   // Territory selector
   territorySelectorContainer: { backgroundColor: TOKENS.colors.neutral.white, paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: TOKENS.colors.neutral.gray200 },
   territorySelectorLabel: { fontSize: 11, fontWeight: '600', color: TOKENS.colors.neutral.gray500, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
