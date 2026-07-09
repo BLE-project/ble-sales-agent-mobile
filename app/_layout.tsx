@@ -5,6 +5,9 @@ import { BiometricAuthProvider } from '../src/auth/useBiometricAuth'
 import { BiometricGate } from '../src/auth/BiometricGate'
 import { useEffect, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
+import * as SplashScreen from 'expo-splash-screen'
+import { useFonts } from 'expo-font'
+import { getAppFontMap } from '../src/theme/fonts'
 import { I18nProvider } from '../src/i18n/I18nProvider'
 import { ensureLocale } from '../src/i18n/config'
 import { initSentry, SentryErrorBoundary } from '../src/observability/sentry'
@@ -12,6 +15,11 @@ import { initSentry, SentryErrorBoundary } from '../src/observability/sentry'
 // ADR-020: Sentry init — dormant until EXPO_PUBLIC_SENTRY_DSN set
 // post Privacy→Legal sign-off (legal-review-log.md entry 2026-05-27).
 initSentry()
+
+// «La Piazza» foundation: keep the native splash visible until Bricolage
+// Grotesque / Hanken Grotesk (+ existing families) finish loading, same
+// pattern as consumer-mobile's app/_layout.tsx (src/fonts/fonts.ts).
+SplashScreen.preventAutoHideAsync().catch(() => {})
 
 const qc = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30_000 } } })
 
@@ -45,6 +53,21 @@ export default function RootLayout() {
   // error boundaries) read the resolved locale. IntlProvider still performs
   // its own async resolution inside I18nProvider — this only seeds the cache.
   useEffect(() => { void ensureLocale(null) }, [])
+
+  // «La Piazza» foundation: block first render until fonts resolve, then
+  // hide the splash. Same fallback stance as consumer-mobile — a font load
+  // error still renders the app (system-font fallback beats a blank screen).
+  const [fontsLoaded, fontsError] = useFonts(getAppFontMap())
+
+  useEffect(() => {
+    if (fontsLoaded || fontsError) {
+      SplashScreen.hideAsync().catch(() => {})
+    }
+  }, [fontsLoaded, fontsError])
+
+  if (!fontsLoaded && !fontsError) {
+    return null
+  }
 
   return (
     <SentryErrorBoundary>
