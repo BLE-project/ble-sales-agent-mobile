@@ -95,8 +95,8 @@ function stageStyle(stage: string) {
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container:   { flex: 1, backgroundColor: '#f5f7fa' },
-  header:      { fontSize: 20, fontWeight: '700', color: '#1a3f6f', padding: 20, paddingBottom: 10 },
+  container:   { flex: 1, backgroundColor: TOKENS.colors.surface.base },
+  header:      { fontSize: 20, fontWeight: '700', color: TOKENS.colors.brand.primary, padding: 20, paddingBottom: 10 },
 
   mapPlaceholder: {
     height: 200,
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   cardRow:    { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   pinIcon:    { fontSize: 22, marginTop: 2 },
   cardContent:{ flex: 1 },
-  cardName:   { fontSize: 15, fontWeight: '600', color: '#111', marginBottom: 2 },
+  cardName:   { fontSize: 15, fontWeight: '600', color: TOKENS.colors.surface.ink, marginBottom: 2 },
   cardAddress:{ fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
   cardCoords: { fontSize: 11, color: '#9ca3af' },
 

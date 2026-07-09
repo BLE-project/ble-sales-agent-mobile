@@ -9,6 +9,7 @@ import {
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useRouter } from 'expo-router'
 import { useAuth } from '../src/auth/AuthContext'
+import { TOKENS } from '../src/theme/defaults/tokens'
 
 export default function LoginScreen() {
   const intl      = useIntl()
@@ -56,7 +57,7 @@ export default function LoginScreen() {
         <TextInput
           style={styles.input}
           placeholder={usernamePlaceholder}
-          placeholderTextColor="#999"
+          placeholderTextColor={TOKENS.colors.surface.inkSoft}
           autoCapitalize="none"
           value={username}
           onChangeText={setUsername}
@@ -67,7 +68,7 @@ export default function LoginScreen() {
         <TextInput
           style={styles.input}
           placeholder={passwordPlaceholder}
-          placeholderTextColor="#999"
+          placeholderTextColor={TOKENS.colors.surface.inkSoft}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -82,7 +83,7 @@ export default function LoginScreen() {
           testID="login-btn"
         >
           {loading
-            ? <ActivityIndicator color="#fff" />
+            ? <ActivityIndicator color={TOKENS.colors.surface.onBrand} />
             : <Text style={styles.btnText}>
                 <FormattedMessage id="auth.login.submit" />
               </Text>
@@ -93,15 +94,15 @@ export default function LoginScreen() {
   )
 }
 
-const BRAND = '#1a3f6f'
+const BRAND = TOKENS.colors.brand.primary
 
 const styles = StyleSheet.create({
   container:  { flex: 1, backgroundColor: BRAND, justifyContent: 'center', padding: 24 },
-  card:       { backgroundColor: '#fff', borderRadius: 16, padding: 28 },
+  card:       { backgroundColor: TOKENS.colors.surface.surface, borderRadius: 16, padding: 28 },
   brand:      { fontSize: 32, fontWeight: '800', color: BRAND, textAlign: 'center', marginBottom: 4 },
-  subtitle:   { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 28 },
-  input:      { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, padding: 14, fontSize: 15, marginBottom: 14 },
+  subtitle:   { fontSize: 14, color: TOKENS.colors.surface.inkSoft, textAlign: 'center', marginBottom: 28 },
+  input:      { borderWidth: 1, borderColor: TOKENS.colors.surface.line, borderRadius: 10, padding: 14, fontSize: 15, marginBottom: 14 },
   btn:        { backgroundColor: BRAND, borderRadius: 10, padding: 16, alignItems: 'center', marginTop: 4 },
   btnDisabled:{ opacity: 0.6 },
-  btnText:    { color: '#fff', fontWeight: '700', fontSize: 16 },
+  btnText:    { color: TOKENS.colors.surface.onBrand, fontWeight: '700', fontSize: 16 },
 })

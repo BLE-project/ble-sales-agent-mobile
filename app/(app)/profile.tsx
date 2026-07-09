@@ -45,17 +45,17 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: '#f5f7fa' },
-  avatar:       { width: 80, height: 80, borderRadius: 40, backgroundColor: '#1a3f6f', alignSelf: 'center', marginTop: 20, marginBottom: 12, justifyContent: 'center', alignItems: 'center' },
+  container:    { flex: 1, backgroundColor: TOKENS.colors.surface.base },
+  avatar:       { width: 80, height: 80, borderRadius: 40, backgroundColor: TOKENS.colors.brand.primary, alignSelf: 'center', marginTop: 20, marginBottom: 12, justifyContent: 'center', alignItems: 'center' },
   avatarText:   { color: TOKENS.colors.neutral.white, fontSize: 32, fontWeight: '700' },
-  name:         { fontSize: 22, fontWeight: '700', color: '#111', textAlign: 'center' },
+  name:         { fontSize: 22, fontWeight: '700', color: TOKENS.colors.surface.ink, textAlign: 'center' },
   email:        { fontSize: 14, color: TOKENS.colors.neutral.gray500, textAlign: 'center', marginBottom: 4 },
-  role:         { fontSize: 13, color: '#1a3f6f', textAlign: 'center', fontWeight: '600', marginBottom: 24 },
+  role:         { fontSize: 13, color: TOKENS.colors.brand.primary, textAlign: 'center', fontWeight: '600', marginBottom: 24 },
   section:      { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginBottom: 16, elevation: 1 },
   sectionTitle: { fontSize: 13, fontWeight: '600', color: TOKENS.colors.neutral.gray500, marginBottom: 12, textTransform: 'uppercase' },
   row:          { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: TOKENS.colors.neutral.gray100 },
   rowLabel:     { fontSize: 14, color: TOKENS.colors.neutral.gray500 },
-  rowValue:     { fontSize: 14, color: '#111', fontWeight: '500' },
-  logoutBtn:    { backgroundColor: '#fee2e2', borderRadius: 10, padding: 16, alignItems: 'center', marginTop: 8 },
+  rowValue:     { fontSize: 14, color: TOKENS.colors.surface.ink, fontWeight: '500' },
+  logoutBtn:    { backgroundColor: TOKENS.colors.semanticSoft.dangerSoft, borderRadius: 10, padding: 16, alignItems: 'center', marginTop: 8 },
   logoutText:   { color: TOKENS.colors.semantic.danger, fontWeight: '700', fontSize: 15 },
 })

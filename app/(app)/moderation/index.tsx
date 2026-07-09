@@ -101,14 +101,14 @@ export default function ModerationQueueScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:     { flex: 1, backgroundColor: '#f5f7fa' },
+  container:     { flex: 1, backgroundColor: TOKENS.colors.surface.base },
   header:        { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
   headerTitle:   { color: TOKENS.colors.neutral.white, fontSize: 22, fontWeight: '700' },
   headerCount:   { color: '#e9d5ff', fontSize: 14, marginTop: 4 },
   card:          { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
   cardExpired:   { borderLeftColor: TOKENS.colors.semantic.danger, borderLeftWidth: 4 },
   cardHeader:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  title:         { fontSize: 16, fontWeight: '700', color: '#111', flex: 1 },
+  title:         { fontSize: 16, fontWeight: '700', color: TOKENS.colors.surface.ink, flex: 1 },
   desc:          { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 6 },
   cardFooter:    { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
   expiry:        { fontSize: 12, color: '#9ca3af' },

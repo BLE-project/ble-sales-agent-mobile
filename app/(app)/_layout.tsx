@@ -1,6 +1,7 @@
 import { Tabs, Redirect } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { useAuth } from '../../src/auth/AuthContext'
+import { TOKENS } from '../../src/theme/defaults/tokens'
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name']
 
@@ -47,7 +48,7 @@ export default function AppLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor:   '#1a3f6f',
+        tabBarActiveTintColor:   TOKENS.colors.brand.primary,
         tabBarInactiveTintColor: '#9E9E9E',
       }}
     >

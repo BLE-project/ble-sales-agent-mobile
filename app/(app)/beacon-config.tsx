@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 22, fontWeight: '700', color: TOKENS.colors.neutral.gray900, marginBottom: 4 },
   subtitle: { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 16 },
   primaryBtn: {
-    backgroundColor: '#1a3f6f',
+    backgroundColor: TOKENS.colors.brand.primary,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -585,8 +585,8 @@ const styles = StyleSheet.create({
     backgroundColor: TOKENS.colors.neutral.gray50,
   },
   chipActive: {
-    backgroundColor: '#1a3f6f',
-    borderColor: '#1a3f6f',
+    backgroundColor: TOKENS.colors.brand.primary,
+    borderColor: TOKENS.colors.brand.primary,
   },
   chipText: { fontSize: 12, color: TOKENS.colors.neutral.gray700, fontWeight: '500' },
   chipTextActive: { color: TOKENS.colors.neutral.white },

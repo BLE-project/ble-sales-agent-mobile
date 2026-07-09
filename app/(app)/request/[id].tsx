@@ -56,7 +56,7 @@ export default function RequestDetailScreen() {
   })
 
   if (isLoading || !request) {
-    return <ActivityIndicator style={{ flex: 1, marginTop: 40 }} color="#1a3f6f" />
+    return <ActivityIndicator style={{ flex: 1, marginTop: 40 }} color={TOKENS.colors.brand.primary} />
   }
 
   return (
@@ -147,15 +147,15 @@ export default function RequestDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: '#f5f7fa' },
-  title:        { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 8 },
-  meta:         { fontSize: 14, color: '#555', marginBottom: 4 },
+  container:    { flex: 1, backgroundColor: TOKENS.colors.surface.base },
+  title:        { fontSize: 22, fontWeight: '700', color: TOKENS.colors.surface.ink, marginBottom: 8 },
+  meta:         { fontSize: 14, color: TOKENS.colors.surface.inkSoft, marginBottom: 4 },
   status:       { fontSize: 15, fontWeight: '600', marginVertical: 12 },
   section:      { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginTop: 16, elevation: 1 },
-  sectionTitle: { fontSize: 15, fontWeight: '700', color: '#1a3f6f', marginBottom: 12 },
-  input:        { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, fontSize: 14, marginBottom: 12, minHeight: 60, textAlignVertical: 'top' },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: TOKENS.colors.brand.primary, marginBottom: 12 },
+  input:        { borderWidth: 1, borderColor: TOKENS.colors.surface.line, borderRadius: 8, padding: 10, fontSize: 14, marginBottom: 12, minHeight: 60, textAlignVertical: 'top' },
   kitItems:     { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 12, fontStyle: 'italic' },
-  btnPrimary:   { backgroundColor: '#1a3f6f', borderRadius: 8, padding: 14, alignItems: 'center' },
+  btnPrimary:   { backgroundColor: TOKENS.colors.brand.primary, borderRadius: 8, padding: 14, alignItems: 'center' },
   btnSuccess:   { backgroundColor: TOKENS.colors.semantic.success, borderRadius: 8, padding: 14, alignItems: 'center' },
   btnText:      { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 15 },
 })

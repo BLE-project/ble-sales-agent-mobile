@@ -81,7 +81,7 @@ export default function SalesAgentMerchantDetailScreen() {
     Linking.openURL(`mailto:${data.email}`)
   }
 
-  if (loading) return <View style={s.center}><ActivityIndicator color="#1a3f6f" /></View>
+  if (loading) return <View style={s.center}><ActivityIndicator color={TOKENS.colors.brand.primary} /></View>
   if (error || !data) {
     return (
       <View style={s.center}>
@@ -177,25 +177,25 @@ export default function SalesAgentMerchantDetailScreen() {
 }
 
 const s = StyleSheet.create({
-  container:   { flex: 1, backgroundColor: '#f5f7fa' },
+  container:   { flex: 1, backgroundColor: TOKENS.colors.surface.base },
   center:      { flex: 1, justifyContent: 'center', alignItems: 'center' },
   cover:       { width: '100%', height: 160 },
   content:     { padding: 16 },
   headerRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   logo:        { width: 56, height: 56, borderRadius: 8, marginRight: 12, backgroundColor: TOKENS.colors.neutral.gray200 },
-  name:        { fontSize: 20, fontWeight: '700', color: '#111' },
+  name:        { fontSize: 20, fontWeight: '700', color: TOKENS.colors.surface.ink },
   rating:      { fontSize: 13, color: TOKENS.colors.neutral.gray700, marginTop: 2 },
   statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   statusText:  { fontSize: 11, fontWeight: '600' },
   sectionLabel:{ fontSize: 13, fontWeight: '600', color: TOKENS.colors.neutral.gray700, marginTop: 20, marginBottom: 8 },
-  desc:        { fontSize: 14, color: '#111', lineHeight: 20 },
+  desc:        { fontSize: 14, color: TOKENS.colors.surface.ink, lineHeight: 20 },
   contactList: { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 8, borderWidth: 1, borderColor: TOKENS.colors.neutral.gray200 },
   contactRow:  { flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: 1,
                  borderBottomColor: TOKENS.colors.neutral.gray100 },
   contactIcon: { fontSize: 18, marginRight: 10 },
-  contactText: { fontSize: 14, color: '#1a3f6f', flex: 1 },
+  contactText: { fontSize: 14, color: TOKENS.colors.brand.primary, flex: 1 },
   readOnlyNote:{ backgroundColor: TOKENS.colors.neutral.gray100, borderRadius: 8, padding: 12, marginTop: 20 },
   readOnlyText:{ fontSize: 12, color: TOKENS.colors.neutral.gray500, textAlign: 'center' },
   errorText:   { fontSize: 16, color: '#dc2626', marginBottom: 8 },
-  link:        { color: '#1a3f6f', textDecorationLine: 'underline', fontSize: 14 },
+  link:        { color: TOKENS.colors.brand.primary, textDecorationLine: 'underline', fontSize: 14 },
 })

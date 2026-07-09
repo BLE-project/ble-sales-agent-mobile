@@ -30,7 +30,7 @@ export default function RequestsScreen() {
       >
         <View style={styles.cardHeader}>
           <Text style={styles.bizName}>{item.businessName}</Text>
-          <View style={[styles.badge, { backgroundColor: STATUS_COLORS[item.status] ?? '#999' }]}>
+          <View style={[styles.badge, { backgroundColor: STATUS_COLORS[item.status] ?? TOKENS.colors.surface.inkSoft }]}>
             <Text style={styles.badgeText}>{item.status}</Text>
           </View>
         </View>
@@ -56,7 +56,7 @@ export default function RequestsScreen() {
       </ScrollView>
 
       {isLoading
-        ? <ActivityIndicator style={{ marginTop: 40 }} color="#1a3f6f" />
+        ? <ActivityIndicator style={{ marginTop: 40 }} color={TOKENS.colors.brand.primary} />
         : <FlatList
             data={data ?? []}
             keyExtractor={i => i.id}
@@ -72,15 +72,15 @@ export default function RequestsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:       { flex: 1, backgroundColor: '#f5f7fa' },
+  container:       { flex: 1, backgroundColor: TOKENS.colors.surface.base },
   filters:         { paddingHorizontal: 12, paddingVertical: 10, flexGrow: 0 },
   filterBtn:       { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, marginRight: 8, backgroundColor: TOKENS.colors.neutral.gray200 },
-  filterActive:    { backgroundColor: '#1a3f6f' },
+  filterActive:    { backgroundColor: TOKENS.colors.brand.primary },
   filterText:      { color: TOKENS.colors.neutral.gray700, fontSize: 13, fontWeight: '500' },
   filterTextActive:{ color: TOKENS.colors.neutral.white },
   card:            { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
   cardHeader:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  bizName:         { fontSize: 16, fontWeight: '700', color: '#111', flex: 1 },
+  bizName:         { fontSize: 16, fontWeight: '700', color: TOKENS.colors.surface.ink, flex: 1 },
   badge:           { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
   badgeText:       { color: TOKENS.colors.neutral.white, fontSize: 11, fontWeight: '600' },
   meta:            { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },

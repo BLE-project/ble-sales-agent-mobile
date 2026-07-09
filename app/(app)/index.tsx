@@ -85,7 +85,7 @@ export default function DashboardScreen() {
     {
       label: intl.formatMessage({ id: 'overview.tile.last_payout' }),
       value: totalPayout !== '--' ? `EUR ${totalPayout}` : '--',
-      color: '#1a3f6f',
+      color: TOKENS.colors.brand.primary,
       route: '/royalties',
     },
   ]
@@ -156,8 +156,8 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: '#f5f7fa' },
-  header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, backgroundColor: '#1a3f6f' },
+  container:    { flex: 1, backgroundColor: TOKENS.colors.surface.base },
+  header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, backgroundColor: TOKENS.colors.brand.primary },
   greeting:     { color: '#93c5fd', fontSize: 13 },
   name:         { color: TOKENS.colors.neutral.white, fontSize: 18, fontWeight: '700' },
   signOut:      { color: '#93c5fd', fontSize: 13 },
@@ -166,14 +166,14 @@ const styles = StyleSheet.create({
   territorySelectorLabel: { fontSize: 11, fontWeight: '600', color: TOKENS.colors.neutral.gray500, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
   territoryChips: { flexDirection: 'row' },
   territoryChip: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: TOKENS.colors.neutral.gray100, marginRight: 8 },
-  territoryChipActive: { backgroundColor: '#1a3f6f' },
+  territoryChipActive: { backgroundColor: TOKENS.colors.brand.primary },
   territoryChipText: { fontSize: 13, fontWeight: '500', color: TOKENS.colors.neutral.gray700 },
   territoryChipTextActive: { color: TOKENS.colors.neutral.white },
   sectionTitle: { fontSize: 14, fontWeight: '600', color: TOKENS.colors.neutral.gray500, marginLeft: 20, marginTop: 20, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
   grid:         { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12 },
   tile:         { width: '45%', margin: 8, backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, borderLeftWidth: 4, elevation: 2 },
-  tileValue:    { fontSize: 24, fontWeight: '700', color: '#111' },
+  tileValue:    { fontSize: 24, fontWeight: '700', color: TOKENS.colors.surface.ink },
   tileLabel:    { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginTop: 4 },
   action:       { backgroundColor: TOKENS.colors.neutral.white, marginHorizontal: 20, marginBottom: 10, borderRadius: 10, padding: 16, elevation: 1 },
-  actionText:   { fontSize: 15, color: '#1a3f6f', fontWeight: '500' },
+  actionText:   { fontSize: 15, color: TOKENS.colors.brand.primary, fontWeight: '500' },
 })

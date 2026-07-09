@@ -127,7 +127,7 @@ export default function BeaconFirstConfigScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:       { flex: 1, backgroundColor: '#f5f7fa' },
+  container:       { flex: 1, backgroundColor: TOKENS.colors.surface.base },
   header:          { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
   back:            { color: '#e9d5ff', marginBottom: 4 },
   title:           { color: TOKENS.colors.neutral.white, fontSize: 22, fontWeight: '700' },
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   scanBtnText:     { color: TOKENS.colors.neutral.white, fontSize: 16, fontWeight: '700' },
   row:             { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: TOKENS.colors.neutral.white, marginHorizontal: 16, marginBottom: 8, borderRadius: 10 },
   icon:            { fontSize: 24, marginRight: 12 },
-  rowTitle:        { fontSize: 15, fontWeight: '600', color: '#111' },
+  rowTitle:        { fontSize: 15, fontWeight: '600', color: TOKENS.colors.surface.ink },
   rowMeta:         { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4 },
   rowMetaFail:     { fontSize: 13, color: TOKENS.colors.semantic.danger, marginTop: 4 },
   confirmBtn:      { backgroundColor: TOKENS.colors.semantic.success, margin: 16, padding: 16, borderRadius: 12, alignItems: 'center' },

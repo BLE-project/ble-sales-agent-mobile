@@ -202,7 +202,7 @@ export default function ReviewDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:      { flex: 1, backgroundColor: '#f5f7fa' },
+  container:      { flex: 1, backgroundColor: TOKENS.colors.surface.base },
   center:         { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header:         { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
   back:           { color: '#e9d5ff', marginBottom: 4 },
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   image:          { width: '100%', height: 200 },
   card:           { backgroundColor: TOKENS.colors.neutral.white, margin: 16, padding: 16, borderRadius: 12, elevation: 2 },
   sectionLabel:   { fontSize: 11, fontWeight: '700', color: TOKENS.colors.neutral.gray500, marginBottom: 8, letterSpacing: 0.5 },
-  description:    { fontSize: 14, color: '#111', lineHeight: 20 },
+  description:    { fontSize: 14, color: TOKENS.colors.surface.ink, lineHeight: 20 },
   claudeRisk:     { fontSize: 18, fontWeight: '700' },
   claudeReasons:  { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 6 },
   actions:        { flexDirection: 'row', padding: 16, gap: 8 },

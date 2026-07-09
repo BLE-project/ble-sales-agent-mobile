@@ -135,7 +135,7 @@ export default function ProspectKanbanScreen() {
   if (loading) {
     return (
       <View style={[styles.container, styles.centered]} testID="kanban-loading">
-        <ActivityIndicator size="large" color="#1a3f6f" />
+        <ActivityIndicator size="large" color={TOKENS.colors.brand.primary} />
         <Text style={styles.stateText}>Caricamento pipeline…</Text>
       </View>
     )
@@ -278,9 +278,9 @@ export default function ProspectKanbanScreen() {
 const COLUMN_WIDTH = 220
 
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: '#f5f7fa' },
+  container:    { flex: 1, backgroundColor: TOKENS.colors.surface.base },
   centered:     { alignItems: 'center', justifyContent: 'center', padding: 24 },
-  header:       { fontSize: 20, fontWeight: '700', color: '#1a3f6f', padding: 20, paddingBottom: 10 },
+  header:       { fontSize: 20, fontWeight: '700', color: TOKENS.colors.brand.primary, padding: 20, paddingBottom: 10 },
   board:        { paddingHorizontal: 12, paddingBottom: 20, gap: 10 },
 
   stateText:    { marginTop: 12, fontSize: 14, color: TOKENS.colors.neutral.gray500 },
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 8,
-    backgroundColor: '#1a3f6f',
+    backgroundColor: TOKENS.colors.brand.primary,
   },
   retryBtnText: { color: TOKENS.colors.neutral.white, fontSize: 14, fontWeight: '600' },
 
@@ -312,12 +312,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 14,
-    color: '#111',
+    color: TOKENS.colors.surface.ink,
   },
   addBtn: {
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#1a3f6f',
+    backgroundColor: TOKENS.colors.brand.primary,
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 90,
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: TOKENS.colors.neutral.gray100,
   },
-  cardName:    { fontSize: 14, fontWeight: '600', color: '#111', marginBottom: 4 },
+  cardName:    { fontSize: 14, fontWeight: '600', color: TOKENS.colors.surface.ink, marginBottom: 4 },
   cardMeta:    { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
 
   cardActions: {
@@ -379,16 +379,16 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#1a3f6f',
+    borderColor: TOKENS.colors.brand.primary,
     alignItems: 'center',
   },
-  detailBtnText: { fontSize: 12, color: '#1a3f6f', fontWeight: '600' },
+  detailBtnText: { fontSize: 12, color: TOKENS.colors.brand.primary, fontWeight: '600' },
 
   moveBtn: {
     flex: 1,
     paddingVertical: 6,
     borderRadius: 6,
-    backgroundColor: '#1a3f6f',
+    backgroundColor: TOKENS.colors.brand.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
