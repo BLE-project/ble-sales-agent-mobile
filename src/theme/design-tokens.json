@@ -22,6 +22,16 @@
     "whiteWarm": "#FAF9F6",
     "white": "#FFFFFF"
   },
+  "surface": {
+    "$note": "«La Piazza» superfici / inchiostro — platform-level, non white-label. Fonte: terrio-platform-docs/design_handoff/tokens/piazza-tokens.ts.",
+    "base": "#FBFAF7",
+    "surface": "#FFFFFF",
+    "sunk": "#F3F0FA",
+    "ink": "#241645",
+    "inkSoft": "#5B5170",
+    "line": "#E7E1F2",
+    "rewardInk": "#6B5200"
+  },
   "semantic": {
     "success": { "base": "#10B981", "soft": "#D1FAE5", "dark": "#065F46" },
     "warning": { "base": "#F59E0B", "soft": "#FEF3C7", "dark": "#92400E" },

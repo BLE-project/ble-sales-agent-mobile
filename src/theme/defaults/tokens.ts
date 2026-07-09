@@ -49,5 +49,17 @@ export const TOKENS = {
       warning: '#F59E0B',
       info:    '#3B82F6',
     },
+    // «La Piazza» superfici / inchiostro — platform-level (sales-agent non è
+    // white-label per-tenant, nessun BrandingContext runtime). Fonte:
+    // terrio-platform-docs/design_handoff/tokens/piazza-tokens.ts.
+    surface: {
+      base:      '#FBFAF7',
+      surface:   '#FFFFFF',
+      sunk:      '#F3F0FA',
+      ink:       '#241645',
+      inkSoft:   '#5B5170',
+      line:      '#E7E1F2',
+      rewardInk: '#6B5200',
+    },
   },
 };
