@@ -5,11 +5,9 @@ import {
 import { Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import {
   JetBrainsMono_400Regular,
-  // ponytail: typography.ts's monoAmount references a nonexistent
-  // 'JetBrainsMono_600Medium' export (pre-existing bug, mono out of scope
-  // this pass) — preload the real 500Medium weight so it's at least
-  // available if that string gets corrected later.
-  JetBrainsMono_500Medium,
+  // monoAmount (typography.ts) usa il peso 600 reale: 600SemiBold.
+  // (Il vecchio riferimento 'JetBrainsMono_600Medium' non esisteva nel package.)
+  JetBrainsMono_600SemiBold,
 } from '@expo-google-fonts/jetbrains-mono';
 import {
   BricolageGrotesque_600SemiBold,
@@ -38,7 +36,7 @@ export function getAppFontMap(): Record<string, FontSource> {
     Inter_400Regular,
     Inter_600SemiBold,
     JetBrainsMono_400Regular,
-    JetBrainsMono_500Medium,
+    JetBrainsMono_600SemiBold,
     BricolageGrotesque_600SemiBold,
     BricolageGrotesque_700Bold,
     HankenGrotesk_400Regular,

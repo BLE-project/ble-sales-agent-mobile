@@ -14,5 +14,5 @@ export const typography: Record<string, TextStyle> = {
   label:       { fontFamily: 'HankenGrotesk_600SemiBold', fontSize: 11, lineHeight: 14 },
   tag:         { fontFamily: 'JetBrainsMono_400Regular', fontSize: 10, lineHeight: 14,
                  letterSpacing: 0.8, textTransform: 'uppercase' },
-  monoAmount:  { fontFamily: 'JetBrainsMono_600Medium', fontSize: 22, lineHeight: 26 },
+  monoAmount:  { fontFamily: 'JetBrainsMono_600SemiBold', fontSize: 22, lineHeight: 26 },
 };
