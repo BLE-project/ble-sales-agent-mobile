@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import { useRouter } from 'expo-router'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -86,9 +87,9 @@ function stageStyle(stage: string) {
     CONTACTED: { backgroundColor: '#fef9c3' },
     DEMO:      { backgroundColor: '#ede9fe' },
     CONTRACT:  { backgroundColor: '#d1fae5' },
-    CLOSED:    { backgroundColor: '#d1d5db' },
+    CLOSED:    { backgroundColor: TOKENS.colors.neutral.gray300 },
   }
-  return map[stage] ?? { backgroundColor: '#f3f4f6' }
+  return map[stage] ?? { backgroundColor: TOKENS.colors.neutral.gray100 }
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
 
   mapPlaceholder: {
     height: 200,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: TOKENS.colors.neutral.gray200,
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 16,
@@ -107,13 +108,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   mapIcon:    { fontSize: 36, marginBottom: 8 },
-  mapText:    { fontSize: 16, fontWeight: '700', color: '#374151', marginBottom: 4 },
-  mapSubText: { fontSize: 12, color: '#6b7280', textAlign: 'center', paddingHorizontal: 24 },
+  mapText:    { fontSize: 16, fontWeight: '700', color: TOKENS.colors.neutral.gray700, marginBottom: 4 },
+  mapSubText: { fontSize: 12, color: TOKENS.colors.neutral.gray500, textAlign: 'center', paddingHorizontal: 24 },
 
   list: { paddingHorizontal: 16, paddingBottom: 20 },
 
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.neutral.white,
     borderRadius: 12,
     padding: 14,
     marginBottom: 10,
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   pinIcon:    { fontSize: 22, marginTop: 2 },
   cardContent:{ flex: 1 },
   cardName:   { fontSize: 15, fontWeight: '600', color: '#111', marginBottom: 2 },
-  cardAddress:{ fontSize: 13, color: '#6b7280', marginBottom: 2 },
+  cardAddress:{ fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
   cardCoords: { fontSize: 11, color: '#9ca3af' },
 
   stageBadge: {
@@ -133,5 +134,5 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 2,
   },
-  stageText:  { fontSize: 10, fontWeight: '700', color: '#374151' },
+  stageText:  { fontSize: 10, fontWeight: '700', color: TOKENS.colors.neutral.gray700 },
 })

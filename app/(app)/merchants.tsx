@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity }
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { merchantsApi } from '../../src/api/salesAgentApi'
+import { TOKENS } from '../../src/theme/defaults/tokens'
 
 export default function MerchantsScreen() {
   const router = useRouter()
@@ -47,12 +48,12 @@ export default function MerchantsScreen() {
 const styles = StyleSheet.create({
   container:   { flex: 1, backgroundColor: '#f5f7fa' },
   header:      { fontSize: 20, fontWeight: '700', color: '#1a3f6f', padding: 20, paddingBottom: 10 },
-  card:        { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
+  card:        { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
   cardRow:     { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   bizName:     { fontSize: 16, fontWeight: '600', color: '#111' },
   status:      { fontSize: 12, fontWeight: '600', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
   statusActive:{ backgroundColor: '#d1fae5', color: '#059669' },
-  statusOther: { backgroundColor: '#f3f4f6', color: '#6b7280' },
-  meta:        { fontSize: 13, color: '#6b7280', marginBottom: 2 },
+  statusOther: { backgroundColor: TOKENS.colors.neutral.gray100, color: TOKENS.colors.neutral.gray500 },
+  meta:        { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
   empty:       { textAlign: 'center', color: '#9ca3af', marginTop: 40 },
 })

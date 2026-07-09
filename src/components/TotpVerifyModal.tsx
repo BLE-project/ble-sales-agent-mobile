@@ -75,5 +75,5 @@ const styles = StyleSheet.create({
   cancelText: { color: TOKENS.colors.surface.inkSoft, fontSize: 14 },
   btn: { flex: 1, backgroundColor: TOKENS.colors.brand.primary, borderRadius: 8, paddingVertical: 10, alignItems: 'center' },
   btnDisabled: { opacity: 0.5 },
-  btnText: { color: TOKENS.colors.neutral.white, fontWeight: '600', fontSize: 14 },
+  btnText: { color: TOKENS.colors.surface.onBrand, fontWeight: '600', fontSize: 14 },
 })

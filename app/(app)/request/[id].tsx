@@ -6,6 +6,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { registrationRequestsApi, kitDeliveryApi } from '../../../src/api/salesAgentApi'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 export default function RequestDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -65,7 +66,7 @@ export default function RequestDetailScreen() {
       <Text style={styles.meta}>Tipo: {request.businessType}</Text>
       <Text style={styles.meta}>Email: {request.email}</Text>
       <Text style={styles.meta}>Tel: {request.phone}</Text>
-      <Text style={[styles.status, { color: request.status === 'PENDING' ? '#f59e0b' : '#10b981' }]}>
+      <Text style={[styles.status, { color: request.status === 'PENDING' ? TOKENS.colors.semantic.warning : TOKENS.colors.semantic.success }]}>
         Stato: {request.status}
       </Text>
 
@@ -150,11 +151,11 @@ const styles = StyleSheet.create({
   title:        { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 8 },
   meta:         { fontSize: 14, color: '#555', marginBottom: 4 },
   status:       { fontSize: 15, fontWeight: '600', marginVertical: 12 },
-  section:      { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginTop: 16, elevation: 1 },
+  section:      { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginTop: 16, elevation: 1 },
   sectionTitle: { fontSize: 15, fontWeight: '700', color: '#1a3f6f', marginBottom: 12 },
   input:        { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, fontSize: 14, marginBottom: 12, minHeight: 60, textAlignVertical: 'top' },
-  kitItems:     { fontSize: 13, color: '#6b7280', marginBottom: 12, fontStyle: 'italic' },
+  kitItems:     { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 12, fontStyle: 'italic' },
   btnPrimary:   { backgroundColor: '#1a3f6f', borderRadius: 8, padding: 14, alignItems: 'center' },
-  btnSuccess:   { backgroundColor: '#10b981', borderRadius: 8, padding: 14, alignItems: 'center' },
-  btnText:      { color: '#fff', fontWeight: '700', fontSize: 15 },
+  btnSuccess:   { backgroundColor: TOKENS.colors.semantic.success, borderRadius: 8, padding: 14, alignItems: 'center' },
+  btnText:      { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 15 },
 })

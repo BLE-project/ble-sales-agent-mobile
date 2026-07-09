@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   error: { color: TOKENS.colors.semantic.danger, fontSize: 13, marginBottom: 8 },
   btn: { backgroundColor: TOKENS.colors.brand.primary, paddingVertical: 12, borderRadius: 8, alignItems: 'center', marginTop: 8 },
   btnDisabled: { opacity: 0.5 },
-  btnText: { color: TOKENS.colors.neutral.white, fontWeight: '600', fontSize: 15 },
+  btnText: { color: TOKENS.colors.surface.onBrand, fontWeight: '600', fontSize: 15 },
   cancelBtn: { marginTop: 12, alignItems: 'center' },
   cancelText: { color: TOKENS.colors.surface.inkSoft, fontSize: 14 },
   doneText: { fontSize: 15, color: TOKENS.colors.surface.ink, textAlign: 'center', marginVertical: 20 },

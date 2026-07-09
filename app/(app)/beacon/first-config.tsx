@@ -15,6 +15,7 @@ import {
 } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { scanBeacons, BeaconCheckResult, summarise, BeaconCheckTarget } from '../../../src/ble/BeaconHealthCheck'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 export default function BeaconFirstConfigScreen() {
   const { merchantId } = useLocalSearchParams<{ merchantId: string }>()
@@ -89,7 +90,7 @@ export default function BeaconFirstConfigScreen() {
         </TouchableOpacity>
       </View>
 
-      {scanning && <ActivityIndicator style={{ marginTop: 20 }} color="#6C3FCF" />}
+      {scanning && <ActivityIndicator style={{ marginTop: 20 }} color={TOKENS.colors.brand.primary} />}
 
       {results && results.map((r) => {
         const icon = r.pass ? '✅' : r.detected ? '⚠' : '❌'
@@ -127,19 +128,19 @@ export default function BeaconFirstConfigScreen() {
 
 const styles = StyleSheet.create({
   container:       { flex: 1, backgroundColor: '#f5f7fa' },
-  header:          { padding: 20, backgroundColor: '#6C3FCF' },
+  header:          { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
   back:            { color: '#e9d5ff', marginBottom: 4 },
-  title:           { color: '#fff', fontSize: 22, fontWeight: '700' },
+  title:           { color: TOKENS.colors.neutral.white, fontSize: 22, fontWeight: '700' },
   subtitle:        { color: '#c4b5fd', fontSize: 13, marginTop: 4 },
   actionsTop:      { padding: 16 },
-  scanBtn:         { backgroundColor: '#6C3FCF', padding: 16, borderRadius: 12, alignItems: 'center' },
+  scanBtn:         { backgroundColor: TOKENS.colors.brand.primary, padding: 16, borderRadius: 12, alignItems: 'center' },
   scanBtnDisabled: { opacity: 0.5 },
-  scanBtnText:     { color: '#fff', fontSize: 16, fontWeight: '700' },
-  row:             { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#fff', marginHorizontal: 16, marginBottom: 8, borderRadius: 10 },
+  scanBtnText:     { color: TOKENS.colors.neutral.white, fontSize: 16, fontWeight: '700' },
+  row:             { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: TOKENS.colors.neutral.white, marginHorizontal: 16, marginBottom: 8, borderRadius: 10 },
   icon:            { fontSize: 24, marginRight: 12 },
   rowTitle:        { fontSize: 15, fontWeight: '600', color: '#111' },
-  rowMeta:         { fontSize: 13, color: '#6b7280', marginTop: 4 },
-  rowMetaFail:     { fontSize: 13, color: '#ef4444', marginTop: 4 },
-  confirmBtn:      { backgroundColor: '#10b981', margin: 16, padding: 16, borderRadius: 12, alignItems: 'center' },
-  confirmBtnText:  { color: '#fff', fontSize: 16, fontWeight: '700' },
+  rowMeta:         { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4 },
+  rowMetaFail:     { fontSize: 13, color: TOKENS.colors.semantic.danger, marginTop: 4 },
+  confirmBtn:      { backgroundColor: TOKENS.colors.semantic.success, margin: 16, padding: 16, borderRadius: 12, alignItems: 'center' },
+  confirmBtnText:  { color: TOKENS.colors.neutral.white, fontSize: 16, fontWeight: '700' },
 })

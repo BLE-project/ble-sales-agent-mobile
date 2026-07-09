@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-nativ
 import { useQuery } from '@tanstack/react-query'
 import { royaltiesApi, AgentRoyalty } from '../../src/api/salesAgentApi'
 import { useAuth } from '../../src/auth/AuthContext'
+import { TOKENS } from '../../src/theme/defaults/tokens'
 
 const STATUS_COLORS: Record<string, string> = {
-  DRAFT:     '#f59e0b',
-  CONFIRMED: '#3b82f6',
-  PAID:      '#10b981',
+  DRAFT:     TOKENS.colors.semantic.warning,
+  CONFIRMED: TOKENS.colors.semantic.info,
+  PAID:      TOKENS.colors.semantic.success,
 }
 
 export default function RoyaltiesScreen() {
@@ -61,13 +62,13 @@ export default function RoyaltiesScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f7fa' },
   header:    { fontSize: 20, fontWeight: '700', color: '#1a3f6f', padding: 20, paddingBottom: 10 },
-  card:      { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
+  card:      { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
   cardRow:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   period:    { fontSize: 15, fontWeight: '600', color: '#111' },
   badge:     { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
-  badgeText: { color: '#fff', fontSize: 11, fontWeight: '600' },
+  badgeText: { color: TOKENS.colors.neutral.white, fontSize: 11, fontWeight: '600' },
   payout:    { fontSize: 28, fontWeight: '800', color: '#1a3f6f', marginBottom: 8 },
-  meta:      { fontSize: 13, color: '#6b7280', marginBottom: 2 },
+  meta:      { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
   ref:       { fontSize: 12, color: '#9ca3af', marginTop: 6 },
   empty:     { textAlign: 'center', color: '#9ca3af', marginTop: 40 },
 })

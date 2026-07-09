@@ -13,6 +13,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { moderationApi, ReviewTask } from '../../../src/api/moderationApi'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 type PendingAction = 'approve' | 'reject' | 'escalate' | null
 
@@ -75,11 +76,11 @@ export default function ReviewDetailScreen() {
   }
 
   if (isLoading || !adv) {
-    return <View style={styles.center}><ActivityIndicator color="#6C3FCF" /></View>
+    return <View style={styles.center}><ActivityIndicator color={TOKENS.colors.brand.primary} /></View>
   }
 
-  const riskColor = adv.claudeRiskLevel === 'HIGH' ? '#ef4444'
-                  : adv.claudeRiskLevel === 'MEDIUM' ? '#f59e0b' : '#10b981'
+  const riskColor = adv.claudeRiskLevel === 'HIGH' ? TOKENS.colors.semantic.danger
+                  : adv.claudeRiskLevel === 'MEDIUM' ? TOKENS.colors.semantic.warning : TOKENS.colors.semantic.success
 
   return (
     <ScrollView style={styles.container}>
@@ -203,28 +204,28 @@ export default function ReviewDetailScreen() {
 const styles = StyleSheet.create({
   container:      { flex: 1, backgroundColor: '#f5f7fa' },
   center:         { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header:         { padding: 20, backgroundColor: '#6C3FCF' },
+  header:         { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
   back:           { color: '#e9d5ff', marginBottom: 4 },
-  title:          { color: '#fff', fontSize: 20, fontWeight: '700' },
+  title:          { color: TOKENS.colors.neutral.white, fontSize: 20, fontWeight: '700' },
   image:          { width: '100%', height: 200 },
-  card:           { backgroundColor: '#fff', margin: 16, padding: 16, borderRadius: 12, elevation: 2 },
-  sectionLabel:   { fontSize: 11, fontWeight: '700', color: '#6b7280', marginBottom: 8, letterSpacing: 0.5 },
+  card:           { backgroundColor: TOKENS.colors.neutral.white, margin: 16, padding: 16, borderRadius: 12, elevation: 2 },
+  sectionLabel:   { fontSize: 11, fontWeight: '700', color: TOKENS.colors.neutral.gray500, marginBottom: 8, letterSpacing: 0.5 },
   description:    { fontSize: 14, color: '#111', lineHeight: 20 },
   claudeRisk:     { fontSize: 18, fontWeight: '700' },
-  claudeReasons:  { fontSize: 13, color: '#6b7280', marginTop: 6 },
+  claudeReasons:  { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 6 },
   actions:        { flexDirection: 'row', padding: 16, gap: 8 },
   actionBtn:      { flex: 1, padding: 14, borderRadius: 10, alignItems: 'center' },
-  btnReject:      { backgroundColor: '#ef4444' },
-  btnEscalate:    { backgroundColor: '#f59e0b' },
-  btnApprove:     { backgroundColor: '#10b981' },
-  btnSecondary:   { backgroundColor: '#6b7280', padding: 14, borderRadius: 10, flex: 1, alignItems: 'center' },
-  btnPrimary:     { backgroundColor: '#6C3FCF', padding: 14, borderRadius: 10, flex: 1, alignItems: 'center' },
+  btnReject:      { backgroundColor: TOKENS.colors.semantic.danger },
+  btnEscalate:    { backgroundColor: TOKENS.colors.semantic.warning },
+  btnApprove:     { backgroundColor: TOKENS.colors.semantic.success },
+  btnSecondary:   { backgroundColor: TOKENS.colors.neutral.gray500, padding: 14, borderRadius: 10, flex: 1, alignItems: 'center' },
+  btnPrimary:     { backgroundColor: TOKENS.colors.brand.primary, padding: 14, borderRadius: 10, flex: 1, alignItems: 'center' },
   btnDisabled:    { opacity: 0.5 },
-  actionText:     { color: '#fff', fontWeight: '700', fontSize: 14 },
+  actionText:     { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 14 },
   modalOverlay:   { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalBody:      { backgroundColor: '#fff', padding: 24, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  modalBody:      { backgroundColor: TOKENS.colors.neutral.white, padding: 24, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   modalTitle:     { fontSize: 18, fontWeight: '700', marginBottom: 16 },
-  modalLabel:     { fontSize: 12, fontWeight: '600', color: '#6b7280', marginTop: 12, marginBottom: 4, textTransform: 'uppercase' },
-  textInput:      { borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 8, padding: 10, fontSize: 14, minHeight: 48 },
+  modalLabel:     { fontSize: 12, fontWeight: '600', color: TOKENS.colors.neutral.gray500, marginTop: 12, marginBottom: 4, textTransform: 'uppercase' },
+  textInput:      { borderWidth: 1, borderColor: TOKENS.colors.neutral.gray200, borderRadius: 8, padding: 10, fontSize: 14, minHeight: 48 },
   modalActions:   { flexDirection: 'row', gap: 8, marginTop: 20 },
 })

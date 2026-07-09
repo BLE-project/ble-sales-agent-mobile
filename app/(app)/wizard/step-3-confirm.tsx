@@ -7,6 +7,7 @@
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { getWizardState, upsertScanResult } from '../../../src/wizard/wizardState'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 export default function WizardStep3Confirm() {
   const router = useRouter()
@@ -81,21 +82,21 @@ export default function WizardStep3Confirm() {
 }
 
 const styles = StyleSheet.create({
-  container:  { flex: 1, backgroundColor: '#fff', padding: 16 },
-  title:      { fontSize: 22, fontWeight: '700', color: '#111827' },
-  subtitle:   { fontSize: 13, color: '#6b7280', marginTop: 4, marginBottom: 12 },
+  container:  { flex: 1, backgroundColor: TOKENS.colors.neutral.white, padding: 16 },
+  title:      { fontSize: 22, fontWeight: '700', color: TOKENS.colors.neutral.gray900 },
+  subtitle:   { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4, marginBottom: 12 },
   row:        {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#e5e7eb',
+    paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: TOKENS.colors.neutral.gray200,
   },
-  rowName:    { fontSize: 15, fontWeight: '600', color: '#111827' },
-  rowMeta:    { fontSize: 12, color: '#6b7280', marginTop: 2 },
+  rowName:    { fontSize: 15, fontWeight: '600', color: TOKENS.colors.neutral.gray900 },
+  rowMeta:    { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginTop: 2 },
   retryBtn:   { backgroundColor: '#fbbf24', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
-  retryBtnText: { color: '#111827', fontWeight: '700', fontSize: 13 },
+  retryBtnText: { color: TOKENS.colors.neutral.gray900, fontWeight: '700', fontSize: 13 },
   actions:    { flexDirection: 'row', gap: 10, marginTop: 16 },
   btn:        { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
   btnPrimary: { backgroundColor: '#0B6E4F' },
-  btnSecondary: { backgroundColor: '#f3f4f6' },
-  btnText:    { color: '#fff', fontWeight: '700', fontSize: 14 },
-  btnTextSecondary: { color: '#374151', fontWeight: '700', fontSize: 14 },
+  btnSecondary: { backgroundColor: TOKENS.colors.neutral.gray100 },
+  btnText:    { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 14 },
+  btnTextSecondary: { color: TOKENS.colors.neutral.gray700, fontWeight: '700', fontSize: 14 },
 })

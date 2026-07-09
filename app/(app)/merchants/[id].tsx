@@ -17,6 +17,7 @@ import {
 } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { api } from '../../../src/api/client'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 interface MerchantLanding {
   id:             string
@@ -42,7 +43,7 @@ const STATUS_LABEL: Record<MerchantLanding['landingStatus'], string> = {
   DRAFT: 'Bozza', PENDING_REVIEW: 'In revisione', PUBLISHED: 'Pubblicata', ARCHIVED: 'Archiviata',
 }
 const STATUS_COLOR: Record<MerchantLanding['landingStatus'], string> = {
-  DRAFT: '#6b7280', PENDING_REVIEW: '#d97706', PUBLISHED: '#059669', ARCHIVED: '#9ca3af',
+  DRAFT: TOKENS.colors.neutral.gray500, PENDING_REVIEW: '#d97706', PUBLISHED: '#059669', ARCHIVED: '#9ca3af',
 }
 
 export default function SalesAgentMerchantDetailScreen() {
@@ -181,20 +182,20 @@ const s = StyleSheet.create({
   cover:       { width: '100%', height: 160 },
   content:     { padding: 16 },
   headerRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  logo:        { width: 56, height: 56, borderRadius: 8, marginRight: 12, backgroundColor: '#e5e7eb' },
+  logo:        { width: 56, height: 56, borderRadius: 8, marginRight: 12, backgroundColor: TOKENS.colors.neutral.gray200 },
   name:        { fontSize: 20, fontWeight: '700', color: '#111' },
-  rating:      { fontSize: 13, color: '#374151', marginTop: 2 },
+  rating:      { fontSize: 13, color: TOKENS.colors.neutral.gray700, marginTop: 2 },
   statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   statusText:  { fontSize: 11, fontWeight: '600' },
-  sectionLabel:{ fontSize: 13, fontWeight: '600', color: '#374151', marginTop: 20, marginBottom: 8 },
+  sectionLabel:{ fontSize: 13, fontWeight: '600', color: TOKENS.colors.neutral.gray700, marginTop: 20, marginBottom: 8 },
   desc:        { fontSize: 14, color: '#111', lineHeight: 20 },
-  contactList: { backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#e5e7eb' },
+  contactList: { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 8, borderWidth: 1, borderColor: TOKENS.colors.neutral.gray200 },
   contactRow:  { flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: 1,
-                 borderBottomColor: '#f3f4f6' },
+                 borderBottomColor: TOKENS.colors.neutral.gray100 },
   contactIcon: { fontSize: 18, marginRight: 10 },
   contactText: { fontSize: 14, color: '#1a3f6f', flex: 1 },
-  readOnlyNote:{ backgroundColor: '#f3f4f6', borderRadius: 8, padding: 12, marginTop: 20 },
-  readOnlyText:{ fontSize: 12, color: '#6b7280', textAlign: 'center' },
+  readOnlyNote:{ backgroundColor: TOKENS.colors.neutral.gray100, borderRadius: 8, padding: 12, marginTop: 20 },
+  readOnlyText:{ fontSize: 12, color: TOKENS.colors.neutral.gray500, textAlign: 'center' },
   errorText:   { fontSize: 16, color: '#dc2626', marginBottom: 8 },
   link:        { color: '#1a3f6f', textDecorationLine: 'underline', fontSize: 14 },
 })

@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../../src/auth/AuthContext'
 import { registrationRequestsApi, royaltiesApi, salesAgentProfileApi, RegistrationRequest } from '../../src/api/salesAgentApi'
 import { moderationApi } from '../../src/api/moderationApi'
+import { TOKENS } from '../../src/theme/defaults/tokens'
 
 interface TerritoryAssignment {
   territoryId: string
@@ -72,13 +73,13 @@ export default function DashboardScreen() {
     {
       label: intl.formatMessage({ id: 'overview.tile.pending_requests' }),
       value: filteredPending?.length ?? '--',
-      color: '#f59e0b',
+      color: TOKENS.colors.semantic.warning,
       route: '/requests',
     },
     {
       label: intl.formatMessage({ id: 'overview.tile.moderations' }),
       value: moderationQueue?.length ?? 0,
-      color: '#6C3FCF',
+      color: TOKENS.colors.brand.primary,
       route: '/moderation',
     },
     {
@@ -158,21 +159,21 @@ const styles = StyleSheet.create({
   container:    { flex: 1, backgroundColor: '#f5f7fa' },
   header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, backgroundColor: '#1a3f6f' },
   greeting:     { color: '#93c5fd', fontSize: 13 },
-  name:         { color: '#fff', fontSize: 18, fontWeight: '700' },
+  name:         { color: TOKENS.colors.neutral.white, fontSize: 18, fontWeight: '700' },
   signOut:      { color: '#93c5fd', fontSize: 13 },
   // Territory selector
-  territorySelectorContainer: { backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#e5e7eb' },
-  territorySelectorLabel: { fontSize: 11, fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  territorySelectorContainer: { backgroundColor: TOKENS.colors.neutral.white, paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: TOKENS.colors.neutral.gray200 },
+  territorySelectorLabel: { fontSize: 11, fontWeight: '600', color: TOKENS.colors.neutral.gray500, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
   territoryChips: { flexDirection: 'row' },
-  territoryChip: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: '#f3f4f6', marginRight: 8 },
+  territoryChip: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: TOKENS.colors.neutral.gray100, marginRight: 8 },
   territoryChipActive: { backgroundColor: '#1a3f6f' },
-  territoryChipText: { fontSize: 13, fontWeight: '500', color: '#374151' },
-  territoryChipTextActive: { color: '#fff' },
-  sectionTitle: { fontSize: 14, fontWeight: '600', color: '#6b7280', marginLeft: 20, marginTop: 20, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
+  territoryChipText: { fontSize: 13, fontWeight: '500', color: TOKENS.colors.neutral.gray700 },
+  territoryChipTextActive: { color: TOKENS.colors.neutral.white },
+  sectionTitle: { fontSize: 14, fontWeight: '600', color: TOKENS.colors.neutral.gray500, marginLeft: 20, marginTop: 20, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
   grid:         { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12 },
-  tile:         { width: '45%', margin: 8, backgroundColor: '#fff', borderRadius: 12, padding: 16, borderLeftWidth: 4, elevation: 2 },
+  tile:         { width: '45%', margin: 8, backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, borderLeftWidth: 4, elevation: 2 },
   tileValue:    { fontSize: 24, fontWeight: '700', color: '#111' },
-  tileLabel:    { fontSize: 12, color: '#6b7280', marginTop: 4 },
-  action:       { backgroundColor: '#fff', marginHorizontal: 20, marginBottom: 10, borderRadius: 10, padding: 16, elevation: 1 },
+  tileLabel:    { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginTop: 4 },
+  action:       { backgroundColor: TOKENS.colors.neutral.white, marginHorizontal: 20, marginBottom: 10, borderRadius: 10, padding: 16, elevation: 1 },
   actionText:   { fontSize: 15, color: '#1a3f6f', fontWeight: '500' },
 })

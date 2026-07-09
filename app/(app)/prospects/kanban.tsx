@@ -17,6 +17,7 @@ import {
   ProspectStage,
 } from '../../../src/api/prospectsApi'
 import { ApiError } from '../../../src/api/client'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 // ── Stage config ────────────────────────────────────────────────────────────
 //
@@ -175,7 +176,7 @@ export default function ProspectKanbanScreen() {
           testID="kanban-add-button"
         >
           {creating
-            ? <ActivityIndicator size="small" color="#fff" />
+            ? <ActivityIndicator size="small" color={TOKENS.colors.neutral.white} />
             : <Text style={styles.addBtnText}>Aggiungi</Text>}
         </TouchableOpacity>
       </View>
@@ -244,7 +245,7 @@ export default function ProspectKanbanScreen() {
                               testID={`kanban-move-${item.id}`}
                             >
                               {busy
-                                ? <ActivityIndicator size="small" color="#fff" />
+                                ? <ActivityIndicator size="small" color={TOKENS.colors.neutral.white} />
                                 : <Text style={styles.moveBtnText}>Sposta a →</Text>}
                             </TouchableOpacity>
                           )}
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
   header:       { fontSize: 20, fontWeight: '700', color: '#1a3f6f', padding: 20, paddingBottom: 10 },
   board:        { paddingHorizontal: 12, paddingBottom: 20, gap: 10 },
 
-  stateText:    { marginTop: 12, fontSize: 14, color: '#6b7280' },
+  stateText:    { marginTop: 12, fontSize: 14, color: TOKENS.colors.neutral.gray500 },
   emptyBoard:   { flex: 1 },
   emptyHint:    { marginTop: 6, fontSize: 13, color: '#9ca3af', textAlign: 'center' },
   errorText:    { fontSize: 14, color: '#b91c1c', textAlign: 'center', marginBottom: 16 },
@@ -293,7 +294,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#1a3f6f',
   },
-  retryBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  retryBtnText: { color: TOKENS.colors.neutral.white, fontSize: 14, fontWeight: '600' },
 
   // New-prospect form
   addRow: {
@@ -304,10 +305,10 @@ const styles = StyleSheet.create({
   },
   addInput: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.neutral.white,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: TOKENS.colors.neutral.gray300,
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 14,
@@ -322,11 +323,11 @@ const styles = StyleSheet.create({
     minWidth: 90,
   },
   addBtnDisabled: { backgroundColor: '#9ca3af' },
-  addBtnText:     { color: '#fff', fontSize: 14, fontWeight: '600' },
+  addBtnText:     { color: TOKENS.colors.neutral.white, fontSize: 14, fontWeight: '600' },
 
   column: {
     width: COLUMN_WIDTH,
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.neutral.white,
     borderRadius: 12,
     overflow: 'hidden',
     elevation: 2,
@@ -351,7 +352,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 6,
   },
-  badgeText: { color: '#fff', fontSize: 11, fontWeight: '700' },
+  badgeText: { color: TOKENS.colors.neutral.white, fontSize: 11, fontWeight: '700' },
 
   emptyColumn: {
     textAlign: 'center',
@@ -363,10 +364,10 @@ const styles = StyleSheet.create({
   card: {
     padding: 12,
     borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
+    borderTopColor: TOKENS.colors.neutral.gray100,
   },
   cardName:    { fontSize: 14, fontWeight: '600', color: '#111', marginBottom: 4 },
-  cardMeta:    { fontSize: 12, color: '#6b7280', marginBottom: 2 },
+  cardMeta:    { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
 
   cardActions: {
     flexDirection: 'row',
@@ -392,7 +393,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   moveBtnDisabled: { opacity: 0.6 },
-  moveBtnText: { fontSize: 12, color: '#fff', fontWeight: '600' },
+  moveBtnText: { fontSize: 12, color: TOKENS.colors.neutral.white, fontWeight: '600' },
 
   loseBtn: {
     marginTop: 6,

@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   primaryButtonText: {
-    color: TOKENS.colors.neutral.white,
+    color: TOKENS.colors.surface.onBrand,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -285,9 +285,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   errorBanner: {
-    // ponytail: no "danger-soft" background token exists yet — kept
-    // hardcoded per MAPPA rule (semantic without a token stays as-is).
-    backgroundColor: '#FFE4E4',
+    backgroundColor: TOKENS.colors.semanticSoft.dangerSoft,
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,

@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     borderColor: TOKENS.colors.surface.line,
   },
   btnTextPrimary: {
-    color: TOKENS.colors.neutral.white,
+    color: TOKENS.colors.surface.onBrand,
     fontWeight: '600',
     fontSize: 13,
   },

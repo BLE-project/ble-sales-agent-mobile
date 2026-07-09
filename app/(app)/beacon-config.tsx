@@ -44,6 +44,7 @@ import { BleConfigDisplay } from '../../src/components/BleConfigDisplay'
 import { GpsCaptureButton } from '../../src/components/GpsCaptureButton'
 import { useRouter } from 'expo-router'
 import { resetWizard } from '../../src/wizard/wizardState'
+import { TOKENS } from '../../src/theme/defaults/tokens'
 
 // Fase 3.1 fixup: aligned with backend BeaconType enum — only 3 valid
 // values. The chip picker used to show 5 chips, two of which ('INFO' and
@@ -179,7 +180,7 @@ export default function BeaconConfigScreen() {
       </Text>
 
       <TouchableOpacity
-        style={[styles.primaryBtn, { backgroundColor: '#6C3FCF', marginTop: 8 }]}
+        style={[styles.primaryBtn, { backgroundColor: TOKENS.colors.brand.primary, marginTop: 8 }]}
         onPress={() => {
           resetWizard()
           router.push('/(app)/wizard/step-1-merchant' as never)
@@ -477,9 +478,9 @@ export default function BeaconConfigScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f9fafb' },
-  title: { fontSize: 22, fontWeight: '700', color: '#111827', marginBottom: 4 },
-  subtitle: { fontSize: 13, color: '#6b7280', marginBottom: 16 },
+  container: { flex: 1, padding: 16, backgroundColor: TOKENS.colors.neutral.gray50 },
+  title: { fontSize: 22, fontWeight: '700', color: TOKENS.colors.neutral.gray900, marginBottom: 4 },
+  subtitle: { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 16 },
   primaryBtn: {
     backgroundColor: '#1a3f6f',
     paddingVertical: 10,
@@ -488,52 +489,52 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  primaryBtnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
+  primaryBtnText: { color: TOKENS.colors.neutral.white, fontWeight: '600', fontSize: 14 },
   secondaryBtn: {
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.neutral.white,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: TOKENS.colors.neutral.gray300,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 12,
   },
-  secondaryBtnText: { color: '#374151', fontWeight: '600', fontSize: 14 },
+  secondaryBtnText: { color: TOKENS.colors.neutral.gray700, fontWeight: '600', fontSize: 14 },
   disabledBtn: { opacity: 0.5 },
   formCard: {
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.neutral.white,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: TOKENS.colors.neutral.gray200,
   },
   field: { marginBottom: 10 },
   row: { flexDirection: 'row', gap: 10 },
   flex1: { flex: 1 },
-  label: { fontSize: 12, fontWeight: '600', color: '#374151', marginBottom: 4 },
+  label: { fontSize: 12, fontWeight: '600', color: TOKENS.colors.neutral.gray700, marginBottom: 4 },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: TOKENS.colors.neutral.gray300,
     borderRadius: 6,
     paddingVertical: 8,
     paddingHorizontal: 10,
     fontSize: 14,
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.neutral.white,
   },
   monoInput: { fontFamily: 'Courier', fontSize: 12 },
   list: { marginTop: 8 },
   beaconCard: {
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.neutral.white,
     borderRadius: 10,
     padding: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: TOKENS.colors.neutral.gray200,
   },
-  beaconName: { fontSize: 15, fontWeight: '600', color: '#111827', marginBottom: 2 },
-  beaconDetail: { fontSize: 12, color: '#6b7280' },
+  beaconName: { fontSize: 15, fontWeight: '600', color: TOKENS.colors.neutral.gray900, marginBottom: 2 },
+  beaconDetail: { fontSize: 12, color: TOKENS.colors.neutral.gray500 },
   configBtn: {
     marginTop: 8,
     backgroundColor: '#eff6ff',
@@ -546,7 +547,7 @@ const styles = StyleSheet.create({
   },
   configBtnText: { color: '#1d4ed8', fontWeight: '600', fontSize: 12 },
   muted: { fontSize: 13, color: '#9ca3af', textAlign: 'center', marginTop: 20 },
-  mono: { fontFamily: 'Courier', fontSize: 12, color: '#6b7280' },
+  mono: { fontFamily: 'Courier', fontSize: 12, color: TOKENS.colors.neutral.gray500 },
   // Modal
   modalOverlay: {
     flex: 1,
@@ -554,20 +555,20 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalCard: {
-    backgroundColor: '#fff',
+    backgroundColor: TOKENS.colors.neutral.white,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: '90%',
   },
   modalScroll: { padding: 20 },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: '#111827', marginBottom: 4 },
-  modalSubtitle: { fontSize: 12, color: '#6b7280', marginBottom: 16 },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: TOKENS.colors.neutral.gray900, marginBottom: 4 },
+  modalSubtitle: { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginBottom: 16 },
   modalFooter: {
     flexDirection: 'row',
     gap: 10,
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+    borderTopColor: TOKENS.colors.neutral.gray200,
   },
   pickerRow: {
     flexDirection: 'row',
@@ -580,15 +581,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    backgroundColor: '#f9fafb',
+    borderColor: TOKENS.colors.neutral.gray300,
+    backgroundColor: TOKENS.colors.neutral.gray50,
   },
   chipActive: {
     backgroundColor: '#1a3f6f',
     borderColor: '#1a3f6f',
   },
-  chipText: { fontSize: 12, color: '#374151', fontWeight: '500' },
-  chipTextActive: { color: '#fff' },
+  chipText: { fontSize: 12, color: TOKENS.colors.neutral.gray700, fontWeight: '500' },
+  chipTextActive: { color: TOKENS.colors.neutral.white },
   randomizeBtn: {
     backgroundColor: '#fef3c7',
     borderWidth: 1,
@@ -599,7 +600,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   randomizeBtnText: { color: '#92400e', fontWeight: '600', fontSize: 13 },
-  helper: { fontSize: 11, color: '#6b7280', marginBottom: 12 },
+  helper: { fontSize: 11, color: TOKENS.colors.neutral.gray500, marginBottom: 12 },
   errorBox: {
     backgroundColor: '#fef2f2',
     borderWidth: 1,

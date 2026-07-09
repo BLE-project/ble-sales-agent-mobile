@@ -13,6 +13,7 @@ import {
 } from 'react-native'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { notificationPreferencesApi, NotificationPref } from '../../../src/api/notificationPreferencesApi'
+import { TOKENS } from '../../../src/theme/defaults/tokens'
 
 interface ChannelDef {
   channelId: string
@@ -138,7 +139,7 @@ export default function NotificationsSettingsScreen() {
             value={prefs[c.channelId] ?? c.defaultEnabled}
             disabled={c.mandatory || saving}
             onValueChange={(v) => toggle(c.channelId, v, c.mandatory)}
-            trackColor={{ true: '#1a3f6f', false: '#d1d5db' }}
+            trackColor={{ true: '#1a3f6f', false: TOKENS.colors.neutral.gray300 }}
           />
         </View>
       ))}
@@ -150,11 +151,11 @@ const styles = StyleSheet.create({
   container:      { flex: 1, backgroundColor: '#f5f7fa' },
   center:         { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header:         { padding: 20, backgroundColor: '#1a3f6f' },
-  title:          { color: '#fff', fontSize: 22, fontWeight: '700' },
+  title:          { color: TOKENS.colors.neutral.white, fontSize: 22, fontWeight: '700' },
   subtitle:       { color: '#93c5fd', fontSize: 13, marginTop: 6, lineHeight: 18 },
-  row:            { flexDirection: 'row', backgroundColor: '#fff', padding: 16, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  row:            { flexDirection: 'row', backgroundColor: TOKENS.colors.neutral.white, padding: 16, borderBottomWidth: 1, borderBottomColor: TOKENS.colors.neutral.gray100 },
   rowText:        { flex: 1, marginRight: 12 },
   label:          { fontSize: 15, fontWeight: '600', color: '#111' },
-  mandatoryBadge: { fontSize: 11, color: '#f59e0b', fontWeight: '700' },
-  description:    { fontSize: 13, color: '#6b7280', marginTop: 4, lineHeight: 18 },
+  mandatoryBadge: { fontSize: 11, color: TOKENS.colors.semantic.warning, fontWeight: '700' },
+  description:    { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4, lineHeight: 18 },
 })

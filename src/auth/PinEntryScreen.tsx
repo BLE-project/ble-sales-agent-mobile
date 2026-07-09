@@ -246,9 +246,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    // ponytail: no "danger-soft" background token exists yet — kept
-    // hardcoded per MAPPA rule (semantic without a token stays as-is).
-    backgroundColor: '#FFE4E4',
+    backgroundColor: TOKENS.colors.semanticSoft.dangerSoft,
     borderRadius: 8,
     marginVertical: 8,
     alignItems: 'center',
@@ -263,9 +261,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    // ponytail: no "warning-soft" background token exists yet — kept
-    // hardcoded per MAPPA rule (semantic without a token stays as-is).
-    backgroundColor: '#FFF4D6',
+    backgroundColor: TOKENS.colors.semanticSoft.warningSoft,
     borderRadius: 8,
     marginVertical: 8,
     alignItems: 'center',
