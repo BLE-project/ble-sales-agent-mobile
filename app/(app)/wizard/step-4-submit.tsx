@@ -8,7 +8,14 @@ import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } fr
 import { useRouter } from 'expo-router'
 import { submitBeaconHealth } from '../../../src/api/beaconHealthApi'
 import { getWizardState, setSnapshotId, resetWizard } from '../../../src/wizard/wizardState'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+
+// Redesign «La Piazza» C4 (2026-07-11): solo restyle token/font; testID
+// wizard-submit-{loading,error,ok,finish} e copy "Invio snapshot in corso…"/
+// "Torna alla conferma" INVARIATI (jest asserisce i testID, Maestro
+// beacon-first-config.yaml attende wizard-submit-ok).
+const P = TOKENS.colors.surface
 
 type Phase = 'submitting' | 'ok' | 'error'
 
@@ -64,7 +71,7 @@ export default function WizardStep4Submit() {
 
   return (
     <View style={styles.center}>
-      <Text style={styles.ok} testID="wizard-submit-ok">✅ First-config registrata</Text>
+      <Text style={styles.ok} testID="wizard-submit-ok">First-config registrata</Text>
       <Text style={styles.muted}>Health Snapshot ID:</Text>
       <Text style={styles.snapshot}>{localSnapshotId}</Text>
       <TouchableOpacity
@@ -82,12 +89,12 @@ export default function WizardStep4Submit() {
 }
 
 const styles = StyleSheet.create({
-  center:     { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: TOKENS.colors.neutral.white },
-  ok:         { fontSize: 22, fontWeight: '700', color: '#166534', marginBottom: 16 },
-  error:      { fontSize: 14, color: '#b91c1c', textAlign: 'center' },
-  muted:      { color: TOKENS.colors.neutral.gray500, marginTop: 12 },
-  snapshot:   { fontFamily: 'Courier', fontSize: 12, color: TOKENS.colors.neutral.gray900, marginTop: 4, textAlign: 'center' },
-  btn:        { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 10, alignItems: 'center' },
-  btnPrimary: { backgroundColor: '#0B6E4F' },
-  btnText:    { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 14 },
+  center:     { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.s6, backgroundColor: P.base },
+  ok:         { ...typography.displayL, color: TOKENS.colors.semantic.success, marginBottom: spacing.s4 },
+  error:      { ...typography.bodyM, color: TOKENS.colors.semantic.danger, textAlign: 'center' },
+  muted:      { ...typography.bodyM, color: P.inkSoft, marginTop: spacing.s3 },
+  snapshot:   { fontFamily: 'JetBrainsMono_400Regular', fontSize: 12, color: P.ink, marginTop: spacing.s1, textAlign: 'center' },
+  btn:        { paddingVertical: spacing.s3, paddingHorizontal: spacing.s5, borderRadius: radius.m, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
+  btnPrimary: { backgroundColor: TOKENS.colors.brand.primary },
+  btnText:    { ...typography.titleM, fontSize: 14, color: P.onBrand },
 })

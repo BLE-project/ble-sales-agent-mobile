@@ -44,7 +44,16 @@ import { BleConfigDisplay } from '../../src/components/BleConfigDisplay'
 import { GpsCaptureButton } from '../../src/components/GpsCaptureButton'
 import { useRouter } from 'expo-router'
 import { resetWizard } from '../../src/wizard/wizardState'
-import { TOKENS } from '../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../src/theme/defaults/tokens'
+import { typography } from '../../src/theme/typography'
+import { Card } from '../../src/components/piazza/ui'
+
+// Redesign «La Piazza» C4 (2026-07-11, self-approved delega): SOLO restyle
+// contenitori/token (Card kit, label mono, identificativi JetBrains Mono,
+// hex fuori token → semanticSoft). Copy EN e testID INVARIATI AL CARATTERE
+// (jest beacon-config.test + flow Maestro beacon-first-config/bcn-map-gps).
+// Gap #2 (password/name senza UI) resta stub: nessun handler aggiunto.
+const P = TOKENS.colors.surface
 
 // Fase 3.1 fixup: aligned with backend BeaconType enum — only 3 valid
 // values. The chip picker used to show 5 chips, two of which ('INFO' and
@@ -187,7 +196,7 @@ export default function BeaconConfigScreen() {
         }}
         testID="start-first-config-wizard"
       >
-        <Text style={styles.primaryBtnText}>🪄 Avvia first-config wizard</Text>
+        <Text style={styles.primaryBtnText}>Avvia first-config wizard</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -200,7 +209,7 @@ export default function BeaconConfigScreen() {
       </TouchableOpacity>
 
       {showForm && (
-        <View style={styles.formCard}>
+        <Card style={styles.formCard}>
           {[
             { key: 'name', label: 'Name', placeholder: 'e.g. Ingresso Nord' },
             { key: 'ibeaconUuid', label: 'UUID *', placeholder: 'iBeacon UUID' },
@@ -234,7 +243,7 @@ export default function BeaconConfigScreen() {
               {enrollMutation.isPending ? 'Enrolling...' : 'Enroll'}
             </Text>
           </TouchableOpacity>
-        </View>
+        </Card>
       )}
 
       {isLoading && <Text style={styles.muted}>Loading beacons...</Text>}
@@ -247,7 +256,7 @@ export default function BeaconConfigScreen() {
           !isLoading ? <Text style={styles.muted}>No beacons registered.</Text> : null
         }
         renderItem={({ item }) => (
-          <View style={styles.beaconCard}>
+          <Card style={styles.beaconCard}>
             <Text style={styles.beaconName}>{item.name ?? 'Unnamed'}</Text>
             <Text style={styles.beaconDetail}>
               {item.ibeaconUuid} | {item.major}/{item.minor}
@@ -268,7 +277,7 @@ export default function BeaconConfigScreen() {
               </TouchableOpacity>
               <GpsCaptureButton beaconId={item.id} testID={`gps-capture-${item.id}`} />
             </View>
-          </View>
+          </Card>
         )}
       />
 
@@ -407,7 +416,7 @@ export default function BeaconConfigScreen() {
                     testID="config-randomize-btn"
                   >
                     <Text style={styles.randomizeBtnText}>
-                      🎲 Randomize UUID / Major / Minor
+                      Randomize UUID / Major / Minor
                     </Text>
                   </TouchableOpacity>
                   <Text style={styles.helper}>
@@ -478,76 +487,67 @@ export default function BeaconConfigScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: TOKENS.colors.neutral.gray50 },
-  title: { fontSize: 22, fontWeight: '700', color: TOKENS.colors.neutral.gray900, marginBottom: 4 },
-  subtitle: { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 16 },
+  container: { flex: 1, padding: spacing.s4, backgroundColor: P.base },
+  title: { ...typography.displayL, color: P.ink, marginBottom: spacing.s1 },
+  subtitle: { ...typography.bodyS, fontSize: 13, color: P.inkSoft, marginBottom: spacing.s4 },
   primaryBtn: {
     backgroundColor: TOKENS.colors.brand.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    paddingVertical: spacing.s3,
+    paddingHorizontal: spacing.s4,
+    borderRadius: radius.m,
     alignItems: 'center',
-    marginBottom: 12,
+    justifyContent: 'center',
+    minHeight: 44,
+    marginBottom: spacing.s3,
   },
-  primaryBtnText: { color: TOKENS.colors.neutral.white, fontWeight: '600', fontSize: 14 },
+  primaryBtnText: { ...typography.titleM, fontSize: 14, color: P.onBrand },
   secondaryBtn: {
-    backgroundColor: TOKENS.colors.neutral.white,
+    backgroundColor: P.surface,
     borderWidth: 1,
-    borderColor: TOKENS.colors.neutral.gray300,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    borderColor: P.line,
+    paddingVertical: spacing.s3,
+    paddingHorizontal: spacing.s4,
+    borderRadius: radius.m,
     alignItems: 'center',
-    marginBottom: 12,
+    justifyContent: 'center',
+    minHeight: 44,
+    marginBottom: spacing.s3,
   },
-  secondaryBtnText: { color: TOKENS.colors.neutral.gray700, fontWeight: '600', fontSize: 14 },
+  secondaryBtnText: { ...typography.titleM, fontSize: 14, color: P.ink },
   disabledBtn: { opacity: 0.5 },
-  formCard: {
-    backgroundColor: TOKENS.colors.neutral.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: TOKENS.colors.neutral.gray200,
-  },
-  field: { marginBottom: 10 },
-  row: { flexDirection: 'row', gap: 10 },
+  formCard: { marginBottom: spacing.s4 },
+  field: { marginBottom: spacing.s3 },
+  row: { flexDirection: 'row', gap: spacing.s3 },
   flex1: { flex: 1 },
-  label: { fontSize: 12, fontWeight: '600', color: TOKENS.colors.neutral.gray700, marginBottom: 4 },
+  label: { ...typography.tag, fontSize: 10, textTransform: 'none', color: P.inkSoft, marginBottom: spacing.s1 },
   input: {
+    ...typography.bodyM,
     borderWidth: 1,
-    borderColor: TOKENS.colors.neutral.gray300,
-    borderRadius: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    fontSize: 14,
-    backgroundColor: TOKENS.colors.neutral.white,
+    borderColor: P.line,
+    borderRadius: radius.m,
+    paddingVertical: spacing.s2,
+    paddingHorizontal: spacing.s3,
+    backgroundColor: P.surface,
+    color: P.ink,
   },
-  monoInput: { fontFamily: 'Courier', fontSize: 12 },
-  list: { marginTop: 8 },
-  beaconCard: {
-    backgroundColor: TOKENS.colors.neutral.white,
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: TOKENS.colors.neutral.gray200,
-  },
-  beaconName: { fontSize: 15, fontWeight: '600', color: TOKENS.colors.neutral.gray900, marginBottom: 2 },
-  beaconDetail: { fontSize: 12, color: TOKENS.colors.neutral.gray500 },
+  monoInput: { fontFamily: 'JetBrainsMono_400Regular', fontSize: 12 },
+  list: { marginTop: spacing.s2 },
+  beaconCard: { marginBottom: spacing.s2 },
+  beaconName: { ...typography.titleM, fontSize: 15, color: P.ink, marginBottom: 2 },
+  beaconDetail: { fontFamily: 'JetBrainsMono_400Regular', fontSize: 11, color: P.inkSoft, lineHeight: 16 },
   configBtn: {
-    marginTop: 8,
-    backgroundColor: '#eff6ff',
+    marginTop: spacing.s2,
+    backgroundColor: TOKENS.colors.semanticSoft.infoSoft,
     borderWidth: 1,
-    borderColor: '#93c5fd',
+    borderColor: TOKENS.colors.semantic.info,
     paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 6,
+    paddingHorizontal: spacing.s3,
+    borderRadius: radius.s,
     alignSelf: 'flex-start',
   },
-  configBtnText: { color: '#1d4ed8', fontWeight: '600', fontSize: 12 },
-  muted: { fontSize: 13, color: '#9ca3af', textAlign: 'center', marginTop: 20 },
-  mono: { fontFamily: 'Courier', fontSize: 12, color: TOKENS.colors.neutral.gray500 },
+  configBtnText: { ...typography.label, fontSize: 12, color: TOKENS.colors.semantic.info },
+  muted: { ...typography.bodyS, fontSize: 13, color: P.inkSoft, textAlign: 'center', marginTop: spacing.s5 },
+  mono: { fontFamily: 'JetBrainsMono_400Regular', fontSize: 12, color: P.inkSoft },
   // Modal
   modalOverlay: {
     flex: 1,
@@ -555,84 +555,82 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalCard: {
-    backgroundColor: TOKENS.colors.neutral.white,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    backgroundColor: P.surface,
+    borderTopLeftRadius: radius.xxl,
+    borderTopRightRadius: radius.xxl,
     maxHeight: '90%',
   },
-  modalScroll: { padding: 20 },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: TOKENS.colors.neutral.gray900, marginBottom: 4 },
-  modalSubtitle: { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginBottom: 16 },
+  modalScroll: { padding: spacing.s5 },
+  modalTitle: { ...typography.displayM, color: P.ink, marginBottom: spacing.s1 },
+  modalSubtitle: { ...typography.bodyS, color: P.inkSoft, marginBottom: spacing.s4 },
   modalFooter: {
     flexDirection: 'row',
-    gap: 10,
-    padding: 16,
+    gap: spacing.s3,
+    padding: spacing.s4,
     borderTopWidth: 1,
-    borderTopColor: TOKENS.colors.neutral.gray200,
+    borderTopColor: P.line,
   },
   pickerRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 6,
-    marginBottom: 12,
+    marginBottom: spacing.s3,
   },
   chip: {
     paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 999,
+    paddingHorizontal: spacing.s3,
+    borderRadius: radius.full,
     borderWidth: 1,
-    borderColor: TOKENS.colors.neutral.gray300,
-    backgroundColor: TOKENS.colors.neutral.gray50,
+    borderColor: P.line,
+    backgroundColor: P.surface,
   },
   chipActive: {
     backgroundColor: TOKENS.colors.brand.primary,
     borderColor: TOKENS.colors.brand.primary,
   },
-  chipText: { fontSize: 12, color: TOKENS.colors.neutral.gray700, fontWeight: '500' },
-  chipTextActive: { color: TOKENS.colors.neutral.white },
+  chipText: { ...typography.tag, fontSize: 11, textTransform: 'none', color: P.inkSoft },
+  chipTextActive: { color: P.onBrand },
   randomizeBtn: {
-    backgroundColor: '#fef3c7',
+    backgroundColor: TOKENS.colors.semanticSoft.warningSoft,
     borderWidth: 1,
-    borderColor: '#fcd34d',
-    paddingVertical: 10,
-    borderRadius: 8,
+    borderColor: TOKENS.colors.semantic.warning,
+    paddingVertical: spacing.s3,
+    borderRadius: radius.m,
     alignItems: 'center',
     marginBottom: 6,
   },
-  randomizeBtnText: { color: '#92400e', fontWeight: '600', fontSize: 13 },
-  helper: { fontSize: 11, color: TOKENS.colors.neutral.gray500, marginBottom: 12 },
+  randomizeBtnText: { ...typography.label, fontSize: 13, color: P.rewardInk },
+  helper: { ...typography.bodyS, fontSize: 11, color: P.inkSoft, marginBottom: spacing.s3 },
   errorBox: {
-    backgroundColor: '#fef2f2',
+    backgroundColor: TOKENS.colors.semanticSoft.dangerSoft,
     borderWidth: 1,
-    borderColor: '#fca5a5',
-    borderRadius: 6,
-    padding: 10,
-    marginBottom: 4,
+    borderColor: TOKENS.colors.semantic.danger,
+    borderRadius: radius.s,
+    padding: spacing.s3,
+    marginBottom: spacing.s1,
   },
-  errorText: { color: '#991b1b', fontSize: 13 },
+  errorText: { ...typography.bodyS, fontSize: 13, color: TOKENS.colors.semantic.danger },
   // Fase 3.1: Holy-IOT factory password hint box (shown inside reconfigure modal)
   holyIotHint: {
-    backgroundColor: '#eff6ff',
+    backgroundColor: TOKENS.colors.semanticSoft.infoSoft,
     borderWidth: 1,
-    borderColor: '#93c5fd',
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 4,
-    marginBottom: 12,
+    borderColor: TOKENS.colors.semantic.info,
+    borderRadius: radius.m,
+    padding: spacing.s3,
+    marginTop: spacing.s1,
+    marginBottom: spacing.s3,
   },
   holyIotLabel: {
+    ...typography.tag,
     fontSize: 11,
-    fontWeight: '700',
-    color: '#1e3a8a',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 4,
+    color: TOKENS.colors.semantic.info,
+    marginBottom: spacing.s1,
   },
   holyIotPassword: {
-    fontFamily: 'Courier',
+    fontFamily: 'JetBrainsMono_600SemiBold',
     fontSize: 15,
-    color: '#1d4ed8',
-    marginBottom: 4,
+    color: TOKENS.colors.semantic.info,
+    marginBottom: spacing.s1,
   },
-  holyIotHelp: { fontSize: 11, color: '#1e40af' },
+  holyIotHelp: { ...typography.bodyS, fontSize: 11, color: TOKENS.colors.semantic.info },
 })

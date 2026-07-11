@@ -95,7 +95,7 @@
 
   "settings.notifications.title": "Notification preferences",
   "settings.notifications.subtitle": "Manage the notifications you receive as a sales agent. Critical notifications are always on.",
-  "settings.notifications.always_on": "  • Always on",
+  "settings.notifications.always_on": "Always on",
   "settings.notifications.mandatory.title": "Always on",
   "settings.notifications.mandatory.body": "This critical notification cannot be disabled for workflow reasons.",
   "settings.notifications.save_error.title": "Save error",

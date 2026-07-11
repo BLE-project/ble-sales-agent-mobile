@@ -41,7 +41,8 @@ export function Card({ children, onPress, testID, style }: {
   testID?: string
   style?: StyleProp<ViewStyle>
 }) {
-  const body = <View style={[s.card, style]}>{children}</View>
+  // testID sul body solo se non-pressabile (evita duplicati con la TouchableOpacity).
+  const body = <View style={[s.card, style]} testID={onPress ? undefined : testID}>{children}</View>
   if (!onPress) return body
   return (
     <TouchableOpacity onPress={onPress} testID={testID} accessibilityRole="button">

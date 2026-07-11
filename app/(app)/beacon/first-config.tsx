@@ -14,8 +14,16 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert,
 } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 import { scanBeacons, BeaconCheckResult, summarise, BeaconCheckTarget } from '../../../src/ble/BeaconHealthCheck'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+import { Card } from '../../../src/components/piazza/ui'
+
+// Redesign «La Piazza» C4 (2026-07-11): SOLO restyle stati esistenti — la
+// fixture 4-beacon hardcoded e il submit console.log restano stub (contract:
+// deprecazione = decisione prodotto fuori scope). Emoji stato → Ionicons.
+const P = TOKENS.colors.surface
 
 export default function BeaconFirstConfigScreen() {
   const { merchantId } = useLocalSearchParams<{ merchantId: string }>()
@@ -93,10 +101,14 @@ export default function BeaconFirstConfigScreen() {
       {scanning && <ActivityIndicator style={{ marginTop: 20 }} color={TOKENS.colors.brand.primary} />}
 
       {results && results.map((r) => {
-        const icon = r.pass ? '✅' : r.detected ? '⚠' : '❌'
+        const icon = r.pass
+          ? { name: 'checkmark-circle' as const, color: TOKENS.colors.semantic.success }
+          : r.detected
+            ? { name: 'alert-circle' as const, color: TOKENS.colors.semantic.warning }
+            : { name: 'close-circle' as const, color: TOKENS.colors.semantic.danger }
         return (
-          <View key={r.code} style={styles.row} testID={`beacon-row-${r.code}`}>
-            <Text style={styles.icon}>{icon}</Text>
+          <Card key={r.code} style={styles.row} testID={`beacon-row-${r.code}`}>
+            <Ionicons name={icon.name} size={24} color={icon.color} style={styles.icon} />
             <View style={{ flex: 1 }}>
               <Text style={styles.rowTitle}>{r.code} — {r.label}</Text>
               {r.detected ? (
@@ -107,7 +119,7 @@ export default function BeaconFirstConfigScreen() {
                 <Text style={styles.rowMetaFail}>{r.reason}</Text>
               )}
             </View>
-          </View>
+          </Card>
         )
       })}
 
@@ -126,21 +138,23 @@ export default function BeaconFirstConfigScreen() {
   )
 }
 
+// Redesign C4: via lo slab brand — header su canvas base, titolo display,
+// merchant id mono; righe risultato in Card kit.
 const styles = StyleSheet.create({
-  container:       { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  header:          { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
-  back:            { color: '#e9d5ff', marginBottom: 4 },
-  title:           { color: TOKENS.colors.neutral.white, fontSize: 22, fontWeight: '700' },
-  subtitle:        { color: '#c4b5fd', fontSize: 13, marginTop: 4 },
-  actionsTop:      { padding: 16 },
-  scanBtn:         { backgroundColor: TOKENS.colors.brand.primary, padding: 16, borderRadius: 12, alignItems: 'center' },
+  container:       { flex: 1, backgroundColor: P.base },
+  header:          { paddingHorizontal: spacing.s5, paddingTop: spacing.s4, paddingBottom: spacing.s2 },
+  back:            { ...typography.bodyS, fontSize: 13, color: TOKENS.colors.brand.primary, marginBottom: spacing.s1 },
+  title:           { ...typography.displayL, color: P.ink },
+  subtitle:        { fontFamily: 'JetBrainsMono_400Regular', fontSize: 12, color: P.inkSoft, marginTop: spacing.s1 },
+  actionsTop:      { padding: spacing.s4 },
+  scanBtn:         { backgroundColor: TOKENS.colors.brand.primary, padding: spacing.s4, borderRadius: radius.m, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
   scanBtnDisabled: { opacity: 0.5 },
-  scanBtnText:     { color: TOKENS.colors.neutral.white, fontSize: 16, fontWeight: '700' },
-  row:             { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: TOKENS.colors.neutral.white, marginHorizontal: 16, marginBottom: 8, borderRadius: 10 },
-  icon:            { fontSize: 24, marginRight: 12 },
-  rowTitle:        { fontSize: 15, fontWeight: '600', color: TOKENS.colors.surface.ink },
-  rowMeta:         { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4 },
-  rowMetaFail:     { fontSize: 13, color: TOKENS.colors.semantic.danger, marginTop: 4 },
-  confirmBtn:      { backgroundColor: TOKENS.colors.semantic.success, margin: 16, padding: 16, borderRadius: 12, alignItems: 'center' },
-  confirmBtnText:  { color: TOKENS.colors.neutral.white, fontSize: 16, fontWeight: '700' },
+  scanBtnText:     { ...typography.titleM, fontSize: 15, color: P.onBrand },
+  row:             { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.s4, marginBottom: spacing.s2 },
+  icon:            { marginRight: spacing.s3 },
+  rowTitle:        { ...typography.titleM, fontSize: 15, color: P.ink },
+  rowMeta:         { fontFamily: 'JetBrainsMono_400Regular', fontSize: 11, color: P.inkSoft, marginTop: spacing.s1 },
+  rowMetaFail:     { ...typography.bodyS, fontSize: 13, color: TOKENS.colors.semantic.danger, marginTop: spacing.s1 },
+  confirmBtn:      { backgroundColor: TOKENS.colors.semantic.success, margin: spacing.s4, padding: spacing.s4, borderRadius: radius.m, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
+  confirmBtnText:  { ...typography.titleM, fontSize: 15, color: P.onBrand },
 })

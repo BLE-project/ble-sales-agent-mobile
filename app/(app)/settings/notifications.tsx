@@ -5,15 +5,25 @@
  * NEVER_DISABLEABLE:
  *   - merchant-support-request (critical workflow)
  *   - moderation-review-request (§9bis Q11)
+ *
+ * Redesign «La Piazza» C3 (2026-07-11, self-approved delega — pattern twin
+ * tenant/territory-mobile): via lo slab hero brand (il titolo vive nell'header
+ * nativo "Impostazioni" da app/(app)/_layout.tsx), preferenze in Card kit,
+ * switch con track brand statico (DS-003, nessun BrandingContext), loading
+ * SkeletonCard, canale mandatory = switch disabled + Tag "Sempre attivo".
+ * testID toggle-<channelId>, logica optimistic+rollback (S6443) e chiavi i18n
+ * INVARIATI.
  */
 
 import React, { useEffect, useState } from 'react'
-import {
-  View, Text, StyleSheet, ScrollView, Switch, ActivityIndicator, Alert,
-} from 'react-native'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { View, Text, StyleSheet, ScrollView, Switch, Alert } from 'react-native'
+import { useIntl } from 'react-intl'
 import { notificationPreferencesApi, NotificationPref } from '../../../src/api/notificationPreferencesApi'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { TOKENS, spacing } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+import { Card, Tag, SkeletonCard } from '../../../src/components/piazza/ui'
+
+const P = TOKENS.colors.surface
 
 interface ChannelDef {
   channelId: string
@@ -115,23 +125,31 @@ export default function NotificationsSettingsScreen() {
     }
   }
 
-  if (loading) return <View style={styles.center}><ActivityIndicator color={TOKENS.colors.brand.primary} /></View>
+  if (loading) {
+    return (
+      <View style={styles.skeletons}>
+        {SALES_AGENT_CHANNELS.slice(0, 5).map((c) => <SkeletonCard key={c.channelId} />)}
+      </View>
+    )
+  }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}><FormattedMessage id="settings.notifications.title" /></Text>
-        <Text style={styles.subtitle}>
-          <FormattedMessage id="settings.notifications.subtitle" />
-        </Text>
-      </View>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.intro}>
+        {intl.formatMessage({ id: 'settings.notifications.subtitle' })}
+      </Text>
       {SALES_AGENT_CHANNELS.map((c) => (
-        <View key={c.channelId} style={styles.row}>
+        <Card key={c.channelId} style={styles.row}>
           <View style={styles.rowText}>
-            <Text style={styles.label}>
-              {c.label}
-              {c.mandatory && <Text style={styles.mandatoryBadge}><FormattedMessage id="settings.notifications.always_on" /></Text>}
-            </Text>
+            <View style={styles.labelRow}>
+              <Text style={styles.label}>{c.label}</Text>
+              {c.mandatory && (
+                <Tag
+                  label={intl.formatMessage({ id: 'settings.notifications.always_on' })}
+                  tone={{ bg: TOKENS.colors.semanticSoft.warningSoft, fg: P.rewardInk }}
+                />
+              )}
+            </View>
             <Text style={styles.description}>{c.description}</Text>
           </View>
           <Switch
@@ -139,23 +157,23 @@ export default function NotificationsSettingsScreen() {
             value={prefs[c.channelId] ?? c.defaultEnabled}
             disabled={c.mandatory || saving}
             onValueChange={(v) => toggle(c.channelId, v, c.mandatory)}
-            trackColor={{ true: TOKENS.colors.brand.primary, false: TOKENS.colors.neutral.gray300 }}
+            trackColor={{ true: TOKENS.colors.brand.primary, false: P.line }}
+            thumbColor={P.surface}
           />
-        </View>
+        </Card>
       ))}
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
-  container:      { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  center:         { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header:         { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
-  title:          { color: TOKENS.colors.neutral.white, fontSize: 22, fontWeight: '700' },
-  subtitle:       { color: TOKENS.colors.brand.primarySoft, fontSize: 13, marginTop: 6, lineHeight: 18 },
-  row:            { flexDirection: 'row', backgroundColor: TOKENS.colors.neutral.white, padding: 16, borderBottomWidth: 1, borderBottomColor: TOKENS.colors.neutral.gray100 },
-  rowText:        { flex: 1, marginRight: 12 },
-  label:          { fontSize: 15, fontWeight: '600', color: TOKENS.colors.surface.ink },
-  mandatoryBadge: { fontSize: 11, color: TOKENS.colors.semantic.warning, fontWeight: '700' },
-  description:    { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4, lineHeight: 18 },
+  container:   { flex: 1, backgroundColor: P.base },
+  content:     { padding: spacing.s4, gap: spacing.s2 },
+  skeletons:   { flex: 1, backgroundColor: P.base, padding: spacing.s4, gap: spacing.s3 },
+  intro:       { ...typography.bodyS, fontSize: 13, lineHeight: 20, color: P.inkSoft, marginBottom: spacing.s2 },
+  row:         { flexDirection: 'row', alignItems: 'center', gap: spacing.s3 },
+  rowText:     { flex: 1 },
+  labelRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.s2, flexWrap: 'wrap' },
+  label:       { ...typography.titleM, fontSize: 15, color: P.ink },
+  description: { ...typography.bodyS, fontSize: 13, color: P.inkSoft, marginTop: spacing.s1, lineHeight: 18 },
 })

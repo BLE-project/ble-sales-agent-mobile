@@ -1,15 +1,25 @@
+/**
+ * Mappa prospect — redesign «La Piazza» C5 (2026-07-11, self-approved delega).
+ *
+ * ⚠ SCHERMATA MOCK (gap #3 del DATA_CONTRACT, confermato on-device): dati
+ * hardcoded in-file, nessuna API, riquadro mappa = placeholder (manca
+ * react-native-maps). SOLO restyle: card kit, coordinate mono, Tag stage con
+ * token, emoji→Ionicons. Nessun endpoint/campo lat-lng inventato — endpoint
+ * reale <<DA POPOLARE>> lato prodotto.
+ * testID invariati: prospect-map, prospect-marker-{id} (jest prospects.test).
+ */
 import React from 'react'
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import { useRouter } from 'expo-router'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { Ionicons } from '@expo/vector-icons'
+import { TOKENS, spacing, radius } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+import { Card, Tag } from '../../../src/components/piazza/ui'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+const P = TOKENS.colors.surface
+const B = TOKENS.colors.brand.primary
+
+// ── Types ──────────────────────────────────────────────────────────────────
 
 interface ProspectLocation {
   id: string
@@ -20,7 +30,7 @@ interface ProspectLocation {
   stage: string
 }
 
-// ── Mock data — Milan area ────────────────────────────────────────────────────
+// ── Mock data — Milan area (gap #3: resta mock, vedi header) ────────────────
 
 const PROSPECTS: ProspectLocation[] = [
   { id: 'p1', name: 'Bar Centrale',        address: 'Via Roma 12, Milano',      lat: 45.4654,  lng: 9.1859,  stage: 'LEAD' },
@@ -30,6 +40,14 @@ const PROSPECTS: ProspectLocation[] = [
   { id: 'p5', name: 'Osteria del Porto',   address: 'Via Savona 23, Milano',    lat: 45.4574,  lng: 9.1752,  stage: 'CLOSED' },
 ]
 
+const STAGE_TONES: Record<string, { bg: string; fg: string }> = {
+  LEAD:      { bg: TOKENS.colors.semanticSoft.infoSoft,    fg: TOKENS.colors.semantic.info },
+  CONTACTED: { bg: TOKENS.colors.semanticSoft.warningSoft, fg: P.rewardInk },
+  DEMO:      { bg: TOKENS.colors.brand.primarySoft,        fg: B },
+  CONTRACT:  { bg: TOKENS.colors.semanticSoft.successSoft, fg: TOKENS.colors.semantic.success },
+  CLOSED:    { bg: TOKENS.colors.semanticSoft.successSoft, fg: TOKENS.colors.semantic.success },
+}
+
 // ── Component — placeholder (react-native-maps not installed) ─────────────────
 
 export default function ProspectMapScreen() {
@@ -37,11 +55,9 @@ export default function ProspectMapScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Mappa prospect</Text>
-
-      {/* Map placeholder */}
+      {/* Map placeholder — stub documentato (gap #3) */}
       <View style={styles.mapPlaceholder} testID="prospect-map">
-        <Text style={styles.mapIcon}>📍</Text>
+        <Ionicons name="map-outline" size={36} color={P.inkSoft} />
         <Text style={styles.mapText}>Mappa prospect</Text>
         <Text style={styles.mapSubText}>
           Installa react-native-maps per visualizzare la mappa interattiva
@@ -54,13 +70,13 @@ export default function ProspectMapScreen() {
         keyExtractor={p => p.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <Card
             style={styles.card}
             testID={`prospect-marker-${item.id}`}
             onPress={() => router.push(`/(app)/merchants` as never)}
           >
             <View style={styles.cardRow}>
-              <Text style={styles.pinIcon}>📍</Text>
+              <Ionicons name="location-outline" size={20} color={B} style={styles.pinIcon} />
               <View style={styles.cardContent}>
                 <Text style={styles.cardName}>{item.name}</Text>
                 <Text style={styles.cardAddress}>{item.address}</Text>
@@ -68,71 +84,46 @@ export default function ProspectMapScreen() {
                   {item.lat.toFixed(4)}, {item.lng.toFixed(4)}
                 </Text>
               </View>
-              <View style={[styles.stageBadge, stageStyle(item.stage)]}>
-                <Text style={styles.stageText}>{item.stage}</Text>
-              </View>
+              <Tag
+                label={item.stage}
+                tone={STAGE_TONES[item.stage] ?? { bg: P.sunk, fg: P.inkSoft }}
+              />
             </View>
-          </TouchableOpacity>
+          </Card>
         )}
       />
     </View>
   )
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function stageStyle(stage: string) {
-  const map: Record<string, object> = {
-    LEAD:      { backgroundColor: '#e0f2fe' },
-    CONTACTED: { backgroundColor: '#fef9c3' },
-    DEMO:      { backgroundColor: '#ede9fe' },
-    CONTRACT:  { backgroundColor: '#d1fae5' },
-    CLOSED:    { backgroundColor: TOKENS.colors.neutral.gray300 },
-  }
-  return map[stage] ?? { backgroundColor: TOKENS.colors.neutral.gray100 }
-}
-
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container:   { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  header:      { fontSize: 20, fontWeight: '700', color: TOKENS.colors.brand.primary, padding: 20, paddingBottom: 10 },
+  container:   { flex: 1, backgroundColor: P.base },
 
   mapPlaceholder: {
     height: 200,
-    backgroundColor: TOKENS.colors.neutral.gray200,
+    backgroundColor: P.sunk,
+    borderWidth: 1,
+    borderColor: P.line,
+    borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 12,
-    borderRadius: 12,
+    margin: spacing.s4,
+    marginBottom: spacing.s3,
+    borderRadius: radius.xl,
+    gap: spacing.s1,
   },
-  mapIcon:    { fontSize: 36, marginBottom: 8 },
-  mapText:    { fontSize: 16, fontWeight: '700', color: TOKENS.colors.neutral.gray700, marginBottom: 4 },
-  mapSubText: { fontSize: 12, color: TOKENS.colors.neutral.gray500, textAlign: 'center', paddingHorizontal: 24 },
+  mapText:    { ...typography.titleM, color: P.ink },
+  mapSubText: { ...typography.bodyS, color: P.inkSoft, textAlign: 'center', paddingHorizontal: spacing.s6 },
 
-  list: { paddingHorizontal: 16, paddingBottom: 20 },
+  list: { paddingHorizontal: spacing.s4, paddingBottom: spacing.s5 },
 
-  card: {
-    backgroundColor: TOKENS.colors.neutral.white,
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
-    elevation: 2,
-  },
-  cardRow:    { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  pinIcon:    { fontSize: 22, marginTop: 2 },
+  card:       { marginBottom: spacing.s3 },
+  cardRow:    { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.s3 },
+  pinIcon:    { marginTop: 2 },
   cardContent:{ flex: 1 },
-  cardName:   { fontSize: 15, fontWeight: '600', color: TOKENS.colors.surface.ink, marginBottom: 2 },
-  cardAddress:{ fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
-  cardCoords: { fontSize: 11, color: '#9ca3af' },
-
-  stageBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 10,
-    alignSelf: 'flex-start',
-    marginTop: 2,
-  },
-  stageText:  { fontSize: 10, fontWeight: '700', color: TOKENS.colors.neutral.gray700 },
+  cardName:   { ...typography.titleM, fontSize: 15, color: P.ink, marginBottom: 2 },
+  cardAddress:{ ...typography.bodyS, fontSize: 13, color: P.inkSoft, marginBottom: 2 },
+  cardCoords: { fontFamily: 'JetBrainsMono_400Regular', fontSize: 11, color: P.inkSoft },
 })

@@ -95,7 +95,7 @@
 
   "settings.notifications.title": "Preferencias de notificaciones",
   "settings.notifications.subtitle": "Gestiona las notificaciones que recibes como sales agent. Las notificaciones críticas están siempre activas.",
-  "settings.notifications.always_on": "  • Siempre activo",
+  "settings.notifications.always_on": "Siempre activo",
   "settings.notifications.mandatory.title": "Siempre activo",
   "settings.notifications.mandatory.body": "Esta notificación crítica no se puede desactivar por motivos de workflow.",
   "settings.notifications.save_error.title": "Error al guardar",

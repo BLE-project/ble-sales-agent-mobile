@@ -95,7 +95,7 @@
 
   "settings.notifications.title": "Benachrichtigungseinstellungen",
   "settings.notifications.subtitle": "Verwalte die Benachrichtigungen, die du als Sales Agent erhältst. Kritische Benachrichtigungen sind immer aktiv.",
-  "settings.notifications.always_on": "  • Immer aktiv",
+  "settings.notifications.always_on": "Immer aktiv",
   "settings.notifications.mandatory.title": "Immer aktiv",
   "settings.notifications.mandatory.body": "Diese kritische Benachrichtigung kann aus Workflow-Gründen nicht deaktiviert werden.",
   "settings.notifications.save_error.title": "Speicherfehler",

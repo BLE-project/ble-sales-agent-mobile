@@ -6,6 +6,11 @@ import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native'
 import { Alert } from 'react-native'
 
+// Redesign C5 2026-07-11: la mappa ora renderizza Ionicons (emoji→Ionicons);
+// jest-expo non mocka i font di @expo/vector-icons — stesso mock secco di
+// app/(app)/__tests__/more.test.tsx. Nessuna asserzione cambiata.
+jest.mock('@expo/vector-icons', () => ({ Ionicons: () => null }))
+
 const mockPush = jest.fn()
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),

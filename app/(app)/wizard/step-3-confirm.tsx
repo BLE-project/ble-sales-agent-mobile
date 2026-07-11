@@ -7,7 +7,13 @@
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { getWizardState, upsertScanResult } from '../../../src/wizard/wizardState'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+
+// Redesign «La Piazza» C4 (2026-07-11): solo restyle token/font — retry
+// Phase-1 (gap #4) INVARIATO; testID wizard-confirm-* e copy asserite
+// ("X/Y beacon hanno superato lo scan.", "detected/missed · pass=…") intatte.
+const P = TOKENS.colors.surface
 
 export default function WizardStep3Confirm() {
   const router = useRouter()
@@ -82,21 +88,25 @@ export default function WizardStep3Confirm() {
 }
 
 const styles = StyleSheet.create({
-  container:  { flex: 1, backgroundColor: TOKENS.colors.neutral.white, padding: 16 },
-  title:      { fontSize: 22, fontWeight: '700', color: TOKENS.colors.neutral.gray900 },
-  subtitle:   { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4, marginBottom: 12 },
+  container:  { flex: 1, backgroundColor: P.base, padding: spacing.s4 },
+  title:      { ...typography.displayL, color: P.ink },
+  subtitle:   { ...typography.bodyS, fontSize: 13, color: P.inkSoft, marginTop: spacing.s1, marginBottom: spacing.s3 },
   row:        {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: TOKENS.colors.neutral.gray200,
+    flexDirection: 'row', alignItems: 'center', gap: spacing.s3,
+    paddingVertical: spacing.s3, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: P.line,
   },
-  rowName:    { fontSize: 15, fontWeight: '600', color: TOKENS.colors.neutral.gray900 },
-  rowMeta:    { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginTop: 2 },
-  retryBtn:   { backgroundColor: '#fbbf24', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
-  retryBtnText: { color: TOKENS.colors.neutral.gray900, fontWeight: '700', fontSize: 13 },
-  actions:    { flexDirection: 'row', gap: 10, marginTop: 16 },
-  btn:        { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
-  btnPrimary: { backgroundColor: '#0B6E4F' },
-  btnSecondary: { backgroundColor: TOKENS.colors.neutral.gray100 },
-  btnText:    { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 14 },
-  btnTextSecondary: { color: TOKENS.colors.neutral.gray700, fontWeight: '700', fontSize: 14 },
+  rowName:    { fontFamily: 'JetBrainsMono_600SemiBold', fontSize: 14, color: P.ink },
+  rowMeta:    { fontFamily: 'JetBrainsMono_400Regular', fontSize: 11, color: P.inkSoft, marginTop: 2 },
+  retryBtn:   {
+    backgroundColor: TOKENS.colors.semanticSoft.warningSoft, borderWidth: 1,
+    borderColor: TOKENS.colors.semantic.warning,
+    paddingVertical: spacing.s2, paddingHorizontal: spacing.s3, borderRadius: radius.m,
+  },
+  retryBtnText: { ...typography.label, fontSize: 13, color: P.rewardInk },
+  actions:    { flexDirection: 'row', gap: spacing.s3, marginTop: spacing.s4 },
+  btn:        { flex: 1, paddingVertical: spacing.s3, borderRadius: radius.m, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
+  btnPrimary: { backgroundColor: TOKENS.colors.brand.primary },
+  btnSecondary: { backgroundColor: P.surface, borderWidth: 1, borderColor: P.line },
+  btnText:    { ...typography.titleM, fontSize: 14, color: P.onBrand },
+  btnTextSecondary: { ...typography.titleM, fontSize: 14, color: P.ink },
 })
