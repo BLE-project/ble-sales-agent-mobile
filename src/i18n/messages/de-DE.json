@@ -1,7 +1,6 @@
 {
   "app.name": "TERRIO Sales",
   "app.tagline": "Händlerbetreuung vor Ort",
-
   "auth.login.title": "Anmelden",
   "auth.login.email": "E-Mail",
   "auth.login.username": "Benutzername",
@@ -17,7 +16,6 @@
   "auth.login.error.generic": "Anmeldung fehlgeschlagen: {reason}",
   "auth.login.error.unknown": "Unbekannter Fehler",
   "auth.logout": "Abmelden",
-
   "auth.biometric.prompt.message": "Bei Terrio Sales anmelden",
   "auth.biometric.prompt.cancel": "PIN verwenden",
   "auth.biometric.gate.title": "Mit Biometrie entsperren",
@@ -48,12 +46,10 @@
   "auth.biometric.enroll.pin2.subtitle": "Gib die PIN erneut ein, um sie zu bestätigen.",
   "auth.biometric.enroll.cta.next": "Weiter",
   "auth.biometric.enroll.cta.confirm": "Bestätigen",
-
   "tab.overview": "Übersicht",
   "tab.merchants": "Händler",
   "tab.moderation": "Moderation",
   "tab.beacon_config": "Beacon-Konfig.",
-
   "overview.territory": "Gebiet",
   "overview.active_merchants": "Aktive Händler",
   "overview.pending_requests": "Ausstehende Anfragen",
@@ -65,12 +61,10 @@
   "overview.tile.moderations": "Moderationen",
   "overview.tile.last_payout": "Letzte Auszahlung",
   "overview.view_royalties": "Royalties anzeigen",
-
   "merchants.assigned": "Zugewiesen",
   "merchants.visit_note": "Besuchsnotiz",
   "merchants.open_ticket": "Ticket öffnen",
   "merchants.back": "← Zurück",
-
   "moderation.queue.title": "Moderationswarteschlange",
   "moderation.empty": "Keine Inhalte zu prüfen",
   "moderation.approve": "Genehmigen",
@@ -82,28 +76,25 @@
   "moderation.expired": "Abgelaufen!",
   "moderation.escalated": "↑ An Admin eskaliert",
   "moderation.empty_queue": "Keine ADV zu moderieren 🎉",
-
   "beacon_config.first_setup": "Ersteinrichtung",
   "beacon_config.calibrate": "Kalibrieren",
   "beacon_config.troubleshoot": "Fehlerbehebung",
-
   "wizard.step1.title": "Schritt 1 — Händler auswählen",
   "wizard.step1.subtitle": "Wähle den Händler, dem die zu konfigurierenden Beacons zugewiesen sind.",
   "wizard.step1.search_placeholder": "Nach Name oder UUID filtern…",
   "wizard.step1.no_merchants": "Kein Händler gefunden.",
   "wizard.error": "Fehler: {reason}",
-
   "settings.notifications.title": "Benachrichtigungseinstellungen",
   "settings.notifications.subtitle": "Verwalte die Benachrichtigungen, die du als Sales Agent erhältst. Kritische Benachrichtigungen sind immer aktiv.",
   "settings.notifications.always_on": "Immer aktiv",
   "settings.notifications.mandatory.title": "Immer aktiv",
   "settings.notifications.mandatory.body": "Diese kritische Benachrichtigung kann aus Workflow-Gründen nicht deaktiviert werden.",
   "settings.notifications.save_error.title": "Speicherfehler",
-
   "common.retry": "Erneut versuchen",
   "common.cancel": "Abbrechen",
   "common.save": "Speichern",
   "common.ok": "OK",
   "common.loading": "Wird geladen…",
-  "common.error.generic": "Ein Fehler ist aufgetreten"
+  "common.error.generic": "Ein Fehler ist aufgetreten",
+  "auth.login.kicker": "Sales Agent"
 }
