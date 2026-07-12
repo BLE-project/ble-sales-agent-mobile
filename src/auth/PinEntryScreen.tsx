@@ -298,6 +298,8 @@ const styles = StyleSheet.create({
     height: 64,
   },
   keyText: {
+    // Piazza «mono per codici»: numeri del tastierino in JetBrains Mono.
+    fontFamily: 'JetBrainsMono_400Regular',
     fontSize: 24,
     fontWeight: '500',
     color: TOKENS.colors.surface.ink,
