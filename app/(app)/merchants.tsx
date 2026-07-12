@@ -1,9 +1,29 @@
+/**
+ * Merchant lista — redesign «La Piazza» C3 (2026-07-11, self-approved delega).
+ * Card kit + Tag stato; header in-screen "I tuoi merchant" → ScreenHeader.
+ * D2 (gap BFF #84): il BFF può omettere businessName/status/totali → rendering
+ * difensivo con fallback '—' (niente "€NaN"); NESSUNA normalizzazione oltre,
+ * il fix dati resta lato backend.
+ * Copy asserita (jest screens.test): "Nessun merchant ancora associato",
+ * "Bar Roma", /4500\.00/, "ACTIVE"; tap card → /merchants/{id}.
+ */
 import React from 'react'
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { merchantsApi } from '../../src/api/salesAgentApi'
-import { TOKENS } from '../../src/theme/defaults/tokens'
+import { TOKENS, spacing } from '../../src/theme/defaults/tokens'
+import { typography } from '../../src/theme/typography'
+import { Card, Tag, ScreenHeader, EmptyState, SkeletonCard } from '../../src/components/piazza/ui'
+
+const P = TOKENS.colors.surface
+
+/** D2: cents → "€x.xx" solo se numero finito, altrimenti '—' (gap BFF #84). */
+function euroOrDash(cents: unknown): string {
+  return typeof cents === 'number' && Number.isFinite(cents)
+    ? `€${(cents / 100).toFixed(2)}`
+    : '—'
+}
 
 export default function MerchantsScreen() {
   const router = useRouter()
@@ -14,30 +34,36 @@ export default function MerchantsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>I tuoi merchant</Text>
+      <ScreenHeader title="I tuoi merchant" />
       {isLoading
-        ? <ActivityIndicator style={{ marginTop: 40 }} color={TOKENS.colors.brand.primary} />
+        ? <View style={styles.skeletons}><SkeletonCard /><SkeletonCard /><SkeletonCard /></View>
         : <FlatList
             data={data ?? []}
             keyExtractor={i => i.id}
-            contentContainerStyle={{ padding: 16 }}
-            ListEmptyComponent={<Text style={styles.empty}>Nessun merchant ancora associato</Text>}
+            contentContainerStyle={{ padding: spacing.s4 }}
+            ListEmptyComponent={<EmptyState title="Nessun merchant ancora associato" />}
             renderItem={({ item }) => (
               // L4 §5-6: tap row → /merchants/:id detail (read-only landing view)
-              <TouchableOpacity
+              <Card
                 style={styles.card}
                 onPress={() => router.push(`/merchants/${item.id}`)}
               >
                 <View style={styles.cardRow}>
-                  <Text style={styles.bizName}>{item.businessName}</Text>
-                  <Text style={[styles.status,
-                    item.status === 'ACTIVE' ? styles.statusActive : styles.statusOther]}>
-                    {item.status}
-                  </Text>
+                  <Text style={styles.bizName}>{item.businessName ?? '—'}</Text>
+                  {item.status ? (
+                    <Tag
+                      label={item.status}
+                      tone={item.status === 'ACTIVE'
+                        ? { bg: TOKENS.colors.semanticSoft.successSoft, fg: TOKENS.colors.semantic.success }
+                        : { bg: P.sunk, fg: P.inkSoft }}
+                    />
+                  ) : null}
                 </View>
-                <Text style={styles.meta}>Transazioni: {item.totalTransactions}</Text>
-                <Text style={styles.meta}>Volume: €{(item.totalVolumeCents / 100).toFixed(2)}</Text>
-              </TouchableOpacity>
+                <Text style={styles.meta}>
+                  Transazioni: {Number.isFinite(item.totalTransactions) ? item.totalTransactions : '—'}
+                </Text>
+                <Text style={styles.meta}>Volume: {euroOrDash(item.totalVolumeCents)}</Text>
+              </Card>
             )}
           />
       }
@@ -46,14 +72,10 @@ export default function MerchantsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:   { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  header:      { fontSize: 20, fontWeight: '700', color: TOKENS.colors.brand.primary, padding: 20, paddingBottom: 10 },
-  card:        { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
-  cardRow:     { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
-  bizName:     { fontSize: 16, fontWeight: '600', color: TOKENS.colors.surface.ink },
-  status:      { fontSize: 12, fontWeight: '600', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
-  statusActive:{ backgroundColor: '#d1fae5', color: '#059669' },
-  statusOther: { backgroundColor: TOKENS.colors.neutral.gray100, color: TOKENS.colors.neutral.gray500 },
-  meta:        { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
-  empty:       { textAlign: 'center', color: '#9ca3af', marginTop: 40 },
+  container: { flex: 1, backgroundColor: P.base },
+  skeletons: { padding: spacing.s4, gap: spacing.s3 },
+  card:      { marginBottom: spacing.s3 },
+  cardRow:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.s2, gap: spacing.s2 },
+  bizName:   { ...typography.titleM, color: P.ink, flexShrink: 1 },
+  meta:      { ...typography.bodyS, fontSize: 13, color: P.inkSoft, marginBottom: 2 },
 })

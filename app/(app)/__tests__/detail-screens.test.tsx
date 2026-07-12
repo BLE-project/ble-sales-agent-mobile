@@ -8,6 +8,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react-nativ
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Alert, Linking } from 'react-native'
 
+// Redesign C3/C4 2026-07-11: le schermate ora renderizzano Ionicons
+// (emoji→Ionicons); jest-expo non mocka i font di @expo/vector-icons —
+// stesso mock secco di app/(app)/__tests__/more.test.tsx. Nessuna
+// asserzione cambiata.
+jest.mock('@expo/vector-icons', () => ({ Ionicons: () => null }))
+
 const mockBack = jest.fn()
 const mockPush = jest.fn()
 let mockParams: Record<string, string> = { id: 'req-1' }

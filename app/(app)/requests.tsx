@@ -1,16 +1,27 @@
+/**
+ * Richieste lista — redesign «La Piazza» C3 (2026-07-11, self-approved delega).
+ * Chips filtro mono (label RAW — contratto Maestro requests.yaml), Card kit,
+ * Tag stato soft-semantic, data mono. Copy asserita (jest screens.test):
+ * "Nessuna richiesta trovata", tap card → /request/{id}, default PENDING.
+ */
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { registrationRequestsApi, RegistrationRequest } from '../../src/api/salesAgentApi'
-import { TOKENS } from '../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../src/theme/defaults/tokens'
+import { typography } from '../../src/theme/typography'
+import { Card, Tag, EmptyState, SkeletonCard } from '../../src/components/piazza/ui'
+
+const P = TOKENS.colors.surface
+const B = TOKENS.colors.brand.primary
 
 const STATUS_FILTERS = ['ALL', 'PENDING', 'IN_REVIEW', 'APPROVED', 'REJECTED'] as const
-const STATUS_COLORS: Record<string, string> = {
-  PENDING:   TOKENS.colors.semantic.warning,
-  IN_REVIEW: TOKENS.colors.semantic.info,
-  APPROVED:  TOKENS.colors.semantic.success,
-  REJECTED:  TOKENS.colors.semantic.danger,
+const STATUS_TONES: Record<string, { bg: string; fg: string }> = {
+  PENDING:   { bg: TOKENS.colors.semanticSoft.warningSoft, fg: P.rewardInk },
+  IN_REVIEW: { bg: TOKENS.colors.semanticSoft.infoSoft,    fg: TOKENS.colors.semantic.info },
+  APPROVED:  { bg: TOKENS.colors.semanticSoft.successSoft, fg: TOKENS.colors.semantic.success },
+  REJECTED:  { bg: TOKENS.colors.semanticSoft.dangerSoft,  fg: TOKENS.colors.semantic.danger },
 }
 
 export default function RequestsScreen() {
@@ -24,20 +35,21 @@ export default function RequestsScreen() {
 
   function renderItem({ item }: { item: RegistrationRequest }) {
     return (
-      <TouchableOpacity
+      <Card
         style={styles.card}
         onPress={() => router.push(`/request/${item.id}` as never)}
       >
         <View style={styles.cardHeader}>
           <Text style={styles.bizName}>{item.businessName}</Text>
-          <View style={[styles.badge, { backgroundColor: STATUS_COLORS[item.status] ?? TOKENS.colors.surface.inkSoft }]}>
-            <Text style={styles.badgeText}>{item.status}</Text>
-          </View>
+          <Tag
+            label={item.status}
+            tone={STATUS_TONES[item.status] ?? { bg: P.sunk, fg: P.inkSoft }}
+          />
         </View>
         <Text style={styles.meta}>{item.ownerName} · {item.businessType}</Text>
         <Text style={styles.meta}>{item.email}</Text>
         <Text style={styles.date}>{new Date(item.createdAt).toLocaleDateString('it-IT')}</Text>
-      </TouchableOpacity>
+      </Card>
     )
   }
 
@@ -49,6 +61,7 @@ export default function RequestsScreen() {
             key={f}
             style={[styles.filterBtn, filter === f && styles.filterActive]}
             onPress={() => setFilter(f)}
+            accessibilityRole="button"
           >
             <Text style={[styles.filterText, filter === f && styles.filterTextActive]}>{f}</Text>
           </TouchableOpacity>
@@ -56,15 +69,15 @@ export default function RequestsScreen() {
       </ScrollView>
 
       {isLoading
-        ? <ActivityIndicator style={{ marginTop: 40 }} color={TOKENS.colors.brand.primary} />
+        ? <View style={styles.skeletons}><SkeletonCard /><SkeletonCard /><SkeletonCard /></View>
         : <FlatList
             data={data ?? []}
             keyExtractor={i => i.id}
             renderItem={renderItem}
-            contentContainerStyle={{ padding: 16 }}
+            contentContainerStyle={{ padding: spacing.s4 }}
             onRefresh={refetch}
             refreshing={isLoading}
-            ListEmptyComponent={<Text style={styles.empty}>Nessuna richiesta trovata</Text>}
+            ListEmptyComponent={<EmptyState title="Nessuna richiesta trovata" />}
           />
       }
     </View>
@@ -72,18 +85,19 @@ export default function RequestsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:       { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  filters:         { paddingHorizontal: 12, paddingVertical: 10, flexGrow: 0 },
-  filterBtn:       { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, marginRight: 8, backgroundColor: TOKENS.colors.neutral.gray200 },
-  filterActive:    { backgroundColor: TOKENS.colors.brand.primary },
-  filterText:      { color: TOKENS.colors.neutral.gray700, fontSize: 13, fontWeight: '500' },
-  filterTextActive:{ color: TOKENS.colors.neutral.white },
-  card:            { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
-  cardHeader:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  bizName:         { fontSize: 16, fontWeight: '700', color: TOKENS.colors.surface.ink, flex: 1 },
-  badge:           { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
-  badgeText:       { color: TOKENS.colors.neutral.white, fontSize: 11, fontWeight: '600' },
-  meta:            { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
-  date:            { fontSize: 12, color: '#9ca3af', marginTop: 6 },
-  empty:           { textAlign: 'center', color: '#9ca3af', marginTop: 40, fontSize: 15 },
+  container:       { flex: 1, backgroundColor: P.base },
+  skeletons:       { padding: spacing.s4, gap: spacing.s3 },
+  filters:         { paddingHorizontal: spacing.s3, paddingVertical: spacing.s3, flexGrow: 0 },
+  filterBtn:       {
+    paddingHorizontal: spacing.s4, paddingVertical: 7, borderRadius: radius.full,
+    marginRight: spacing.s2, backgroundColor: P.surface, borderWidth: 1, borderColor: P.line,
+  },
+  filterActive:    { backgroundColor: B, borderColor: B },
+  filterText:      { ...typography.tag, fontSize: 11, textTransform: 'none', color: P.inkSoft },
+  filterTextActive:{ color: P.onBrand },
+  card:            { marginBottom: spacing.s3 },
+  cardHeader:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.s2, gap: spacing.s2 },
+  bizName:         { ...typography.titleM, color: P.ink, flex: 1 },
+  meta:            { ...typography.bodyS, fontSize: 13, color: P.inkSoft, marginBottom: 2 },
+  date:            { ...typography.tag, fontSize: 11, textTransform: 'none', color: P.inkSoft, marginTop: spacing.s2 },
 })

@@ -1,3 +1,12 @@
+/**
+ * Redesign «La Piazza» 2026-07-11 (cluster C6): canvas base, header con
+ * greeting mono + nome Bricolage + logout ghost, tile → Metric kit, chip
+ * territorio brand-soft, sezioni mono, quick actions come Card.
+ *
+ * INVARIATO riga per riga: il gate ruoli Sprint14 P2 (canSeeRegistrations/
+ * canSeeModeration + `enabled` delle query) che ferma la logout-cascade;
+ * testID `btn-logout`; tutti gli id i18n (nessun testo asserito cambiato).
+ */
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -6,7 +15,17 @@ import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../../src/auth/AuthContext'
 import { registrationRequestsApi, royaltiesApi, salesAgentProfileApi, RegistrationRequest } from '../../src/api/salesAgentApi'
 import { moderationApi } from '../../src/api/moderationApi'
-import { TOKENS } from '../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../src/theme/defaults/tokens'
+import { Card, Metric } from '../../src/components/piazza/ui'
+
+const S = TOKENS.colors.surface
+const BRAND = TOKENS.colors.brand.primary
+const F = {
+  display: 'BricolageGrotesque_700Bold',
+  body: 'HankenGrotesk_400Regular',
+  bodySemiBold: 'HankenGrotesk_600SemiBold',
+  mono: 'JetBrainsMono_400Regular',
+}
 
 interface TerritoryAssignment {
   territoryId: string
@@ -73,31 +92,28 @@ export default function DashboardScreen() {
     {
       label: intl.formatMessage({ id: 'overview.tile.pending_requests' }),
       value: filteredPending?.length ?? '--',
-      color: TOKENS.colors.semantic.warning,
       route: '/requests',
     },
     {
       label: intl.formatMessage({ id: 'overview.tile.moderations' }),
       value: moderationQueue?.length ?? 0,
-      color: TOKENS.colors.brand.primary,
       route: '/moderation',
     },
     {
       label: intl.formatMessage({ id: 'overview.tile.last_payout' }),
       value: totalPayout !== '--' ? `EUR ${totalPayout}` : '--',
-      color: TOKENS.colors.brand.primary,
       route: '/royalties',
     },
   ]
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.greeting}><FormattedMessage id="overview.greeting" /></Text>
-          <Text style={styles.name}>{user?.name ?? user?.sub}</Text>
+          <Text style={styles.name} numberOfLines={1}>{user?.name ?? user?.sub}</Text>
         </View>
-        <TouchableOpacity onPress={logout} testID="btn-logout">
+        <TouchableOpacity onPress={logout} testID="btn-logout" style={styles.logoutBtn}>
           <Text style={styles.signOut}><FormattedMessage id="auth.logout" /></Text>
         </TouchableOpacity>
       </View>
@@ -105,23 +121,23 @@ export default function DashboardScreen() {
       {/* Territory selector — shown only if agent has multiple territory assignments */}
       {hasMultipleTerritories && (
         <View style={styles.territorySelectorContainer}>
-          <Text style={styles.territorySelectorLabel}><FormattedMessage id="overview.territory" /></Text>
+          <Text style={styles.sectionLabel}>{intl.formatMessage({ id: 'overview.territory' }).toUpperCase()}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.territoryChips}>
             <TouchableOpacity
-              style={[styles.territoryChip, !selectedTerritoryId && styles.territoryChipActive]}
+              style={[styles.chip, !selectedTerritoryId && styles.chipActive]}
               onPress={() => setSelectedTerritoryId(null)}
             >
-              <Text style={[styles.territoryChipText, !selectedTerritoryId && styles.territoryChipTextActive]}>
+              <Text style={[styles.chipText, !selectedTerritoryId && styles.chipTextActive]}>
                 <FormattedMessage id="overview.all" />
               </Text>
             </TouchableOpacity>
             {assignments?.map(a => (
               <TouchableOpacity
                 key={a.territoryId}
-                style={[styles.territoryChip, selectedTerritoryId === a.territoryId && styles.territoryChipActive]}
+                style={[styles.chip, selectedTerritoryId === a.territoryId && styles.chipActive]}
                 onPress={() => setSelectedTerritoryId(a.territoryId)}
               >
-                <Text style={[styles.territoryChipText, selectedTerritoryId === a.territoryId && styles.territoryChipTextActive]}>
+                <Text style={[styles.chipText, selectedTerritoryId === a.territoryId && styles.chipTextActive]}>
                   {a.territoryName}
                 </Text>
               </TouchableOpacity>
@@ -130,50 +146,50 @@ export default function DashboardScreen() {
         </View>
       )}
 
-      <Text style={styles.sectionTitle}><FormattedMessage id="tab.overview" /></Text>
+      <Text style={styles.sectionLabel}>{intl.formatMessage({ id: 'tab.overview' }).toUpperCase()}</Text>
       <View style={styles.grid}>
         {tiles.map(t => (
           <TouchableOpacity
             key={t.label}
-            style={[styles.tile, { borderLeftColor: t.color }]}
+            style={styles.tileWrap}
             onPress={() => router.push(t.route as never)}
           >
-            <Text style={styles.tileValue}>{String(t.value)}</Text>
-            <Text style={styles.tileLabel}>{t.label}</Text>
+            <Metric label={t.label} value={String(t.value)} />
           </TouchableOpacity>
         ))}
       </View>
 
-      <Text style={styles.sectionTitle}><FormattedMessage id="overview.quick_actions" /></Text>
-      <TouchableOpacity style={styles.action} onPress={() => router.push('/requests')}>
+      <Text style={styles.sectionLabel}>{intl.formatMessage({ id: 'overview.quick_actions' }).toUpperCase()}</Text>
+      <Card style={styles.action} onPress={() => router.push('/requests')}>
         <Text style={styles.actionText}><FormattedMessage id="overview.manage_merchant_requests" /></Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.action} onPress={() => router.push('/royalties')}>
+        <Text style={styles.actionChevron}>›</Text>
+      </Card>
+      <Card style={styles.action} onPress={() => router.push('/royalties')}>
         <Text style={styles.actionText}><FormattedMessage id="overview.view_royalties" /></Text>
-      </TouchableOpacity>
+        <Text style={styles.actionChevron}>›</Text>
+      </Card>
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, backgroundColor: TOKENS.colors.brand.primary },
-  greeting:     { color: TOKENS.colors.brand.primarySoft, fontSize: 13 },
-  name:         { color: TOKENS.colors.neutral.white, fontSize: 18, fontWeight: '700' },
-  signOut:      { color: TOKENS.colors.brand.primarySoft, fontSize: 13 },
-  // Territory selector
-  territorySelectorContainer: { backgroundColor: TOKENS.colors.neutral.white, paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: TOKENS.colors.neutral.gray200 },
-  territorySelectorLabel: { fontSize: 11, fontWeight: '600', color: TOKENS.colors.neutral.gray500, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
-  territoryChips: { flexDirection: 'row' },
-  territoryChip: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: TOKENS.colors.neutral.gray100, marginRight: 8 },
-  territoryChipActive: { backgroundColor: TOKENS.colors.brand.primary },
-  territoryChipText: { fontSize: 13, fontWeight: '500', color: TOKENS.colors.neutral.gray700 },
-  territoryChipTextActive: { color: TOKENS.colors.neutral.white },
-  sectionTitle: { fontSize: 14, fontWeight: '600', color: TOKENS.colors.neutral.gray500, marginLeft: 20, marginTop: 20, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
-  grid:         { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12 },
-  tile:         { width: '45%', margin: 8, backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, borderLeftWidth: 4, elevation: 2 },
-  tileValue:    { fontSize: 24, fontWeight: '700', color: TOKENS.colors.surface.ink },
-  tileLabel:    { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginTop: 4 },
-  action:       { backgroundColor: TOKENS.colors.neutral.white, marginHorizontal: 20, marginBottom: 10, borderRadius: 10, padding: 16, elevation: 1 },
-  actionText:   { fontSize: 15, color: TOKENS.colors.brand.primary, fontWeight: '500' },
+  container:    { flex: 1, backgroundColor: S.base },
+  content:      { paddingBottom: spacing.s10 },
+  header:       { flexDirection: 'row', alignItems: 'center', gap: spacing.s3, paddingHorizontal: spacing.s5, paddingTop: spacing.s6, paddingBottom: spacing.s2 },
+  greeting:     { fontFamily: F.mono, fontSize: 11, letterSpacing: 1, color: S.inkSoft },
+  name:         { fontFamily: F.display, fontSize: 24, letterSpacing: -0.5, color: S.ink, marginTop: 2 },
+  logoutBtn:    { paddingVertical: spacing.s3, paddingLeft: spacing.s4, minHeight: 44, justifyContent: 'center' },
+  signOut:      { fontFamily: F.bodySemiBold, fontSize: 14, color: S.inkSoft },
+  territorySelectorContainer: { paddingHorizontal: spacing.s5, paddingTop: spacing.s3 },
+  territoryChips: { flexDirection: 'row', marginTop: spacing.s2 },
+  chip:         { paddingHorizontal: 14, paddingVertical: 6, borderRadius: radius.full, backgroundColor: S.sunk, marginRight: 8 },
+  chipActive:   { backgroundColor: BRAND },
+  chipText:     { fontFamily: F.bodySemiBold, fontSize: 13, color: S.inkSoft },
+  chipTextActive: { color: S.onBrand },
+  sectionLabel: { fontFamily: F.mono, fontSize: 10, letterSpacing: 0.8, color: S.inkSoft, marginLeft: spacing.s5, marginTop: spacing.s6, marginBottom: spacing.s2 },
+  grid:         { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: spacing.s5 - 4 },
+  tileWrap:     { width: '50%', padding: 4 },
+  action:       { marginHorizontal: spacing.s5, marginBottom: spacing.s2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  actionText:   { fontFamily: F.bodySemiBold, fontSize: 15, color: S.ink, flex: 1 },
+  actionChevron:{ fontSize: 18, color: S.inkSoft, marginLeft: spacing.s2 },
 })

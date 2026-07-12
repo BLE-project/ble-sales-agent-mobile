@@ -17,7 +17,15 @@ import {
   ProspectStage,
 } from '../../../src/api/prospectsApi'
 import { ApiError } from '../../../src/api/client'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+import { ScreenHeader } from '../../../src/components/piazza/ui'
+
+// Redesign «La Piazza» C5 (2026-07-11, self-approved delega): SOLO restyle —
+// colonne/card con token Piazza, header display, tone stage soft-semantic.
+// Logica pipeline, testID kanban-* e copy invariati; "Dettaglio" continua a
+// puntare a /merchants (contract §17, nessun dettaglio prospect inventato).
+const P = TOKENS.colors.surface
 
 // ── Stage config ────────────────────────────────────────────────────────────
 //
@@ -32,22 +40,23 @@ const COLUMNS: Column[] = ['LEAD', 'CONTACTED', 'DEMO', 'CONTRACT', 'CLOSED', 'L
 /** Happy-path order — used to compute the single legal "advance" target. */
 const HAPPY_PATH: ProspectStage[] = ['LEAD', 'CONTACTED', 'DEMO', 'CONTRACT', 'CLOSED']
 
+// C5: hex fuori token → palette Piazza (soft bg + ink forte per colonna).
 const STAGE_COLORS: Record<Column, string> = {
-  LEAD:      '#e0f2fe',
-  CONTACTED: '#fef9c3',
-  DEMO:      '#ede9fe',
-  CONTRACT:  '#d1fae5',
-  CLOSED:    '#bbf7d0',
-  LOST:      '#fee2e2',
+  LEAD:      TOKENS.colors.semanticSoft.infoSoft,
+  CONTACTED: TOKENS.colors.semanticSoft.warningSoft,
+  DEMO:      TOKENS.colors.brand.primarySoft,
+  CONTRACT:  TOKENS.colors.semanticSoft.successSoft,
+  CLOSED:    TOKENS.colors.semanticSoft.successSoft,
+  LOST:      TOKENS.colors.semanticSoft.dangerSoft,
 }
 
 const STAGE_TEXT_COLORS: Record<Column, string> = {
-  LEAD:      '#0369a1',
-  CONTACTED: '#92400e',
-  DEMO:      '#5b21b6',
-  CONTRACT:  '#065f46',
-  CLOSED:    '#15803d',
-  LOST:      '#b91c1c',
+  LEAD:      TOKENS.colors.semantic.info,
+  CONTACTED: TOKENS.colors.surface.rewardInk,
+  DEMO:      TOKENS.colors.brand.primary,
+  CONTRACT:  TOKENS.colors.semantic.success,
+  CLOSED:    TOKENS.colors.semantic.success,
+  LOST:      TOKENS.colors.semantic.danger,
 }
 
 /** Next stage on the happy path, or null when terminal. Mirrors the backend. */
@@ -156,7 +165,7 @@ export default function ProspectKanbanScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Pipeline prospect</Text>
+      <ScreenHeader title="Pipeline prospect" />
 
       {/* New-prospect inline form */}
       <View style={styles.addRow} testID="kanban-add-row">
@@ -278,130 +287,131 @@ export default function ProspectKanbanScreen() {
 const COLUMN_WIDTH = 220
 
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  centered:     { alignItems: 'center', justifyContent: 'center', padding: 24 },
-  header:       { fontSize: 20, fontWeight: '700', color: TOKENS.colors.brand.primary, padding: 20, paddingBottom: 10 },
-  board:        { paddingHorizontal: 12, paddingBottom: 20, gap: 10 },
+  container:    { flex: 1, backgroundColor: P.base },
+  centered:     { alignItems: 'center', justifyContent: 'center', padding: spacing.s6 },
+  board:        { paddingHorizontal: spacing.s3, paddingBottom: spacing.s5, gap: spacing.s3 },
 
-  stateText:    { marginTop: 12, fontSize: 14, color: TOKENS.colors.neutral.gray500 },
+  stateText:    { ...typography.bodyM, marginTop: spacing.s3, color: P.inkSoft },
   emptyBoard:   { flex: 1 },
-  emptyHint:    { marginTop: 6, fontSize: 13, color: '#9ca3af', textAlign: 'center' },
-  errorText:    { fontSize: 14, color: '#b91c1c', textAlign: 'center', marginBottom: 16 },
+  emptyHint:    { ...typography.bodyS, fontSize: 13, marginTop: 6, color: P.inkSoft, textAlign: 'center' },
+  errorText:    { ...typography.bodyM, color: TOKENS.colors.semantic.danger, textAlign: 'center', marginBottom: spacing.s4 },
 
   retryBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: spacing.s2,
+    paddingHorizontal: spacing.s5,
+    borderRadius: radius.m,
     backgroundColor: TOKENS.colors.brand.primary,
+    minHeight: 44,
+    justifyContent: 'center',
   },
-  retryBtnText: { color: TOKENS.colors.neutral.white, fontSize: 14, fontWeight: '600' },
+  retryBtnText: { ...typography.titleM, fontSize: 14, color: P.onBrand },
 
   // New-prospect form
   addRow: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 8,
+    paddingHorizontal: spacing.s4,
+    paddingBottom: spacing.s3,
+    gap: spacing.s2,
   },
   addInput: {
+    ...typography.bodyM,
     flex: 1,
-    backgroundColor: TOKENS.colors.neutral.white,
-    borderRadius: 8,
+    backgroundColor: P.surface,
+    borderRadius: radius.m,
     borderWidth: 1,
-    borderColor: TOKENS.colors.neutral.gray300,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 14,
-    color: TOKENS.colors.surface.ink,
+    borderColor: P.line,
+    paddingHorizontal: spacing.s3,
+    paddingVertical: spacing.s2,
+    color: P.ink,
   },
   addBtn: {
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    paddingHorizontal: spacing.s4,
+    borderRadius: radius.m,
     backgroundColor: TOKENS.colors.brand.primary,
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 90,
   },
-  addBtnDisabled: { backgroundColor: '#9ca3af' },
-  addBtnText:     { color: TOKENS.colors.neutral.white, fontSize: 14, fontWeight: '600' },
+  addBtnDisabled: { opacity: 0.5 },
+  addBtnText:     { ...typography.titleM, fontSize: 14, color: P.onBrand },
 
   column: {
     width: COLUMN_WIDTH,
-    backgroundColor: TOKENS.colors.neutral.white,
-    borderRadius: 12,
+    backgroundColor: P.surface,
+    borderWidth: 1,
+    borderColor: P.line,
+    borderRadius: radius.xl,
     overflow: 'hidden',
-    elevation: 2,
   },
   columnHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 12,
+    padding: spacing.s3,
   },
   columnTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    ...typography.tag,
+    fontSize: 11,
   },
   badge: {
     minWidth: 22,
     height: 22,
-    borderRadius: 11,
+    borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 6,
   },
-  badgeText: { color: TOKENS.colors.neutral.white, fontSize: 11, fontWeight: '700' },
+  badgeText: { fontFamily: 'JetBrainsMono_600SemiBold', color: P.onBrand, fontSize: 11 },
 
   emptyColumn: {
-    textAlign: 'center',
-    color: '#9ca3af',
+    ...typography.bodyS,
     fontSize: 13,
-    padding: 20,
+    textAlign: 'center',
+    color: P.inkSoft,
+    padding: spacing.s5,
   },
 
   card: {
-    padding: 12,
+    padding: spacing.s3,
     borderTopWidth: 1,
-    borderTopColor: TOKENS.colors.neutral.gray100,
+    borderTopColor: P.line,
   },
-  cardName:    { fontSize: 14, fontWeight: '600', color: TOKENS.colors.surface.ink, marginBottom: 4 },
-  cardMeta:    { fontSize: 12, color: TOKENS.colors.neutral.gray500, marginBottom: 2 },
+  cardName:    { ...typography.titleM, fontSize: 14, color: P.ink, marginBottom: spacing.s1 },
+  cardMeta:    { ...typography.bodyS, color: P.inkSoft, marginBottom: 2 },
 
   cardActions: {
     flexDirection: 'row',
     gap: 6,
-    marginTop: 10,
+    marginTop: spacing.s3,
   },
   detailBtn: {
     flex: 1,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: radius.s,
     borderWidth: 1,
     borderColor: TOKENS.colors.brand.primary,
     alignItems: 'center',
   },
-  detailBtnText: { fontSize: 12, color: TOKENS.colors.brand.primary, fontWeight: '600' },
+  detailBtnText: { ...typography.label, fontSize: 12, color: TOKENS.colors.brand.primary },
 
   moveBtn: {
     flex: 1,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: radius.s,
     backgroundColor: TOKENS.colors.brand.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   moveBtnDisabled: { opacity: 0.6 },
-  moveBtnText: { fontSize: 12, color: TOKENS.colors.neutral.white, fontWeight: '600' },
+  moveBtnText: { ...typography.label, fontSize: 12, color: P.onBrand },
 
   loseBtn: {
     marginTop: 6,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: radius.s,
     borderWidth: 1,
-    borderColor: '#b91c1c',
+    borderColor: TOKENS.colors.semantic.danger,
     alignItems: 'center',
   },
-  loseBtnText: { fontSize: 12, color: '#b91c1c', fontWeight: '600' },
+  loseBtnText: { ...typography.label, fontSize: 12, color: TOKENS.colors.semantic.danger },
 })

@@ -1,7 +1,6 @@
 {
   "app.name": "TERRIO Sales",
   "app.tagline": "Assistenza merchant sul territorio",
-
   "auth.login.title": "Accedi",
   "auth.login.email": "Email",
   "auth.login.username": "Username",
@@ -17,7 +16,6 @@
   "auth.login.error.generic": "Accesso fallito: {reason}",
   "auth.login.error.unknown": "Errore sconosciuto",
   "auth.logout": "Esci",
-
   "auth.biometric.prompt.message": "Accedi a Terrio Sales",
   "auth.biometric.prompt.cancel": "Usa PIN",
   "auth.biometric.gate.title": "Sblocca con la biometria",
@@ -48,12 +46,10 @@
   "auth.biometric.enroll.pin2.subtitle": "Inserisci di nuovo il PIN per confermarlo.",
   "auth.biometric.enroll.cta.next": "Avanti",
   "auth.biometric.enroll.cta.confirm": "Conferma",
-
   "tab.overview": "Panoramica",
   "tab.merchants": "Merchant",
   "tab.moderation": "Moderazione",
   "tab.beacon_config": "Config Beacon",
-
   "overview.territory": "Territorio",
   "overview.active_merchants": "Merchant attivi",
   "overview.pending_requests": "Richieste pendenti",
@@ -65,12 +61,10 @@
   "overview.tile.moderations": "Moderazioni",
   "overview.tile.last_payout": "Ultimo payout",
   "overview.view_royalties": "Visualizza royalties",
-
   "merchants.assigned": "Assegnati",
   "merchants.visit_note": "Nota visita",
   "merchants.open_ticket": "Apri ticket",
   "merchants.back": "← Indietro",
-
   "moderation.queue.title": "Coda moderazione",
   "moderation.empty": "Nessun contenuto da rivedere",
   "moderation.approve": "Approva",
@@ -82,28 +76,25 @@
   "moderation.expired": "Scaduta!",
   "moderation.escalated": "↑ Escalata ad admin",
   "moderation.empty_queue": "Nessuna ADV da moderare 🎉",
-
   "beacon_config.first_setup": "Prima configurazione",
   "beacon_config.calibrate": "Calibra",
   "beacon_config.troubleshoot": "Risoluzione problemi",
-
   "wizard.step1.title": "Step 1 — Seleziona merchant",
   "wizard.step1.subtitle": "Scegli il merchant a cui sono assegnati i beacon da configurare.",
   "wizard.step1.search_placeholder": "Filtra per nome o UUID…",
   "wizard.step1.no_merchants": "Nessun merchant trovato.",
   "wizard.error": "Errore: {reason}",
-
   "settings.notifications.title": "Preferenze notifiche",
   "settings.notifications.subtitle": "Gestisci le notifiche che ricevi come sales agent. Notifiche critiche sempre attive.",
-  "settings.notifications.always_on": "  • Sempre attivo",
+  "settings.notifications.always_on": "Sempre attivo",
   "settings.notifications.mandatory.title": "Sempre attivo",
   "settings.notifications.mandatory.body": "Questa notifica critica non può essere disabilitata per motivi di workflow.",
   "settings.notifications.save_error.title": "Errore salvataggio",
-
   "common.retry": "Riprova",
   "common.cancel": "Annulla",
   "common.save": "Salva",
   "common.ok": "OK",
   "common.loading": "Caricamento…",
-  "common.error.generic": "Si è verificato un errore"
+  "common.error.generic": "Si è verificato un errore",
+  "auth.login.kicker": "Sales Agent"
 }

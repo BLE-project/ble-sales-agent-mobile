@@ -7,21 +7,26 @@
  */
 
 import React from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { moderationApi, ReviewTask } from '../../../src/api/moderationApi'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { TOKENS, spacing } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+import { Card, Tag, EmptyState, SkeletonCard } from '../../../src/components/piazza/ui'
 
+const P = TOKENS.colors.surface
+
+// Redesign «La Piazza» C3 (2026-07-11): Tag kit tone soft-semantic; label raw
+// LOW/MEDIUM/HIGH invariata (jest screens.test asserisce 'HIGH').
 function RiskBadge({ level }: Readonly<{ level: ReviewTask['claudeRiskLevel'] }>) {
   if (!level) return null
-  const color = level === 'HIGH' ? TOKENS.colors.semantic.danger : level === 'MEDIUM' ? TOKENS.colors.semantic.warning : TOKENS.colors.semantic.success
-  return (
-    <View style={[styles.riskBadge, { backgroundColor: color }]}>
-      <Text style={styles.riskBadgeText}>{level}</Text>
-    </View>
-  )
+  const tone =
+    level === 'HIGH'   ? { bg: TOKENS.colors.semanticSoft.dangerSoft,  fg: TOKENS.colors.semantic.danger }
+    : level === 'MEDIUM' ? { bg: TOKENS.colors.semanticSoft.warningSoft, fg: P.rewardInk }
+    : { bg: TOKENS.colors.semanticSoft.successSoft, fg: TOKENS.colors.semantic.success }
+  return <Tag label={level} tone={tone} />
 }
 
 /** Remaining time as a compact "Xh Ym" / "Ym" string, or null when expired/absent. */
@@ -48,9 +53,9 @@ export default function ModerationQueueScreen() {
     const scaduta = item.salesReviewExpiresAt
       && new Date(item.salesReviewExpiresAt).getTime() < Date.now()
     return (
-      <TouchableOpacity
+      <Card
         testID="moderation-row"
-        style={[styles.card, scaduta && styles.cardExpired]}
+        style={[styles.card, scaduta ? styles.cardExpired : null]}
         onPress={() => router.push(`/moderation/${item.advId}` as never)}
       >
         <View style={styles.cardHeader}>
@@ -71,7 +76,7 @@ export default function ModerationQueueScreen() {
             <Text style={styles.escalated}><FormattedMessage id="moderation.escalated" /></Text>
           )}
         </View>
-      </TouchableOpacity>
+      </Card>
     )
   }
 
@@ -85,15 +90,15 @@ export default function ModerationQueueScreen() {
       </View>
 
       {isLoading
-        ? <ActivityIndicator style={{ marginTop: 40 }} color={TOKENS.colors.brand.primary} />
+        ? <View style={styles.skeletons}><SkeletonCard /><SkeletonCard /><SkeletonCard /></View>
         : <FlatList
             data={data ?? []}
             keyExtractor={(i) => i.advId}
             renderItem={renderItem}
-            contentContainerStyle={{ padding: 16 }}
+            contentContainerStyle={{ padding: spacing.s4 }}
             onRefresh={refetch}
             refreshing={isLoading}
-            ListEmptyComponent={<Text style={styles.empty}><FormattedMessage id="moderation.empty_queue" /></Text>}
+            ListEmptyComponent={<EmptyState title={intl.formatMessage({ id: 'moderation.empty_queue' })} />}
           />
       }
     </View>
@@ -101,19 +106,18 @@ export default function ModerationQueueScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:     { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  header:        { padding: 20, backgroundColor: TOKENS.colors.brand.primary },
-  headerTitle:   { color: TOKENS.colors.neutral.white, fontSize: 22, fontWeight: '700' },
-  headerCount:   { color: '#e9d5ff', fontSize: 14, marginTop: 4 },
-  card:          { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 12, padding: 16, marginBottom: 10, elevation: 2 },
+  container:     { flex: 1, backgroundColor: P.base },
+  skeletons:     { padding: spacing.s4, gap: spacing.s3 },
+  // Redesign C3: via lo slab brand — header su canvas base, titolo display.
+  header:        { paddingHorizontal: spacing.s5, paddingTop: spacing.s4, paddingBottom: spacing.s2 },
+  headerTitle:   { ...typography.displayL, color: TOKENS.colors.brand.primary },
+  headerCount:   { ...typography.tag, fontSize: 11, textTransform: 'none', color: P.inkSoft, marginTop: spacing.s1 },
+  card:          { marginBottom: spacing.s3 },
   cardExpired:   { borderLeftColor: TOKENS.colors.semantic.danger, borderLeftWidth: 4 },
-  cardHeader:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  title:         { fontSize: 16, fontWeight: '700', color: TOKENS.colors.surface.ink, flex: 1 },
-  desc:          { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 6 },
-  cardFooter:    { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
-  expiry:        { fontSize: 12, color: '#9ca3af' },
-  escalated:     { fontSize: 12, color: TOKENS.colors.semantic.warning, fontWeight: '600' },
-  riskBadge:     { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10, marginLeft: 8 },
-  riskBadgeText: { color: TOKENS.colors.neutral.white, fontSize: 11, fontWeight: '700' },
-  empty:         { textAlign: 'center', color: '#9ca3af', marginTop: 60, fontSize: 15 },
+  cardHeader:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: spacing.s2 },
+  title:         { ...typography.titleM, color: P.ink, flex: 1 },
+  desc:          { ...typography.bodyS, fontSize: 13, color: P.inkSoft, marginTop: spacing.s2 },
+  cardFooter:    { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.s3 },
+  expiry:        { ...typography.tag, fontSize: 11, textTransform: 'none', color: P.inkSoft },
+  escalated:     { ...typography.label, fontSize: 12, color: P.rewardInk },
 })

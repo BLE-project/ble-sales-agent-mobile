@@ -8,6 +8,12 @@
  *
  * No edit/moderation actions — that's tenant-mobile's role.
  * Cross-linking from merchants.tsx list (tap a row).
+ *
+ * Redesign «La Piazza» C3 (2026-07-11, self-approved delega): emoji→Ionicons,
+ * Card kit per contatti/social, label sezione mono, Tag stato landing con
+ * tone semantic-soft. Fetch useEffect INVARIATO (i test renderizzano senza
+ * QueryClientProvider — migrazione react-query rimandata, decisione fuori
+ * scope restyle). Copy asserita (jest detail-screens.test) invariata.
  */
 
 import React, { useEffect, useState } from 'react'
@@ -16,8 +22,16 @@ import {
   TouchableOpacity, Linking,
 } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 import { api } from '../../../src/api/client'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+import { Card, Tag } from '../../../src/components/piazza/ui'
+
+const P = TOKENS.colors.surface
+const B = TOKENS.colors.brand.primary
+
+type IoniconName = React.ComponentProps<typeof Ionicons>['name']
 
 interface MerchantLanding {
   id:             string
@@ -42,8 +56,11 @@ interface MerchantLanding {
 const STATUS_LABEL: Record<MerchantLanding['landingStatus'], string> = {
   DRAFT: 'Bozza', PENDING_REVIEW: 'In revisione', PUBLISHED: 'Pubblicata', ARCHIVED: 'Archiviata',
 }
-const STATUS_COLOR: Record<MerchantLanding['landingStatus'], string> = {
-  DRAFT: TOKENS.colors.neutral.gray500, PENDING_REVIEW: '#d97706', PUBLISHED: '#059669', ARCHIVED: '#9ca3af',
+const STATUS_TONE: Record<MerchantLanding['landingStatus'], { bg: string; fg: string }> = {
+  DRAFT:          { bg: P.sunk, fg: P.inkSoft },
+  PENDING_REVIEW: { bg: TOKENS.colors.semanticSoft.warningSoft, fg: P.rewardInk },
+  PUBLISHED:      { bg: TOKENS.colors.semanticSoft.successSoft, fg: TOKENS.colors.semantic.success },
+  ARCHIVED:       { bg: P.sunk, fg: P.inkSoft },
 }
 
 export default function SalesAgentMerchantDetailScreen() {
@@ -81,12 +98,12 @@ export default function SalesAgentMerchantDetailScreen() {
     Linking.openURL(`mailto:${data.email}`)
   }
 
-  if (loading) return <View style={s.center}><ActivityIndicator color={TOKENS.colors.brand.primary} /></View>
+  if (loading) return <View style={s.center}><ActivityIndicator color={B} /></View>
   if (error || !data) {
     return (
       <View style={s.center}>
         <Text style={s.errorText}>Merchant non trovato</Text>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()} accessibilityRole="button">
           <Text style={s.link}>Indietro</Text>
         </TouchableOpacity>
       </View>
@@ -103,14 +120,16 @@ export default function SalesAgentMerchantDetailScreen() {
           <View style={{ flex: 1 }}>
             <Text style={s.name}>{data.name}</Text>
             {data.ratingAvg != null && data.ratingCount > 0 && (
-              <Text style={s.rating}>⭐ {data.ratingAvg.toFixed(1)} ({data.ratingCount})</Text>
+              <View style={s.ratingRow}>
+                <Ionicons name="star" size={13} color={TOKENS.colors.brand.accent} />
+                <Text style={s.rating}>{data.ratingAvg.toFixed(1)} ({data.ratingCount})</Text>
+              </View>
             )}
           </View>
-          <View style={[s.statusBadge, { backgroundColor: STATUS_COLOR[data.landingStatus] + '22' }]}>
-            <Text style={[s.statusText, { color: STATUS_COLOR[data.landingStatus] }]}>
-              {STATUS_LABEL[data.landingStatus]}
-            </Text>
-          </View>
+          <Tag
+            label={STATUS_LABEL[data.landingStatus]}
+            tone={STATUS_TONE[data.landingStatus] ?? { bg: P.sunk, fg: P.inkSoft }}
+          />
         </View>
 
         {data.description && (
@@ -121,54 +140,57 @@ export default function SalesAgentMerchantDetailScreen() {
         )}
 
         <Text style={s.sectionLabel}>Contatti</Text>
-        <View style={s.contactList}>
+        <Card style={s.contactList}>
           {data.addressLine && (
-            <TouchableOpacity style={s.contactRow} onPress={openMaps}>
-              <Text style={s.contactIcon}>📍</Text>
+            <TouchableOpacity style={s.contactRow} onPress={openMaps} accessibilityRole="button">
+              <Ionicons name="location-outline" size={18} color={B} style={s.contactIcon} />
               <Text style={s.contactText}>
                 {data.addressLine}{data.city ? `, ${data.city}` : ''}
               </Text>
             </TouchableOpacity>
           )}
           {data.phone && (
-            <TouchableOpacity style={s.contactRow} onPress={openPhone}>
-              <Text style={s.contactIcon}>📞</Text>
+            <TouchableOpacity style={s.contactRow} onPress={openPhone} accessibilityRole="button">
+              <Ionicons name="call-outline" size={18} color={B} style={s.contactIcon} />
               <Text style={s.contactText}>{data.phone}</Text>
             </TouchableOpacity>
           )}
           {data.email && (
-            <TouchableOpacity style={s.contactRow} onPress={openEmail}>
-              <Text style={s.contactIcon}>✉</Text>
+            <TouchableOpacity style={s.contactRow} onPress={openEmail} accessibilityRole="button">
+              <Ionicons name="mail-outline" size={18} color={B} style={s.contactIcon} />
               <Text style={s.contactText}>{data.email}</Text>
             </TouchableOpacity>
           )}
-        </View>
+        </Card>
 
         {/* v7.9.10 — social links as inline rows */}
         {data.socialLinks && Object.values(data.socialLinks).some(Boolean) && (
           <>
             <Text style={s.sectionLabel}>Social</Text>
-            <View style={s.contactList}>
+            <Card style={s.contactList}>
               {([
-                ['instagram','📸','Instagram'], ['facebook','👥','Facebook'],
-                ['whatsapp','💬','WhatsApp'],  ['website','🌐','Sito web'],
-                ['tiktok','🎵','TikTok'],
-              ] as const).map(([k, icon, label]) => {
+                ['instagram', 'logo-instagram', 'Instagram'] as const,
+                ['facebook',  'logo-facebook',  'Facebook']  as const,
+                ['whatsapp',  'logo-whatsapp',  'WhatsApp']  as const,
+                ['website',   'globe-outline',  'Sito web']  as const,
+                ['tiktok',    'logo-tiktok',    'TikTok']    as const,
+              ]).map(([k, icon, label]) => {
                 const url = data.socialLinks?.[k]
                 return url ? (
-                  <TouchableOpacity key={k} style={s.contactRow} onPress={() => Linking.openURL(url)}>
-                    <Text style={s.contactIcon}>{icon}</Text>
+                  <TouchableOpacity key={k} style={s.contactRow} onPress={() => Linking.openURL(url)} accessibilityRole="button">
+                    <Ionicons name={icon as IoniconName} size={18} color={B} style={s.contactIcon} />
                     <Text style={s.contactText} numberOfLines={1}>{label} — {url}</Text>
                   </TouchableOpacity>
                 ) : null
               })}
-            </View>
+            </Card>
           </>
         )}
 
         <View style={s.readOnlyNote}>
+          <Ionicons name="information-circle-outline" size={14} color={P.inkSoft} />
           <Text style={s.readOnlyText}>
-            ℹ Sola lettura. Per modifiche → contatta l'admin tenant.
+            Sola lettura. Per modifiche → contatta l'admin tenant.
           </Text>
         </View>
       </View>
@@ -177,25 +199,29 @@ export default function SalesAgentMerchantDetailScreen() {
 }
 
 const s = StyleSheet.create({
-  container:   { flex: 1, backgroundColor: TOKENS.colors.surface.base },
-  center:      { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  container:   { flex: 1, backgroundColor: P.base },
+  center:      { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: P.base },
   cover:       { width: '100%', height: 160 },
-  content:     { padding: 16 },
-  headerRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  logo:        { width: 56, height: 56, borderRadius: 8, marginRight: 12, backgroundColor: TOKENS.colors.neutral.gray200 },
-  name:        { fontSize: 20, fontWeight: '700', color: TOKENS.colors.surface.ink },
-  rating:      { fontSize: 13, color: TOKENS.colors.neutral.gray700, marginTop: 2 },
-  statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-  statusText:  { fontSize: 11, fontWeight: '600' },
-  sectionLabel:{ fontSize: 13, fontWeight: '600', color: TOKENS.colors.neutral.gray700, marginTop: 20, marginBottom: 8 },
-  desc:        { fontSize: 14, color: TOKENS.colors.surface.ink, lineHeight: 20 },
-  contactList: { backgroundColor: TOKENS.colors.neutral.white, borderRadius: 8, borderWidth: 1, borderColor: TOKENS.colors.neutral.gray200 },
-  contactRow:  { flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: 1,
-                 borderBottomColor: TOKENS.colors.neutral.gray100 },
-  contactIcon: { fontSize: 18, marginRight: 10 },
-  contactText: { fontSize: 14, color: TOKENS.colors.brand.primary, flex: 1 },
-  readOnlyNote:{ backgroundColor: TOKENS.colors.neutral.gray100, borderRadius: 8, padding: 12, marginTop: 20 },
-  readOnlyText:{ fontSize: 12, color: TOKENS.colors.neutral.gray500, textAlign: 'center' },
-  errorText:   { fontSize: 16, color: '#dc2626', marginBottom: 8 },
-  link:        { color: TOKENS.colors.brand.primary, textDecorationLine: 'underline', fontSize: 14 },
+  content:     { padding: spacing.s4 },
+  headerRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.s2, gap: spacing.s2 },
+  logo:        { width: 56, height: 56, borderRadius: radius.m, marginRight: spacing.s1, backgroundColor: P.sunk },
+  name:        { ...typography.displayM, color: P.ink },
+  ratingRow:   { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  rating:      { ...typography.bodyS, fontSize: 13, color: P.inkSoft },
+  sectionLabel:{ ...typography.tag, fontSize: 11, textTransform: 'none', color: P.inkSoft, marginTop: spacing.s5, marginBottom: spacing.s2 },
+  desc:        { ...typography.bodyM, color: P.ink },
+  contactList: { padding: 0, overflow: 'hidden' },
+  contactRow:  {
+    flexDirection: 'row', alignItems: 'center', padding: spacing.s3,
+    borderBottomWidth: 1, borderBottomColor: P.line,
+  },
+  contactIcon: { marginRight: spacing.s2 },
+  contactText: { ...typography.bodyM, color: B, flex: 1 },
+  readOnlyNote:{
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.s1,
+    backgroundColor: P.sunk, borderRadius: radius.m, padding: spacing.s3, marginTop: spacing.s5,
+  },
+  readOnlyText:{ ...typography.bodyS, color: P.inkSoft, textAlign: 'center' },
+  errorText:   { ...typography.titleL, color: TOKENS.colors.semantic.danger, marginBottom: spacing.s2 },
+  link:        { ...typography.bodyM, color: B, textDecorationLine: 'underline' },
 })

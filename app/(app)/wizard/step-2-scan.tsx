@@ -17,7 +17,13 @@ import {
   getWizardState, setBeacons, setScanResults,
 } from '../../../src/wizard/wizardState'
 import { scanBeacons, type BeaconCheckTarget } from '../../../src/ble/BeaconHealthCheck'
-import { TOKENS } from '../../../src/theme/defaults/tokens'
+import { TOKENS, spacing, radius } from '../../../src/theme/defaults/tokens'
+import { typography } from '../../../src/theme/typography'
+
+// Redesign «La Piazza» C4 (2026-07-11): solo restyle token/font — testID
+// wizard-scan-start/-next/-row-* e label stato raw (pending/scanning/
+// detected/missed, asserite dal jest) INVARIATI.
+const P = TOKENS.colors.surface
 
 const SCAN_WINDOW_MS = 60_000
 
@@ -157,32 +163,33 @@ export default function WizardStep2Scan() {
 
 function badgeStyle(s: RowState) {
   switch (s) {
-    case 'detected': return { backgroundColor: '#dcfce7', color: '#166534' }
-    case 'missed':   return { backgroundColor: '#fee2e2', color: '#991b1b' }
-    case 'scanning': return { backgroundColor: '#dbeafe', color: '#1e40af' }
-    default:         return { backgroundColor: TOKENS.colors.neutral.gray100, color: TOKENS.colors.neutral.gray700 }
+    case 'detected': return { backgroundColor: TOKENS.colors.semanticSoft.successSoft, color: TOKENS.colors.semantic.success }
+    case 'missed':   return { backgroundColor: TOKENS.colors.semanticSoft.dangerSoft,  color: TOKENS.colors.semantic.danger }
+    case 'scanning': return { backgroundColor: TOKENS.colors.semanticSoft.infoSoft,    color: TOKENS.colors.semantic.info }
+    default:         return { backgroundColor: P.sunk, color: P.inkSoft }
   }
 }
 
 const styles = StyleSheet.create({
-  container:  { flex: 1, backgroundColor: TOKENS.colors.neutral.white, padding: 16 },
-  center:     { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  title:      { fontSize: 22, fontWeight: '700', color: TOKENS.colors.neutral.gray900 },
-  subtitle:   { fontSize: 13, color: TOKENS.colors.neutral.gray500, marginTop: 4, marginBottom: 12 },
+  container:  { flex: 1, backgroundColor: P.base, padding: spacing.s4 },
+  center:     { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.s6, backgroundColor: P.base },
+  title:      { ...typography.displayL, color: P.ink },
+  subtitle:   { ...typography.bodyS, fontSize: 13, color: P.inkSoft, marginTop: spacing.s1, marginBottom: spacing.s3 },
   row:        {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: TOKENS.colors.neutral.gray200,
+    paddingVertical: spacing.s3, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: P.line,
   },
-  rowName:    { fontSize: 15, fontWeight: '600', color: TOKENS.colors.neutral.gray900 },
+  rowName:    { fontFamily: 'JetBrainsMono_600SemiBold', fontSize: 14, color: P.ink },
   badge:      {
-    paddingVertical: 4, paddingHorizontal: 10, borderRadius: 999,
-    fontSize: 11, fontWeight: '700', overflow: 'hidden',
+    fontFamily: 'JetBrainsMono_400Regular',
+    paddingVertical: 4, paddingHorizontal: spacing.s3, borderRadius: radius.full,
+    fontSize: 11, overflow: 'hidden',
   },
-  actions:    { flexDirection: 'row', gap: 10, marginTop: 16 },
-  btn:        { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
-  btnPrimary: { backgroundColor: '#0B6E4F' },
-  btnSecondary: { backgroundColor: TOKENS.colors.neutral.gray100 },
-  btnText:    { color: TOKENS.colors.neutral.white, fontWeight: '700', fontSize: 14 },
-  btnTextSecondary: { color: TOKENS.colors.neutral.gray700, fontWeight: '700', fontSize: 14 },
-  error:      { color: '#b91c1c', fontSize: 14 },
+  actions:    { flexDirection: 'row', gap: spacing.s3, marginTop: spacing.s4 },
+  btn:        { flex: 1, paddingVertical: spacing.s3, borderRadius: radius.m, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
+  btnPrimary: { backgroundColor: TOKENS.colors.brand.primary },
+  btnSecondary: { backgroundColor: P.surface, borderWidth: 1, borderColor: P.line },
+  btnText:    { ...typography.titleM, fontSize: 14, color: P.onBrand },
+  btnTextSecondary: { ...typography.titleM, fontSize: 14, color: P.ink },
+  error:      { ...typography.bodyM, color: TOKENS.colors.semantic.danger },
 })

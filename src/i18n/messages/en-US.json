@@ -1,7 +1,6 @@
 {
   "app.name": "TERRIO Sales",
   "app.tagline": "Merchant support in the field",
-
   "auth.login.title": "Sign in",
   "auth.login.email": "Email",
   "auth.login.username": "Username",
@@ -17,7 +16,6 @@
   "auth.login.error.generic": "Login failed: {reason}",
   "auth.login.error.unknown": "Unknown error",
   "auth.logout": "Sign out",
-
   "auth.biometric.prompt.message": "Sign in to Terrio Sales",
   "auth.biometric.prompt.cancel": "Use PIN",
   "auth.biometric.gate.title": "Unlock with biometrics",
@@ -48,12 +46,10 @@
   "auth.biometric.enroll.pin2.subtitle": "Enter your PIN again to confirm.",
   "auth.biometric.enroll.cta.next": "Next",
   "auth.biometric.enroll.cta.confirm": "Confirm",
-
   "tab.overview": "Overview",
   "tab.merchants": "Merchants",
   "tab.moderation": "Moderation",
   "tab.beacon_config": "Beacon Config",
-
   "overview.territory": "Territory",
   "overview.active_merchants": "Active merchants",
   "overview.pending_requests": "Pending requests",
@@ -65,12 +61,10 @@
   "overview.tile.moderations": "Moderations",
   "overview.tile.last_payout": "Last payout",
   "overview.view_royalties": "View royalties",
-
   "merchants.assigned": "Assigned",
   "merchants.visit_note": "Visit note",
   "merchants.open_ticket": "Open ticket",
   "merchants.back": "← Back",
-
   "moderation.queue.title": "Moderation queue",
   "moderation.empty": "Nothing to review",
   "moderation.approve": "Approve",
@@ -82,28 +76,25 @@
   "moderation.expired": "Expired!",
   "moderation.escalated": "↑ Escalated to admin",
   "moderation.empty_queue": "No ADVs to moderate 🎉",
-
   "beacon_config.first_setup": "First setup",
   "beacon_config.calibrate": "Calibrate",
   "beacon_config.troubleshoot": "Troubleshoot",
-
   "wizard.step1.title": "Step 1 — Select merchant",
   "wizard.step1.subtitle": "Choose the merchant whose beacons need to be configured.",
   "wizard.step1.search_placeholder": "Filter by name or UUID…",
   "wizard.step1.no_merchants": "No merchants found.",
   "wizard.error": "Error: {reason}",
-
   "settings.notifications.title": "Notification preferences",
   "settings.notifications.subtitle": "Manage the notifications you receive as a sales agent. Critical notifications are always on.",
-  "settings.notifications.always_on": "  • Always on",
+  "settings.notifications.always_on": "Always on",
   "settings.notifications.mandatory.title": "Always on",
   "settings.notifications.mandatory.body": "This critical notification cannot be disabled for workflow reasons.",
   "settings.notifications.save_error.title": "Save error",
-
   "common.retry": "Retry",
   "common.cancel": "Cancel",
   "common.save": "Save",
   "common.ok": "OK",
   "common.loading": "Loading…",
-  "common.error.generic": "An error occurred"
+  "common.error.generic": "An error occurred",
+  "auth.login.kicker": "Sales Agent"
 }
