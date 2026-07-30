@@ -143,6 +143,28 @@ describe('prospectsApi.moveStage', () => {
   })
 })
 
+// ── convert (#82) ─────────────────────────────────────────────────────────────
+
+describe('prospectsApi.convert', () => {
+  it('calls POST /api/v1/prospects/:id/convert with an empty body + tenant header', async () => {
+    mockFetch.mockResolvedValueOnce(
+      mockJsonRes(201, { merchantId: 'm1', prospectId: 'p1', name: 'Bar Centrale' }))
+    const res = await prospectsApi.convert('p1')
+    const [url, init] = mockFetch.mock.calls[0]
+    expect(url).toContain('/api/v1/prospects/p1/convert')
+    expect(init.method).toBe('POST')
+    expect(JSON.parse(init.body)).toEqual({})
+    expect(init.headers['X-Tenant-Id']).toBe(TENANT_ID)
+    expect(res.merchantId).toBe('m1')
+  })
+
+  it('surfaces a 409 already-converted as an ApiError', async () => {
+    mockFetch.mockResolvedValue(
+      mockJsonRes(409, { error: { code: 'ALREADY_CONVERTED', merchantId: 'm1' } }))
+    await expect(prospectsApi.convert('p1')).rejects.toMatchObject({ status: 409 })
+  })
+})
+
 // ── tenant resolution failures ──────────────────────────────────────────────
 
 describe('tenant resolution', () => {

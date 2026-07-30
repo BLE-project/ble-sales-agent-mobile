@@ -44,8 +44,17 @@ export interface Prospect {
   stage: ProspectStage
   notes: string | null
   lastContactAt: string | null
+  /** #82 — id of the Merchant this won prospect was onboarded into, else null. */
+  convertedMerchantId: string | null
   createdAt: string
   updatedAt: string
+}
+
+/** Result of onboarding a won prospect into a Merchant (#82). */
+export interface ConvertResult {
+  merchantId: string
+  prospectId: string
+  name: string
 }
 
 /** Paged envelope returned by the list endpoint. */
@@ -126,5 +135,16 @@ export const prospectsApi = {
   async moveStage(id: string, stage: ProspectStage): Promise<Prospect> {
     const headers = await tenantHeaders()
     return api.post<Prospect>(`/api/v1/prospects/${id}/stage`, { stage }, headers)
+  },
+
+  /**
+   * #82 — onboard a won (CLOSED) prospect into a Merchant entity assigned to the
+   * calling sales agent (assignment is derived server-side from the prospect's
+   * owner; the body is empty). Scope is anagrafica-only: no MERCHANT_USER, no
+   * store. Returns 409 if the prospect isn't CLOSED or was already converted.
+   */
+  async convert(id: string): Promise<ConvertResult> {
+    const headers = await tenantHeaders()
+    return api.post<ConvertResult>(`/api/v1/prospects/${id}/convert`, {}, headers)
   },
 }
