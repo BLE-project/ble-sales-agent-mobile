@@ -87,6 +87,8 @@ export default function ProspectKanbanScreen() {
   const [error, setError]         = useState<string | null>(null)
   // id of the prospect whose stage move is in-flight (disables its buttons)
   const [movingId, setMovingId]   = useState<string | null>(null)
+  // id of the prospect whose merchant onboarding is in-flight (#82)
+  const [convertingId, setConvertingId] = useState<string | null>(null)
 
   // New-prospect inline form
   const [newOrg, setNewOrg]       = useState('')
@@ -135,6 +137,36 @@ export default function ProspectKanbanScreen() {
       setMovingId(null)
     }
   }, [])
+
+  // #82 — onboard a won prospect into a Merchant assigned to this agent. The
+  // button is disabled while in-flight (single-flight guard). On success the
+  // card flips to "Esercente creato"; a 409 (already converted / not won) just
+  // re-syncs from the backend, which is the durable dedup source of truth.
+  const convertProspect = useCallback(async (p: Prospect) => {
+    if (convertingId) return
+    setConvertingId(p.id)
+    try {
+      const res = await prospectsApi.convert(p.id)
+      setProspects(prev =>
+        prev.map(x => (x.id === p.id ? { ...x, convertedMerchantId: res.merchantId } : x)))
+      Alert.alert(
+        'Esercente creato',
+        `"${res.name}" è stato onboardato e assegnato a te.`,
+        [{ text: 'Apri scheda', onPress: () => router.push(`/(app)/merchants/${res.merchantId}` as never) },
+         { text: 'OK', style: 'cancel' }],
+      )
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 409) {
+        // Already converted or no longer eligible — trust the backend and reload.
+        Alert.alert('Onboarding non necessario', 'Questo prospect risulta già convertito in esercente.')
+        void loadProspects()
+      } else {
+        Alert.alert('Onboarding non riuscito', describeError(e))
+      }
+    } finally {
+      setConvertingId(null)
+    }
+  }, [convertingId, router, loadProspects])
 
   const prospectsInStage = (stage: Column) =>
     prospects.filter(p => p.stage === stage)
@@ -228,6 +260,10 @@ export default function ProspectKanbanScreen() {
                     const advanceTo = nextHappyStage(item.stage)
                     const canLose   = item.stage !== 'CLOSED' && item.stage !== 'LOST'
                     const busy      = movingId === item.id
+                    // #82 — onboarding only on the won (CLOSED) column.
+                    const converted     = !!item.convertedMerchantId
+                    const canOnboard    = item.stage === 'CLOSED' && !converted
+                    const convertBusy   = convertingId === item.id
                     return (
                       <View style={styles.card} testID={`kanban-card-${item.id}`}>
                         <Text style={styles.cardName}>{item.organization}</Text>
@@ -242,7 +278,10 @@ export default function ProspectKanbanScreen() {
                         <View style={styles.cardActions}>
                           <TouchableOpacity
                             style={styles.detailBtn}
-                            onPress={() => router.push(`/(app)/merchants` as never)}
+                            onPress={() => router.push(
+                              (converted
+                                ? `/(app)/merchants/${item.convertedMerchantId}`
+                                : `/(app)/merchants`) as never)}
                           >
                             <Text style={styles.detailBtnText}>Dettaglio</Text>
                           </TouchableOpacity>
@@ -268,6 +307,23 @@ export default function ProspectKanbanScreen() {
                           >
                             <Text style={styles.loseBtnText}>Segna come perso</Text>
                           </TouchableOpacity>
+                        )}
+                        {canOnboard && (
+                          <TouchableOpacity
+                            style={[styles.onboardBtn, convertBusy && styles.moveBtnDisabled]}
+                            disabled={convertBusy}
+                            onPress={() => void convertProspect(item)}
+                            testID={`kanban-onboard-${item.id}`}
+                          >
+                            {convertBusy
+                              ? <ActivityIndicator size="small" color={TOKENS.colors.neutral.white} />
+                              : <Text style={styles.onboardBtnText}>Onboarding esercente</Text>}
+                          </TouchableOpacity>
+                        )}
+                        {converted && (
+                          <View style={styles.convertedTag} testID={`kanban-converted-${item.id}`}>
+                            <Text style={styles.convertedTagText}>Esercente creato</Text>
+                          </View>
                         )}
                       </View>
                     )
@@ -414,4 +470,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loseBtnText: { ...typography.label, fontSize: 12, color: TOKENS.colors.semantic.danger },
+
+  // #82 — onboarding (convert to merchant) on the won column
+  onboardBtn: {
+    marginTop: 6,
+    paddingVertical: 6,
+    borderRadius: radius.s,
+    backgroundColor: TOKENS.colors.brand.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 32,
+  },
+  onboardBtnText: { ...typography.label, fontSize: 12, color: P.onBrand },
+  convertedTag: {
+    marginTop: 6,
+    paddingVertical: 6,
+    borderRadius: radius.s,
+    backgroundColor: TOKENS.colors.semanticSoft.successSoft,
+    alignItems: 'center',
+  },
+  convertedTagText: { ...typography.label, fontSize: 12, color: TOKENS.colors.semantic.success },
 })
